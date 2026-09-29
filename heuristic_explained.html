@@ -1,0 +1,648 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Wallship AI — Heuristic Explained</title>
+  <style>
+    :root {
+      --bg: #07111f;
+      --panel: #0d1b2a;
+      --panel-2: #11263a;
+      --line: #27445d;
+      --text: #eaf3f8;
+      --muted: #9bb2c3;
+      --cyan: #4dd8ff;
+      --green: #52e0a4;
+      --yellow: #ffd166;
+      --red: #ff6b6b;
+      --purple: #b494ff;
+      --unknown: #1a3045;
+      --miss: #496273;
+      --hit: #d85b58;
+      --sunk: #713d62;
+      --radius: 18px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 10% 0%, #123954 0, transparent 28rem),
+        radial-gradient(circle at 90% 20%, #202553 0, transparent 24rem),
+        var(--bg);
+      line-height: 1.65;
+    }
+    a { color: var(--cyan); }
+    code, pre { font-family: "Cascadia Code", Consolas, monospace; }
+    .shell { width: min(1180px, calc(100% - 32px)); margin: 0 auto; }
+    header { padding: 72px 0 42px; }
+    .eyebrow {
+      color: var(--cyan); font: 700 .78rem/1.2 inherit; letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+    h1 { margin: 10px 0 14px; font-size: clamp(2.4rem, 7vw, 5.8rem); line-height: .96; }
+    h1 span { color: var(--cyan); }
+    h2 { margin: 0 0 18px; font-size: clamp(1.55rem, 3vw, 2.3rem); line-height: 1.2; }
+    h3 { margin: 0 0 10px; font-size: 1.08rem; }
+    p { margin: 0 0 14px; }
+    .lead { max-width: 850px; color: #c5d6e1; font-size: 1.13rem; }
+    .pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+    .pill { border: 1px solid var(--line); background: #0a1725cc; border-radius: 999px; padding: 6px 12px; color: #bfd0dd; font-size: .86rem; }
+    nav {
+      position: sticky; top: 0; z-index: 10; backdrop-filter: blur(16px);
+      background: #07111fdd; border-block: 1px solid #1d3448;
+    }
+    nav .shell { display: flex; gap: 20px; overflow-x: auto; padding-block: 12px; scrollbar-width: none; }
+    nav a { color: var(--muted); text-decoration: none; white-space: nowrap; font-size: .9rem; }
+    nav a:hover { color: var(--text); }
+    main { padding: 42px 0 90px; }
+    section { scroll-margin-top: 76px; margin-bottom: 54px; }
+    .card {
+      background: linear-gradient(145deg, #0e1e2eec, #0a1724ec);
+      border: 1px solid var(--line); border-radius: var(--radius); padding: 24px;
+      box-shadow: 0 18px 48px #0004;
+    }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .number { color: var(--cyan); font-size: 2rem; font-weight: 800; line-height: 1; margin-bottom: 12px; }
+    .muted { color: var(--muted); }
+    .accent { color: var(--cyan); }
+    .good { color: var(--green); }
+    .warn { color: var(--yellow); }
+    .flow {
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; align-items: stretch;
+    }
+    .flow > div { position: relative; padding: 18px 16px; border-radius: 14px; background: var(--panel-2); border: 1px solid var(--line); }
+    .flow > div:not(:last-child)::after { content: "→"; position: absolute; right: -15px; top: 38%; z-index: 2; color: var(--yellow); font-size: 1.4rem; }
+    .flow b { display: block; color: var(--cyan); margin-bottom: 5px; }
+    .stepper { overflow: hidden; padding: 0; }
+    .step-strip {
+      display: grid; grid-template-columns: repeat(7, minmax(92px, 1fr));
+      border-bottom: 1px solid var(--line); overflow-x: auto;
+    }
+    .step-tab {
+      position: relative; min-height: 76px; border: 0; border-right: 1px solid var(--line);
+      border-radius: 0; background: #091724; color: var(--muted); padding: 11px 8px;
+      text-align: left; font-size: .78rem;
+    }
+    .step-tab:last-child { border-right: 0; }
+    .step-tab b { display: block; color: inherit; font-size: 1rem; margin-bottom: 2px; }
+    .step-tab.active { color: #04111a; background: var(--cyan); }
+    .step-tab.done { color: var(--green); background: #0d2630; }
+    .step-content { display: grid; grid-template-columns: minmax(420px, 1.2fr) minmax(270px, .8fr); gap: 22px; padding: 24px; }
+    .stage-board {
+      display: grid; grid-template-columns: 26px repeat(8, minmax(42px, 1fr));
+      gap: 5px; min-width: 420px;
+    }
+    .stage-cell {
+      min-height: 54px; position: relative; display: grid; place-items: center;
+      border-radius: 9px; border: 1px solid #35536a; background: var(--unknown);
+      transition: background .22s, transform .22s, outline-color .22s;
+    }
+    .stage-cell.miss { background: var(--miss); }
+    .stage-cell.hit { background: var(--hit); }
+    .stage-cell.sunk { background: var(--sunk); }
+    .stage-cell.candidate { outline: 3px solid var(--purple); outline-offset: -3px; transform: translateY(-2px); }
+    .stage-cell.best { outline: 3px solid var(--yellow); outline-offset: 1px; }
+    .stage-cell.chosen { outline: 4px solid white; outline-offset: 1px; animation: pulse 1s ease-in-out infinite alternate; }
+    .stage-cell .big { font-weight: 850; font-size: .9rem; }
+    .stage-cell .tiny { position: absolute; top: 2px; left: 5px; font-size: .58rem; color: #fffbd0; }
+    .stage-cell .bonus { position: absolute; right: 3px; bottom: 1px; font-size: .55rem; color: var(--yellow); }
+    .stage-side { display: flex; flex-direction: column; min-height: 390px; }
+    .stage-kicker { color: var(--cyan); font: 750 .76rem/1.2 inherit; letter-spacing: .12em; text-transform: uppercase; }
+    .stage-side h3 { font-size: 1.55rem; margin-top: 7px; }
+    .stage-equation { margin: 6px 0 16px; padding: 13px; border-radius: 11px; background: #06111c; color: var(--yellow); font-family: "Cascadia Code", Consolas, monospace; }
+    .stage-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: auto; }
+    .stage-stat { padding: 10px; border: 1px solid var(--line); border-radius: 10px; background: #091725; }
+    .stage-stat strong { display: block; color: var(--cyan); font-size: 1.15rem; }
+    .step-actions { display: flex; gap: 8px; padding: 0 24px 24px; justify-content: flex-end; }
+    .feedback-paths { display: grid; gap: 6px; margin-top: 10px; }
+    .feedback-path { padding: 8px 10px; border-left: 3px solid var(--line); background: #091725; font-size: .84rem; }
+    .feedback-path.hit-path { border-color: var(--red); }
+    .feedback-path.sunk-path { border-color: var(--purple); }
+    @keyframes pulse { from { transform: scale(.96); } to { transform: scale(1.03); } }
+    .formula { padding: 16px; border-left: 4px solid var(--cyan); background: #081522; border-radius: 0 12px 12px 0; font-family: "Cascadia Code", Consolas, monospace; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 540px; }
+    th, td { border-bottom: 1px solid var(--line); padding: 11px 12px; text-align: left; }
+    th { color: var(--cyan); font-size: .85rem; }
+    .table-wrap { overflow-x: auto; }
+    .demo-layout { display: grid; grid-template-columns: minmax(440px, 1.25fr) minmax(260px, .75fr); gap: 20px; }
+    .controls { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    button, select, input {
+      color: var(--text); background: #132b3f; border: 1px solid #35536a;
+      border-radius: 9px; padding: 8px 11px; font: inherit;
+    }
+    button { cursor: pointer; }
+    button:hover { border-color: var(--cyan); }
+    button.active { color: #04111a; background: var(--cyan); border-color: var(--cyan); font-weight: 700; }
+    .board-wrap { overflow-x: auto; padding-bottom: 4px; }
+    .board {
+      display: grid; grid-template-columns: 26px repeat(8, minmax(42px, 1fr));
+      gap: 5px; min-width: 420px; user-select: none;
+    }
+    .axis { display: grid; place-items: center; color: var(--muted); font-size: .78rem; }
+    .cell {
+      min-height: 54px; border: 1px solid #35536a; border-radius: 9px;
+      display: grid; place-items: center; position: relative; overflow: hidden;
+      background: var(--unknown); cursor: pointer; transition: transform .12s, border-color .12s;
+    }
+    .cell:hover { transform: translateY(-1px); border-color: var(--cyan); }
+    .cell .score { font-size: .86rem; font-weight: 800; }
+    .cell .state { position: absolute; top: 2px; left: 5px; font-size: .62rem; color: #dce8efaa; }
+    .cell.miss { background: var(--miss); }
+    .cell.hit { background: var(--hit); }
+    .cell.sunk { background: var(--sunk); }
+    .cell.best { outline: 3px solid var(--yellow); outline-offset: 1px; }
+    .cell.target-1::after, .cell.target-2::after { position: absolute; right: 3px; bottom: 1px; font-size: .58rem; color: #fff; }
+    .cell.target-1::after { content: "+ADJ"; }
+    .cell.target-2::after { content: "+LINE"; color: var(--yellow); }
+    .legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; color: var(--muted); font-size: .82rem; }
+    .swatch { width: 12px; height: 12px; border-radius: 3px; display: inline-block; vertical-align: -1px; margin-right: 4px; }
+    .metric { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+    .metric output { color: var(--cyan); font-weight: 800; }
+    .counter-row { display: grid; grid-template-columns: 1fr 82px; gap: 10px; align-items: center; margin: 10px 0; }
+    .callout { border-radius: 14px; padding: 18px; background: #16243a; border: 1px solid #344f69; }
+    .callout strong { color: var(--yellow); }
+    .file-tree { display: grid; gap: 10px; }
+    .file {
+      display: grid; grid-template-columns: 140px 1fr auto; gap: 14px; align-items: center;
+      padding: 14px; background: #091725; border: 1px solid var(--line); border-radius: 12px;
+    }
+    .file code { color: var(--cyan); font-weight: 700; }
+    .tag { font-size: .73rem; border-radius: 999px; padding: 3px 8px; background: #18384e; color: #cde6f3; white-space: nowrap; }
+    .tag.core { color: #062117; background: var(--green); }
+    .tag.demo { color: #251b03; background: var(--yellow); }
+    .code { overflow-x: auto; color: #d6e6ef; background: #06101b; border: 1px solid #20394d; border-radius: 12px; padding: 16px; font-size: .88rem; line-height: 1.55; }
+    footer { color: var(--muted); border-top: 1px solid var(--line); padding: 24px 0 46px; }
+    @media (max-width: 850px) {
+      .grid-2, .grid-3, .demo-layout, .step-content { grid-template-columns: 1fr; }
+      .flow { grid-template-columns: 1fr; }
+      .flow > div:not(:last-child)::after { content: "↓"; right: 50%; top: auto; bottom: -22px; }
+      .file { grid-template-columns: 1fr; gap: 6px; }
+      header { padding-top: 46px; }
+    }
+    @media print {
+      :root { color-scheme: light; --text: #10202b; --muted: #4b5e69; --line: #b7c4cb; }
+      body { background: white; }
+      nav, .controls, .hint { display: none; }
+      .card { box-shadow: none; background: white; break-inside: avoid; }
+      section { break-inside: avoid; }
+      .cell { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+  <header class="shell">
+    <div class="eyebrow">Wallship · STM32 · Rule-based AI</div>
+    <h1>Heuristic<br><span>คิดอย่างไร?</span></h1>
+    <p class="lead">AI ไม่รู้ตำแหน่งเรือฝ่ายตรงข้าม จึงให้คะแนนทุกช่องจาก “จำนวนรูปแบบเรือที่ยังวางผ่านช่องนั้นได้” แล้วเพิ่มคะแนนมากเป็นพิเศษเมื่อพบ HIT เพื่อพยายามปิดงานเรือลำนั้น</p>
+    <div class="pills">
+      <span class="pill">กระดาน 8 × 7</span><span class="pill">เรือ 3, 3, 2, 2, 1, 1</span>
+      <span class="pill">Integer only</span><span class="pill">No dynamic allocation</span><span class="pill">Deterministic by seed</span>
+    </div>
+  </header>
+
+  <nav aria-label="สารบัญ">
+    <div class="shell">
+      <a href="#overview">ภาพรวม</a><a href="#walkthrough">ทีละขั้น</a><a href="#hunt">Hunt mode</a><a href="#target">Target mode</a>
+      <a href="#lab">ทดลองคะแนน</a><a href="#sunk">Touching & SUNK</a><a href="#profiles">Profiles</a><a href="#files">ไฟล์ที่ใช้</a>
+    </div>
+  </nav>
+
+  <main class="shell">
+    <section id="overview">
+      <h2>1 · เส้นทางการตัดสินใจ</h2>
+      <div class="flow">
+        <div><b>อ่านสถานะ</b>UNKNOWN / MISS / HIT / SUNK</div>
+        <div><b>สร้างสมมติฐาน</b>ลองวางเรือทุกขนาดที่ยังเหลือ</div>
+        <div><b>รวมคะแนน</b>Hunt + Target + Jitter</div>
+        <div><b>เลือกค่าสูงสุด</b>สุ่มอย่างยุติธรรมเมื่อคะแนนเท่ากัน</div>
+        <div><b>รอผล</b>บันทึก MISS, HIT หรือ SUNK</div>
+      </div>
+      <div class="grid-3" style="margin-top:18px">
+        <article class="card"><div class="number">01</div><h3>Hunt</h3><p class="muted">ตอนยังหาเรือ ให้ช่องที่รองรับรูปแบบเรือได้มากมีคะแนนสูง</p></article>
+        <article class="card"><div class="number">02</div><h3>Target</h3><p class="muted">เมื่อมี HIT ให้เพื่อนบ้านแนวตั้ง/นอนมีโบนัสที่ใหญ่กว่า Hunt ชัดเจน</p></article>
+        <article class="card"><div class="number">03</div><h3>Resolve</h3><p class="muted">เมื่อ SUNK ใช้พิกัดเรือทั้งหมดจาก event เพื่อแยกเรือที่แตะกัน</p></article>
+      </div>
+    </section>
+
+    <section id="walkthrough">
+      <h2>2 · ดูอัลกอริทึมทำงานทีละขั้น</h2>
+      <p class="muted">ตัวอย่างนี้ใช้ Balanced profile และเรือทุกขนาดยังเหลืออย่างละ 2 ลำ กดแต่ละขั้นหรือกด “เล่นอัตโนมัติ” เพื่อดูว่าข้อมูลชุดเดียวค่อย ๆ กลายเป็นพิกัดยิงอย่างไร</p>
+      <div class="card stepper">
+        <div id="stepStrip" class="step-strip" aria-label="Algorithm steps"></div>
+        <div class="step-content">
+          <div class="board-wrap">
+            <div id="stageBoard" class="stage-board" aria-live="polite"></div>
+            <div class="legend">
+              <span><i class="swatch" style="background:var(--hit)"></i>HIT ที่ยังไม่รู้ว่าเป็นเรือลำใด</span>
+              <span><i class="swatch" style="background:var(--miss)"></i>MISS ขวางการวาง</span>
+              <span><i class="swatch" style="background:var(--sunk)"></i>SUNK ขวางการวาง</span>
+            </div>
+          </div>
+          <div class="stage-side">
+            <div id="stageKicker" class="stage-kicker"></div>
+            <h3 id="stageTitle"></h3>
+            <p id="stageText" class="muted"></p>
+            <div id="stageEquation" class="stage-equation"></div>
+            <div id="feedbackPaths" class="feedback-paths" hidden>
+              <div class="feedback-path">MISS → บันทึก CELL_MISS → จบเทิร์น AI</div>
+              <div class="feedback-path hit-path">HIT → บันทึก CELL_HIT → AI ยิงต่อ</div>
+              <div class="feedback-path sunk-path">SUNK → รอพิกัดทั้งลำ → CELL_SUNK → AI ยิงต่อ</div>
+            </div>
+            <div class="stage-stats">
+              <div class="stage-stat"><span class="muted">รูปแบบที่ถูกกติกา</span><strong id="legalCount">—</strong></div>
+              <div class="stage-stat"><span class="muted">คะแนนสูงสุด</span><strong id="stageMax">—</strong></div>
+            </div>
+          </div>
+        </div>
+        <div class="step-actions">
+          <button id="prevStep" type="button">← ย้อนกลับ</button>
+          <button id="playSteps" type="button">▶ เล่นอัตโนมัติ</button>
+          <button id="nextStep" type="button">ถัดไป →</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="hunt">
+      <h2>3 · Hunt mode: นับความเป็นไปได้</h2>
+      <div class="grid-2">
+        <div class="card">
+          <p>สำหรับเรือขนาด 1, 2 และ 3 ที่ยังไม่จม AI ลองเลื่อนเรือแนวนอนและแนวตั้งไปทั่วกระดาน รูปแบบที่ผ่าน <span class="good">UNKNOWN</span> หรือ <span class="warn">HIT</span> ใช้ได้ ส่วนรูปแบบที่ชน MISS หรือ SUNK ใช้ไม่ได้</p>
+          <div class="formula">Hunt score += hunt_weight × จำนวนเรือขนาดนั้นที่ยังเหลือ</div>
+          <p class="muted" style="margin-top:14px">เรือขนาด 1 ถูกนับเพียงหนึ่ง orientation เพื่อไม่ให้ได้คะแนนซ้ำ ช่อง HIT ช่วยตรวจความเข้ากันได้ แต่ AI ยิงได้เฉพาะช่อง UNKNOWN</p>
+        </div>
+        <div class="card">
+          <h3>ทำไมกลางกระดานมักสูงกว่า?</h3>
+          <p class="muted">เรือยาวสามารถคร่อมช่องกลางได้จากหลายตำแหน่ง ขอบและมุมมีรูปแบบผ่านได้น้อยกว่า แต่ MISS/SUNK รอบกลางอาจทำให้คะแนนบริเวณอื่นสูงกว่าแทน</p>
+          <pre class="code">for each remaining ship length:
+  for each horizontal/vertical placement:
+    if every cell is UNKNOWN or HIT:
+      add hunt score to UNKNOWN cells</pre>
+        </div>
+      </div>
+    </section>
+
+    <section id="target">
+      <h2>4 · Target mode: HIT เปลี่ยนลำดับความสำคัญ</h2>
+      <div class="grid-3">
+        <article class="card"><h3>H เดียว</h3><p class="formula">? ← H → ?</p><p class="muted">ให้ adjacent bonus เฉพาะซ้าย ขวา บน ล่าง ที่ร่วมอยู่ในรูปแบบเรือที่เป็นไปได้</p></article>
+        <article class="card"><h3>H เรียงแนว</h3><p class="formula">? ← H H → ?</p><p class="muted">ถ้ารูปแบบเรือมี HIT ตั้งแต่ 2 ช่อง จะให้ line bonus กับ UNKNOWN ในแนวเดียวกัน</p></article>
+        <article class="card"><h3>ช่องว่างระหว่าง HIT</h3><p class="formula">H → ? ← H</p><p class="muted">ช่องกลางเข้ากับเรือยาว 3 จึงได้ line bonus เช่นกัน</p></article>
+      </div>
+      <div class="callout" style="margin-top:16px"><strong>โบนัสใช้ค่าสูงสุด ไม่บวกซ้อน</strong> — target level ของแต่ละช่องมีเพียง 0, 1 หรือ 2 เพื่อไม่ให้กลุ่ม HIT จากเรือหลายลำที่แตะกันดันคะแนนสูงผิดปกติ</div>
+    </section>
+
+    <section id="lab">
+      <h2>5 · ทดลอง Score Map ด้วยตัวเอง</h2>
+      <p class="muted hint">คลิกช่องเพื่อวน UNKNOWN → HIT → MISS → SUNK แล้วดูคะแนนใหม่ ตัวอย่างนี้ไม่ใส่ random jitter เพื่อให้เห็นเหตุผลของคะแนนชัดเจน; โค้ด C จริงเพิ่ม jitter ก่อนเลือก</p>
+      <div class="demo-layout">
+        <div class="card">
+          <div class="controls" aria-label="ตัวอย่างกระดาน">
+            <button type="button" data-preset="clear">ล้างกระดาน</button>
+            <button type="button" data-preset="single">HIT เดียว</button>
+            <button type="button" data-preset="line">HIT แนวนอน</button>
+            <button type="button" data-preset="gap">HIT เว้นช่อง</button>
+            <button type="button" data-preset="touching">เรือแตะกัน</button>
+            <button type="button" data-preset="blocked">มี MISS/SUNK ขวาง</button>
+          </div>
+          <div class="board-wrap"><div id="board" class="board" aria-label="Interactive heuristic score map"></div></div>
+          <div class="legend">
+            <span><i class="swatch" style="background:var(--unknown)"></i>UNKNOWN</span>
+            <span><i class="swatch" style="background:var(--hit)"></i>HIT</span>
+            <span><i class="swatch" style="background:var(--miss)"></i>MISS</span>
+            <span><i class="swatch" style="background:var(--sunk)"></i>SUNK</span>
+            <span><i class="swatch" style="outline:2px solid var(--yellow)"></i>คะแนนสูงสุด</span>
+          </div>
+        </div>
+        <aside class="card">
+          <h3>ตั้งค่าเหมือนใน C</h3>
+          <label class="counter-row">Profile
+            <select id="profile"><option value="balanced">Balanced</option><option value="aggressive">Aggressive</option></select>
+          </label>
+          <label class="counter-row">เรือยาว 1 ที่เหลือ <input id="remain1" type="number" min="0" max="2" value="2"></label>
+          <label class="counter-row">เรือยาว 2 ที่เหลือ <input id="remain2" type="number" min="0" max="2" value="2"></label>
+          <label class="counter-row">เรือยาว 3 ที่เหลือ <input id="remain3" type="number" min="0" max="2" value="2"></label>
+          <div class="metric"><span>Hunt weight</span><output id="huntWeight">10</output></div>
+          <div class="metric"><span>Adjacent bonus</span><output id="adjBonus">400</output></div>
+          <div class="metric"><span>Line bonus</span><output id="lineBonus">1200</output></div>
+          <div class="metric"><span>Jitter ใน C จริง</span><output id="jitter">0..5</output></div>
+          <div class="metric"><span>คะแนนสูงสุดในแผนภาพ</span><output id="maxScore">—</output></div>
+          <p class="muted" style="margin-top:14px">ป้าย <span class="accent">+ADJ</span> และ <span class="warn">+LINE</span> แสดงโบนัสเป้าหมาย ตัวเลขกลางช่องคือคะแนนก่อน jitter</p>
+        </aside>
+      </div>
+    </section>
+
+    <section id="sunk">
+      <h2>6 · เรือแตะกัน และเหตุผลที่ SUNK ต้องมีพิกัด</h2>
+      <div class="grid-2">
+        <div class="card">
+          <pre class="code">H H H H H
+└─ AAA ─┘└ BB ┘</pre>
+          <p>HIT ห้าช่องติดกันอาจเป็นเรือยาว 3 แตะกับเรือยาว 2 จึงห้าม flood-fill หรือสรุปจากความติดกันเพียงอย่างเดียว</p>
+        </div>
+        <div class="card">
+          <p>เมื่อเกิด SUNK ระบบส่ง <code>ship_length</code> และพิกัดทุกช่องของลำนั้นเข้ามา AI ตรวจว่าพิกัดไม่ซ้ำ อยู่ในกระดาน เรียงตรง ต่อเนื่อง เป็น HIT ทั้งหมด และมีพิกัดนัดล่าสุดอยู่ด้วย</p>
+          <p class="muted">เมื่อผ่านจึงเปลี่ยนเฉพาะช่องเหล่านั้นเป็น SUNK และลดตัวนับเรือหนึ่งครั้ง HIT ที่แตะอยู่แต่เป็นอีกลำยังคงเป็น HIT</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="profiles">
+      <h2>7 · Profiles และการสุ่ม</h2>
+      <div class="table-wrap card">
+        <table>
+          <thead><tr><th>Profile</th><th>Hunt</th><th>Adjacent</th><th>Line</th><th>Jitter</th><th>พฤติกรรม</th></tr></thead>
+          <tbody>
+            <tr><td>RANDOM</td><td>—</td><td>—</td><td>—</td><td>—</td><td>สุ่มจาก UNKNOWN ด้วย reservoir sampling</td></tr>
+            <tr><td>BALANCED</td><td>10</td><td>400</td><td>1200</td><td>0..5</td><td>สมดุลระหว่างหาเรือและตาม HIT</td></tr>
+            <tr><td>AGGRESSIVE</td><td>6</td><td>800</td><td>2000</td><td>0..3</td><td>ให้น้ำหนักกับการปิดงานหลัง HIT มากกว่า</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="grid-2" style="margin-top:18px">
+        <div class="card"><h3>xorshift32</h3><p class="muted">RNG อยู่ใน <code>ai-&gt;rng_state</code> จึงทำซ้ำผลได้เมื่อ seed และลำดับการเรียกเหมือนเดิม ค่า seed 0 ถูกแทนด้วยค่าคงที่ที่ไม่เป็นศูนย์</p></div>
+        <div class="card"><h3>Tie breaking</h3><p class="muted">เมื่อหลายช่องคะแนนสูงสุดเท่ากัน ใช้ reservoir sampling เพื่อสุ่มอย่างยุติธรรมโดยไม่ต้องสร้างอาร์เรย์ผู้สมัคร 56 ช่อง</p></div>
+      </div>
+    </section>
+
+    <section id="files">
+      <h2>8 · ไฟล์ไหนใช้จริง?</h2>
+      <div class="file-tree">
+        <div class="file"><code>wallship_ai.h</code><span>ชนิดข้อมูล, state และ public API ของ AI</span><span class="tag core">CORE</span></div>
+        <div class="file"><code>wallship_ai.c</code><span>วางเรือ, RNG, heuristic scoring, เลือกยิง, รับผล</span><span class="tag core">CORE</span></div>
+        <div class="file"><code>wallship_play.c</code><span>เกม terminal สำหรับคนเล่นกับ AI; เรียกใช้ core สองไฟล์ด้านบน</span><span class="tag demo">DEMO</span></div>
+        <div class="file"><code>play_wallship.ps1</code><span>คำสั่งช่วยคอมไพล์และเปิด demo บน Windows</span><span class="tag demo">DEMO</span></div>
+      </div>
+      <div class="grid-2" style="margin-top:18px">
+        <div class="callout"><strong>นำ AI ไปใช้ใน STM32</strong><br>ใช้ <code>wallship_ai.c</code> และ <code>wallship_ai.h</code> แล้วให้ application/main loop ของ STM32 เรียก API และส่งผลยิงกลับเข้ามา หากใช้ตัวอย่าง event/state machine ของโปรเจกต์ ให้เพิ่มไฟล์ใน <code>examples/</code> หรือเขียน integration ของบอร์ดเอง</div>
+        <div class="callout"><strong>ส่งให้คนอื่นเล่น demo จาก source</strong><br>ต้องส่งอย่างน้อย 4 ไฟล์ด้านบน และเครื่องผู้เล่นต้องมี <code>gcc</code> ใน PATH เพราะ PowerShell script ทำหน้าที่คอมไพล์ก่อนรัน การส่ง <code>play_wallship.ps1</code> เพียงไฟล์เดียวไม่พอ</div>
+      </div>
+      <div class="card" style="margin-top:18px">
+        <h3>คำสั่ง demo</h3>
+        <pre class="code">powershell -NoProfile -ExecutionPolicy Bypass -File .\play_wallship.ps1 balanced 123
+
+# เปิดตำแหน่งเรือ AI เพื่อสาธิต seed และการวางเรือ
+powershell -NoProfile -ExecutionPolicy Bypass -File .\play_wallship.ps1 aggressive 124 --reveal</pre>
+      </div>
+    </section>
+  </main>
+
+  <footer><div class="shell">อ้างอิงพฤติกรรมจาก <code>wallship_ai.c</code> และ <code>wallship_ai.h</code> ในโปรเจกต์นี้ · Score Map ในหน้านี้คำนวณด้วยกติกาเดียวกันโดยตัด jitter ออกเพื่อให้อธิบายได้ชัดเจน</div></footer>
+
+  <script>
+    "use strict";
+    const W = 8, H = 7;
+    const states = ["unknown", "hit", "miss", "sunk"];
+    const labels = {unknown: "U", hit: "H", miss: "M", sunk: "S"};
+    const configs = {
+      balanced: {hunt: 10, adjacent: 400, line: 1200, jitter: 5},
+      aggressive: {hunt: 6, adjacent: 800, line: 2000, jitter: 3}
+    };
+
+    /* Animated walkthrough: the math mirrors calculate_scores() in C.
+       Jitter values are fixed here only so the explanation is reproducible. */
+    const walkGrid = Array.from({length: H}, () => Array(W).fill("unknown"));
+    walkGrid[0][0] = "sunk"; walkGrid[0][1] = "sunk";
+    walkGrid[2][6] = "miss"; walkGrid[5][2] = "miss";
+    walkGrid[3][3] = "hit"; walkGrid[3][4] = "hit";
+    const walkJitter = Array.from({length: H}, (_, y) =>
+      Array.from({length: W}, (_, x) => (x * 3 + y * 5 + 2) % 6));
+    let walkStep = 0, walkTimer = null;
+
+    function scoreWalkthrough() {
+      const cfg = configs.balanced;
+      const hunt = Array.from({length: H}, () => Array(W).fill(0));
+      const target = Array.from({length: H}, () => Array(W).fill(0));
+      let legal = 0;
+      for (let length = 1; length <= 3; length++) {
+        const directions = length === 1 ? [[1, 0]] : [[1, 0], [0, 1]];
+        for (const [dx, dy] of directions) {
+          for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+            let hits = 0, valid = true;
+            for (let i = 0; i < length; i++) {
+              const nx = x + dx*i, ny = y + dy*i;
+              if (!inside(nx, ny) || !["unknown", "hit"].includes(walkGrid[ny][nx])) { valid = false; break; }
+              if (walkGrid[ny][nx] === "hit") hits++;
+            }
+            if (!valid) continue;
+            legal++;
+            for (let i = 0; i < length; i++) {
+              const nx = x + dx*i, ny = y + dy*i;
+              if (walkGrid[ny][nx] !== "unknown") continue;
+              hunt[ny][nx] += cfg.hunt * 2;
+              let level = 0;
+              if (hits >= 2) level = 2;
+              else if (hits === 1 &&
+                ((i > 0 && walkGrid[ny-dy][nx-dx] === "hit") ||
+                 (i+1 < length && walkGrid[ny+dy][nx+dx] === "hit"))) level = 1;
+              target[ny][nx] = Math.max(target[ny][nx], level);
+            }
+          }
+        }
+      }
+      const total = hunt.map((row, y) => row.map((value, x) =>
+        walkGrid[y][x] !== "unknown" ? 0 : value + (target[y][x] === 2 ? cfg.line : target[y][x] === 1 ? cfg.adjacent : 0)));
+      const withJitter = total.map((row, y) => row.map((value, x) =>
+        walkGrid[y][x] === "unknown" ? value + walkJitter[y][x] : 0));
+      const max = Math.max(...withJitter.flat());
+      let chosen = null;
+      for (let y = 0; y < H && !chosen; y++) for (let x = 0; x < W; x++) {
+        if (walkGrid[y][x] === "unknown" && withJitter[y][x] === max) { chosen = {x, y}; break; }
+      }
+      return {hunt, target, total, withJitter, legal, max, chosen};
+    }
+
+    const walkSteps = [
+      {short:"สถานะ", kicker:"STEP 1 · INPUT", title:"อ่านสิ่งที่ AI รู้เท่านั้น",
+       text:"กระดานเก็บ UNKNOWN, MISS, HIT และ SUNK โดยไม่เห็นเรือจริงของคู่แข่ง HIT สองช่องกลางยังเป็นชิ้นส่วนที่ต้องตามหา ส่วน MISS และ SUNK เป็นกำแพงของสมมติฐาน",
+       equation:"enemy_board[y][x] → U / M / H / S", mode:"state"},
+      {short:"ลองวาง", kicker:"STEP 2 · ENUMERATE", title:"เลื่อนเรือสมมติทุกแบบ",
+       text:"ตัวอย่างกรอบสีม่วงคือเรือยาว 3 ที่วางผ่าน HIT สองช่องได้ จึงเป็นสมมติฐานที่ถูกกติกา AI ทำแบบนี้กับทุกจุด ทุกขนาด และทั้งสองแนว",
+       equation:"placement valid ⇔ ทุกช่องเป็น UNKNOWN หรือ HIT", mode:"candidate"},
+      {short:"Hunt", kicker:"STEP 3 · ACCUMULATE", title:"ทุกสมมติฐานโหวตให้ช่อง UNKNOWN",
+       text:"ตัวเลขคือ Hunt score รูปแบบเรือที่ถูกกติกาแต่ละแบบเพิ่มคะแนนให้ทุก UNKNOWN ในแนวของมัน และคูณด้วยจำนวนเรือขนาดนั้นที่ยังเหลือ",
+       equation:"hunt += 10 × remaining_count", mode:"hunt"},
+      {short:"Target", kicker:"STEP 4 · PRIORITIZE", title:"HIT เพิ่มโบนัสที่แรงกว่า Hunt",
+       text:"ช่องต่อแนวกับ HIT สองช่องได้ LINE +1200 ส่วนช่องที่ต่อกับ HIT เดียวได้ ADJ +400 โบนัสใช้ระดับสูงสุดเพียงครั้งเดียวเพื่อรับมือเรือที่แตะกัน",
+       equation:"score = hunt + max(ADJ 400, LINE 1200)", mode:"target"},
+      {short:"Jitter", kicker:"STEP 5 · VARIATION", title:"เติมเลขสุ่มขนาดเล็ก",
+       text:"Balanced เติม 0..5 เพื่อให้เกมจาก seed ต่างกันไม่เลือกเหมือนกันทุกครั้ง ตัวเลขเล็กมุมซ้ายคือ jitter ตัวอย่าง ซึ่งเล็กเกินกว่าจะล้มลำดับ Target bonus",
+       equation:"final_score = target_score + random(0..5)", mode:"jitter"},
+      {short:"เลือก", kicker:"STEP 6 · SELECT", title:"เลือกเฉพาะ UNKNOWN ที่คะแนนสูงสุด",
+       text:"กรอบขาวคือพิกัดยิงของตัวอย่าง หากหลายช่องมีคะแนนสูงสุดเท่ากัน โค้ดจริงใช้ reservoir sampling จึงไม่เอนเอียงไปช่องแรก",
+       equation:"shot = random member of argmax(final_score)", mode:"select"},
+      {short:"รับผล", kicker:"STEP 7 · FEEDBACK", title:"ผลยิงกลายเป็นข้อมูลรอบถัดไป",
+       text:"ระบบภายนอกส่ง MISS, HIT หรือ SUNK กลับมา AI แก้ enemy_board แล้วคำนวณใหม่ในนัดต่อไป ถ้า SUNK ต้องรอพิกัดครบทั้งลำก่อน",
+       equation:"SelectShot → game result → ReportShotResult", mode:"feedback"}
+    ];
+
+    function renderWalkthrough() {
+      const calc = scoreWalkthrough(), step = walkSteps[walkStep];
+      const strip = document.getElementById("stepStrip");
+      strip.replaceChildren();
+      walkSteps.forEach((item, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "step-tab" + (index === walkStep ? " active" : index < walkStep ? " done" : "");
+        button.innerHTML = `<b>${index + 1}</b>${item.short}`;
+        button.addEventListener("click", () => { stopWalk(); walkStep = index; renderWalkthrough(); });
+        strip.append(button);
+      });
+      const stage = document.getElementById("stageBoard");
+      stage.replaceChildren(); stage.append(document.createElement("span"));
+      for (let x = 0; x < W; x++) {
+        const axis = document.createElement("span"); axis.className = "axis"; axis.textContent = x; stage.append(axis);
+      }
+      for (let y = 0; y < H; y++) {
+        const axis = document.createElement("span"); axis.className = "axis"; axis.textContent = y; stage.append(axis);
+        for (let x = 0; x < W; x++) {
+          const state = walkGrid[y][x], cell = document.createElement("div");
+          const isCandidate = step.mode === "candidate" && y === 3 && x >= 2 && x <= 4;
+          const isChosen = ["select", "feedback"].includes(step.mode) && calc.chosen.x === x && calc.chosen.y === y;
+          cell.className = `stage-cell ${state}${isCandidate ? " candidate" : ""}${isChosen ? " chosen" : ""}`;
+          let big = state === "unknown" ? "·" : labels[state];
+          let tiny = "", bonus = "";
+          if (step.mode === "hunt" && state === "unknown") big = calc.hunt[y][x];
+          if (step.mode === "target" && state === "unknown") {
+            big = calc.total[y][x];
+            bonus = calc.target[y][x] === 2 ? "+LINE" : calc.target[y][x] === 1 ? "+ADJ" : "";
+          }
+          if (["jitter", "select"].includes(step.mode) && state === "unknown") {
+            big = calc.withJitter[y][x]; tiny = `+${walkJitter[y][x]}`;
+            bonus = calc.target[y][x] === 2 ? "LINE" : calc.target[y][x] === 1 ? "ADJ" : "";
+          }
+          if (step.mode === "feedback" && isChosen) { big = "H"; tiny = "ผลตัวอย่าง"; }
+          cell.innerHTML = `<span class="tiny">${tiny}</span><span class="big">${big}</span><span class="bonus">${bonus}</span>`;
+          stage.append(cell);
+        }
+      }
+      document.getElementById("stageKicker").textContent = step.kicker;
+      document.getElementById("stageTitle").textContent = step.title;
+      document.getElementById("stageText").textContent = step.text;
+      document.getElementById("stageEquation").textContent = step.equation;
+      document.getElementById("feedbackPaths").hidden = step.mode !== "feedback";
+      document.getElementById("legalCount").textContent = walkStep >= 1 ? calc.legal : "—";
+      document.getElementById("stageMax").textContent = walkStep >= 2 ?
+        (walkStep < 4 ? Math.max(...(walkStep === 2 ? calc.hunt : calc.total).flat()) : calc.max) : "—";
+      document.getElementById("prevStep").disabled = walkStep === 0;
+      document.getElementById("nextStep").disabled = walkStep === walkSteps.length - 1;
+    }
+
+    function stopWalk() {
+      if (walkTimer !== null) { clearInterval(walkTimer); walkTimer = null; }
+      const button = document.getElementById("playSteps");
+      button.textContent = "▶ เล่นอัตโนมัติ"; button.classList.remove("active");
+    }
+    function advanceWalk() {
+      if (walkStep === walkSteps.length - 1) walkStep = 0; else walkStep++;
+      renderWalkthrough();
+    }
+
+    let grid = Array.from({length: H}, () => Array(W).fill("unknown"));
+    const board = document.getElementById("board");
+
+    function inside(x, y) { return x >= 0 && x < W && y >= 0 && y < H; }
+    function remaining(length) {
+      return Math.max(0, Math.min(2, Number(document.getElementById("remain" + length).value) || 0));
+    }
+    function candidate(x, y, dx, dy, length) {
+      let hits = 0;
+      for (let i = 0; i < length; i++) {
+        const nx = x + dx * i, ny = y + dy * i;
+        if (!inside(nx, ny) || (grid[ny][nx] !== "unknown" && grid[ny][nx] !== "hit")) return null;
+        if (grid[ny][nx] === "hit") hits++;
+      }
+      return hits;
+    }
+    function calculate() {
+      const cfg = configs[document.getElementById("profile").value];
+      const score = Array.from({length: H}, () => Array(W).fill(0));
+      const target = Array.from({length: H}, () => Array(W).fill(0));
+      for (let length = 1; length <= 3; length++) {
+        const count = remaining(length);
+        if (!count) continue;
+        const directions = length === 1 ? [[1, 0]] : [[1, 0], [0, 1]];
+        for (const [dx, dy] of directions) {
+          for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+            const hits = candidate(x, y, dx, dy, length);
+            if (hits === null) continue;
+            for (let i = 0; i < length; i++) {
+              const nx = x + dx * i, ny = y + dy * i;
+              if (grid[ny][nx] !== "unknown") continue;
+              score[ny][nx] += cfg.hunt * count;
+              let level = 0;
+              if (hits >= 2) level = 2;
+              else if (hits === 1 &&
+                ((i > 0 && grid[ny-dy][nx-dx] === "hit") ||
+                 (i+1 < length && grid[ny+dy][nx+dx] === "hit"))) level = 1;
+              target[ny][nx] = Math.max(target[ny][nx], level);
+            }
+          }
+        }
+      }
+      let max = -Infinity;
+      for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+        if (grid[y][x] !== "unknown") continue;
+        score[y][x] += target[y][x] === 2 ? cfg.line : target[y][x] === 1 ? cfg.adjacent : 0;
+        max = Math.max(max, score[y][x]);
+      }
+      return {score, target, max: Number.isFinite(max) ? max : null, cfg};
+    }
+    function render() {
+      const {score, target, max, cfg} = calculate();
+      board.replaceChildren();
+      board.append(document.createElement("span"));
+      for (let x = 0; x < W; x++) {
+        const axis = document.createElement("span"); axis.className = "axis"; axis.textContent = x; board.append(axis);
+      }
+      for (let y = 0; y < H; y++) {
+        const axis = document.createElement("span"); axis.className = "axis"; axis.textContent = y; board.append(axis);
+        for (let x = 0; x < W; x++) {
+          const cell = document.createElement("button");
+          cell.type = "button";
+          cell.className = "cell " + grid[y][x] + (target[y][x] ? " target-" + target[y][x] : "") +
+            (grid[y][x] === "unknown" && score[y][x] === max ? " best" : "");
+          cell.setAttribute("aria-label", `(${x},${y}) ${grid[y][x]} score ${score[y][x]}`);
+          cell.innerHTML = `<span class="state">${labels[grid[y][x]]}</span><span class="score">${grid[y][x] === "unknown" ? score[y][x] : labels[grid[y][x]]}</span>`;
+          cell.addEventListener("click", () => {
+            grid[y][x] = states[(states.indexOf(grid[y][x]) + 1) % states.length]; render();
+          });
+          board.append(cell);
+        }
+      }
+      document.getElementById("huntWeight").value = cfg.hunt;
+      document.getElementById("adjBonus").value = cfg.adjacent;
+      document.getElementById("lineBonus").value = cfg.line;
+      document.getElementById("jitter").value = `0..${cfg.jitter}`;
+      document.getElementById("maxScore").value = max ?? "ไม่มี UNKNOWN";
+    }
+    function preset(name) {
+      grid = Array.from({length: H}, () => Array(W).fill("unknown"));
+      const set = (x, y, state) => { grid[y][x] = state; };
+      if (name === "single") set(3, 3, "hit");
+      if (name === "line") { set(3, 3, "hit"); set(4, 3, "hit"); }
+      if (name === "gap") { set(2, 3, "hit"); set(4, 3, "hit"); }
+      if (name === "touching") { [2,3,4,5].forEach(x => set(x, 3, "hit")); }
+      if (name === "blocked") { set(3,3,"hit"); set(4,3,"hit"); set(2,3,"miss"); set(5,3,"sunk"); }
+      render();
+    }
+    document.querySelectorAll("[data-preset]").forEach(button => button.addEventListener("click", () => preset(button.dataset.preset)));
+    ["profile", "remain1", "remain2", "remain3"].forEach(id => document.getElementById(id).addEventListener("input", render));
+    document.getElementById("prevStep").addEventListener("click", () => { stopWalk(); walkStep--; renderWalkthrough(); });
+    document.getElementById("nextStep").addEventListener("click", () => { stopWalk(); walkStep++; renderWalkthrough(); });
+    document.getElementById("playSteps").addEventListener("click", () => {
+      if (walkTimer !== null) { stopWalk(); return; }
+      const button = document.getElementById("playSteps");
+      button.textContent = "■ หยุด"; button.classList.add("active");
+      walkTimer = setInterval(advanceWalk, 1800);
+    });
+    renderWalkthrough();
+    preset("single");
+  </script>
+</body>
+</html>

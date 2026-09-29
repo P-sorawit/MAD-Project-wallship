@@ -1,0 +1,5 @@
+/build/
+/examples/
+test_placement_failure.c
+test_wallship_ai.c
+test_wallship_game.c
