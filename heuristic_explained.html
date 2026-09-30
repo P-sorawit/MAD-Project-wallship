@@ -373,14 +373,16 @@
     <section id="files">
       <h2>8 · ไฟล์ไหนใช้จริง?</h2>
       <div class="file-tree">
-        <div class="file"><code>wallship_ai.h</code><span>ชนิดข้อมูล, state และ public API ของ AI</span><span class="tag core">CORE</span></div>
-        <div class="file"><code>wallship_ai.c</code><span>วางเรือ, RNG, heuristic scoring, เลือกยิง, รับผล</span><span class="tag core">CORE</span></div>
-        <div class="file"><code>wallship_play.c</code><span>เกม terminal สำหรับคนเล่นกับ AI; เรียกใช้ core สองไฟล์ด้านบน</span><span class="tag demo">DEMO</span></div>
+        <div class="file"><code>wallship_types.h</code><span>ขนาดกระดาน ชนิดข้อมูล และ state ที่ใช้ร่วมกัน</span><span class="tag core">CORE</span></div>
+        <div class="file"><code>wallship_heuristic.h</code><span>RNG, โปรไฟล์คะแนน และการคำนวณ Score Map</span><span class="tag core">CORE</span></div>
+        <div class="file"><code>wallship_game_rules.h</code><span>ผลการยิง การสลับเทิร์น และผู้ชนะ</span><span class="tag core">CORE</span></div>
+        <div class="file"><code>wallship_ai.h</code><span>วางเรือ เลือกยิง และรับผล โดยรวม header อื่นให้พร้อมใช้</span><span class="tag core">CORE</span></div>
+        <div class="file"><code>wallship_play.c</code><span>เกม terminal สำหรับคนเล่นกับ AI</span><span class="tag demo">DEMO</span></div>
         <div class="file"><code>play_wallship.ps1</code><span>คำสั่งช่วยคอมไพล์และเปิด demo บน Windows</span><span class="tag demo">DEMO</span></div>
       </div>
       <div class="grid-2" style="margin-top:18px">
-        <div class="callout"><strong>นำ AI ไปใช้ใน STM32</strong><br>ใช้ <code>wallship_ai.c</code> และ <code>wallship_ai.h</code> แล้วให้ application/main loop ของ STM32 เรียก API และส่งผลยิงกลับเข้ามา หากใช้ตัวอย่าง event/state machine ของโปรเจกต์ ให้เพิ่มไฟล์ใน <code>examples/</code> หรือเขียน integration ของบอร์ดเอง</div>
-        <div class="callout"><strong>ส่งให้คนอื่นเล่น demo จาก source</strong><br>ต้องส่งอย่างน้อย 4 ไฟล์ด้านบน และเครื่องผู้เล่นต้องมี <code>gcc</code> ใน PATH เพราะ PowerShell script ทำหน้าที่คอมไพล์ก่อนรัน การส่ง <code>play_wallship.ps1</code> เพียงไฟล์เดียวไม่พอ</div>
+        <div class="callout"><strong>นำ AI ไปใช้ใน STM32</strong><br>คัดลอก header ทั้งสี่ไฟล์แล้ว <code>#include "wallship_ai.h"</code> ใน application/main loop หากต้องการเฉพาะคะแนนให้ include <code>wallship_heuristic.h</code> ตัวอย่าง event/state machine ใน <code>examples/</code> ยังต้องคอมไพล์ไฟล์ <code>.c</code> ของตัวอย่างด้วย</div>
+        <div class="callout"><strong>ส่งให้คนอื่นเล่น demo จาก source</strong><br>ส่ง header ทั้งสี่ไฟล์, <code>wallship_play.c</code> และ <code>play_wallship.ps1</code> เครื่องผู้เล่นต้องมี <code>gcc</code> ใน PATH เพราะ PowerShell script คอมไพล์ก่อนรัน</div>
       </div>
       <div class="card" style="margin-top:18px">
         <h3>คำสั่ง demo</h3>
@@ -392,7 +394,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\play_wallship.ps1 aggressi
     </section>
   </main>
 
-  <footer><div class="shell">อ้างอิงพฤติกรรมจาก <code>wallship_ai.c</code> และ <code>wallship_ai.h</code> ในโปรเจกต์นี้ · Score Map ในหน้านี้คำนวณด้วยกติกาเดียวกันโดยตัด jitter ออกเพื่อให้อธิบายได้ชัดเจน</div></footer>
+  <footer><div class="shell">อ้างอิงพฤติกรรมจาก <code>wallship_heuristic.h</code> และ <code>wallship_ai.h</code> ในโปรเจกต์นี้ · Score Map ในหน้านี้คำนวณด้วยกติกาเดียวกันโดยตัด jitter ออกเพื่อให้อธิบายได้ชัดเจน</div></footer>
 
   <script>
     "use strict";

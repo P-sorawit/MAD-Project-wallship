@@ -2,6 +2,7 @@
 /*to demo run "powershell -NoProfile -ExecutionPolicy Bypass -File .\play_wallship.ps1 balanced 123" in powershell*/
 //add --reveal to show AI generate position ship
 #include "wallship_ai.h"
+#include "wallship_game_rules.h"
 
 #include <ctype.h>
 #include <errno.h>
@@ -29,18 +30,17 @@ static void print_grid_header(void)
     putchar('\n');
 }
 
-static char radar_symbol(CellState state)
+static char radar_symbol(const WallshipAgent *ai, int x, int y, bool reveal)
 {
-    switch (state) {
-    case CELL_MISS: return 'o';
-    case CELL_HIT: return 'X';
-    case CELL_SUNK: return '#';
-    default: return '.';
+    const uint8_t id = ai->own_board[y][x];
+    if (ai->human_shot_board[y][x] == 0) {
+        return reveal && id != 0 ? (char)('0' + id) : '.';
     }
+    return id == 0 ? 'o' : (ai->ships[id-1].sunk ? '#' : 'X');
 }
 
 static void print_boards(const WallshipAgent *human, const WallshipAgent *ai,
-                         CellState radar[BOARD_H][BOARD_W], bool reveal)
+                         bool reveal)
 {
     int x, y;
     puts("\nYOUR FLEET (ship IDs shown)       AI WATERS (your attacks)");
@@ -56,10 +56,7 @@ static void print_boards(const WallshipAgent *human, const WallshipAgent *ai,
         }
         printf("       %d  ", y);
         for (x = 0; x < BOARD_W; ++x) {
-            const char symbol = reveal && radar[y][x] == CELL_UNKNOWN &&
-                ai->own_board[y][x] != 0
-                ? (char)('0' + ai->own_board[y][x]) : radar_symbol(radar[y][x]);
-            printf(" %c", symbol);
+            printf(" %c", radar_symbol(ai, x, y, reveal));
         }
         putchar('\n');
     }
@@ -114,7 +111,7 @@ static bool parse_shot_line(const char *line, Position *p)
     return true;
 }
 
-static bool read_human_shot(CellState radar[BOARD_H][BOARD_W], Position *p)
+static bool read_human_shot(const WallshipAgent *ai, Position *p)
 {
     char line[80];
     for (;;) {
@@ -136,7 +133,7 @@ static bool read_human_shot(CellState radar[BOARD_H][BOARD_W], Position *p)
             puts("Use x=0..7 and y=0..6, separated by a space.");
             continue;
         }
-        if (radar[p->y][p->x] != CELL_UNKNOWN) {
+        if (ai->human_shot_board[p->y][p->x] != 0) {
             puts("You have already attacked that cell. Choose another.");
             continue;
         }
@@ -183,16 +180,28 @@ static uint32_t automatic_seed(void)
     return seed != 0 ? seed : WALLSHIP_DEFAULT_SEED;
 }
 
+static unsigned sunk_count(const WallshipAgent *player)
+{
+    unsigned count = 0;
+    int i;
+    for (i = 0; i < SHIP_COUNT; ++i) {
+        if (player->ships[i].sunk) { ++count; }
+    }
+    return count;
+}
+
 static int play_game(AIProfile profile, uint32_t seed, bool reveal)
 {
     WallshipAgent ai, human;
-    CellState radar[BOARD_H][BOARD_W] = {{CELL_UNKNOWN}};
-    uint8_t human_sunk = 0, ai_sunk = 0;
-    bool human_turn = true;
+    WallshipTwoPlayerGame game;
     WallshipAI_Init(&ai, seed, profile);
     WallshipAI_Init(&human, seed ^ UINT32_C(0x9E3779B9), AI_RANDOM);
     if (!WallshipAI_PlaceShips(&ai) || !WallshipAI_PlaceShips(&human)) {
         fputs("Could not place ships. Start again with another seed.\n", stderr);
+        return 1;
+    }
+    if (!WallshipTwoPlayerGame_Init(&game, &human, &ai, 0)) {
+        fputs("Could not start game; fleet state is inconsistent.\n", stderr);
         return 1;
     }
     printf("Wallship: 8x7, fleets 3+3+2+2+1+1; seed=%lu\n",
@@ -201,41 +210,30 @@ static int play_game(AIProfile profile, uint32_t seed, bool reveal)
     if (reveal) {
         puts("DEBUG REVEAL: AI ship IDs are visible on the right board.");
     }
-    print_boards(&human, &ai, radar, reveal);
+    print_boards(&human, &ai, reveal);
 
-    while (human_sunk < SHIP_COUNT && ai_sunk < SHIP_COUNT) {
-        if (human_turn) {
+    while (!game.finished) {
+        if (game.current_player == 0) {
             Position p;
             uint8_t length = 0;
-            uint8_t id;
             ShotResult result;
-            if (!read_human_shot(radar, &p)) {
+            if (!read_human_shot(&ai, &p)) {
                 puts("Game ended by player.");
                 return 0;
             }
-            result = WallshipAI_ProcessHumanShot(&ai, p.x, p.y, &length);
+            result = WallshipTwoPlayerGame_Shoot(&game, 0, p.x, p.y, &length);
             if (result == SHOT_INVALID) {
                 puts("Shot rejected. Try another cell.");
                 continue;
             }
-            radar[p.y][p.x] = result == SHOT_MISS ? CELL_MISS : CELL_HIT;
             printf("You fired at (%u,%u): %s", (unsigned)p.x, (unsigned)p.y,
                    result_name(result));
             if (result == SHOT_SUNK) {
-                Position cells[MAX_SHIP_LENGTH];
-                uint8_t count, i;
-                id = ai.own_board[p.y][p.x];
-                count = ship_cells(&ai.ships[id-1], cells);
-                for (i = 0; i < count; ++i) {
-                    radar[cells[i].y][cells[i].x] = CELL_SUNK;
-                }
-                ++human_sunk;
                 printf(" (length %u, %u/6 ships)", (unsigned)length,
-                       (unsigned)human_sunk);
+                       sunk_count(&ai));
             }
             putchar('\n');
-            print_boards(&human, &ai, radar, reveal);
-            human_turn = WallshipAI_ShouldContinueTurn(result);
+            print_boards(&human, &ai, reveal);
         } else {
             Position p = WallshipAI_SelectShot(&ai);
             uint8_t length = 0;
@@ -244,7 +242,7 @@ static int play_game(AIProfile profile, uint32_t seed, bool reveal)
                 fputs("AI has no available target; game state is inconsistent.\n", stderr);
                 return 1;
             }
-            result = WallshipAI_ProcessHumanShot(&human, p.x, p.y, &length);
+            result = WallshipTwoPlayerGame_Shoot(&game, 1, p.x, p.y, &length);
             if (result == SHOT_INVALID) {
                 fputs("AI shot was rejected; game state is inconsistent.\n", stderr);
                 return 1;
@@ -259,20 +257,18 @@ static int play_game(AIProfile profile, uint32_t seed, bool reveal)
                     fputs("SUNK details were rejected; game state is inconsistent.\n", stderr);
                     return 1;
                 }
-                ++ai_sunk;
             }
             printf("AI fired at (%u,%u): %s", (unsigned)p.x, (unsigned)p.y,
                    result_name(result));
             if (result == SHOT_SUNK) {
                 printf(" (length %u, %u/6 ships)", (unsigned)length,
-                       (unsigned)ai_sunk);
+                       sunk_count(&human));
             }
             putchar('\n');
-            print_boards(&human, &ai, radar, reveal);
-            human_turn = !WallshipAI_ShouldContinueTurn(result);
+            print_boards(&human, &ai, reveal);
         }
     }
-    puts(human_sunk == SHIP_COUNT ? "You win!" : "AI wins!");
+    puts(game.winner == 0 ? "You win!" : "AI wins!");
     return 0;
 }
 
