@@ -392,6 +392,26 @@ int main(int argc, char **argv)
         puts("Invalid choice. Please enter 1 or 2.");
     }
     if (mode == 1) {
+        int diff = 0;
+        for (;;) {
+            printf("\n--- Select AI Difficulty ---\n");
+            printf(" 1. Random (Easy)\n");
+            printf(" 2. Balanced (Normal)\n");
+            printf(" 3. Aggressive (Hard)\n");
+            printf("Choice (1-3): ");
+            fflush(stdout);
+            
+            if (fgets(line, sizeof line, stdin) == NULL) {
+                return 0;
+            }
+            if (sscanf(line, "%d", &diff) == 1 && diff >= 1 && diff <= 3) {
+                if (diff == 1) profile = AI_RANDOM;
+                else if (diff == 2) profile = AI_BALANCED;
+                else if (diff == 3) profile = AI_AGGRESSIVE;
+                break;
+            }
+            puts("Invalid choice. Please enter 1, 2, or 3.");
+        }
         return play_pve(profile, seed, reveal);
     } else {
         return play_pvp(seed, reveal);
