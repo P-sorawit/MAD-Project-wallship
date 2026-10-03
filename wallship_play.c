@@ -44,7 +44,7 @@ static void print_boards(const WallshipAgent *human, const WallshipAgent *ai,
                          bool reveal)
 {
     int x, y;
-    puts("\nYOUR FLEET (ship IDs shown)       AI WATERS (your attacks)");
+    puts("\nYOUR FLEET (ship IDs shown)       ENEMY WATERS (your attacks)");
     print_grid_header();
     for (y = 0; y < BOARD_H; ++y) {
         printf(" %d  ", y);
@@ -191,7 +191,13 @@ static unsigned sunk_count(const WallshipAgent *player)
     return count;
 }
 
-static int play_game(AIProfile profile, uint32_t seed, bool reveal)
+static void wait_for_next_player(int next_player_id) {
+    printf("\n--- Press ENTER to pass turn to Player %d ---\n", next_player_id + 1);
+    while (getchar() != '\n');
+    system("cls");
+}
+
+static int play_pve(AIProfile profile, uint32_t seed, bool reveal)
 {
     WallshipAgent ai, human;
     WallshipTwoPlayerGame game;
@@ -274,6 +280,77 @@ static int play_game(AIProfile profile, uint32_t seed, bool reveal)
     return 0;
 }
 
+static int play_pvp(uint32_t seed, bool reveal)
+{
+    WallshipAgent player1, player2;
+    WallshipTwoPlayerGame game;
+
+    WallshipAI_Init(&player1, seed, AI_RANDOM);
+    WallshipAI_Init(&player2, seed ^ UINT32_C(0x9E3779B9), AI_RANDOM);
+    printf("=== PLAYER 1 FLEET SETUP ===\n");
+    WallshipPlacement_ManualSetup(&player1, 0, wait_for_next_player);
+    printf("=== PLAYER 2 FLEET SETUP ===\n");
+    WallshipPlacement_ManualSetup(&player2, 1, wait_for_next_player);
+    if (!WallshipTwoPlayerGame_Init(&game, &player1, &player2, 0)) {
+        fputs("Could not start game; fleet state is inconsistent.\n", stderr);
+        return 1;
+    }
+    printf("Wallship PvP: 8x7, fleets 3+3+2+2+1+1; seed=%lu\n", (unsigned long)seed);
+    puts("Player 1 starts. HIT and SUNK grant another shot; MISS passes the turn.");
+    
+    wait_for_next_player(0);
+
+    while (!game.finished) {
+        Position p;
+        uint8_t length = 0;
+        ShotResult result;
+        if (game.current_player == 0) {
+            printf("\n>>> PLAYER 1 TURN <<<\n");
+            print_boards(&player1, &player2, reveal);
+            if (!read_human_shot(&player2, &p)) {
+                puts("Game ended by player.");
+                return 0;
+            }
+            result = WallshipTwoPlayerGame_Shoot(&game, 0, p.x, p.y, &length);
+            if (result == SHOT_INVALID) {
+                puts("Shot rejected. Try another cell.");
+                continue;
+            }
+            printf("Player 1 fired at (%u,%u): %s", (unsigned)p.x, (unsigned)p.y, result_name(result));
+            if (result == SHOT_SUNK) {
+                printf(" (length %u, %u/6 ships)", (unsigned)length, sunk_count(&player2));
+            }
+            putchar('\n');
+            if (result == SHOT_MISS && !game.finished) {
+                wait_for_next_player(1);
+            }
+        } else {
+            printf("\n>>> PLAYER 2 TURN <<<\n");
+            print_boards(&player2, &player1, reveal);
+            if (!read_human_shot(&player1, &p)) {
+                puts("Game ended by player.");
+                return 0;
+            }
+            result = WallshipTwoPlayerGame_Shoot(&game, 1, p.x, p.y, &length);
+            if (result == SHOT_INVALID) {
+                puts("Shot rejected. Try another cell.");
+                continue;
+            }
+            printf("Player 2 fired at (%u,%u): %s", (unsigned)p.x, (unsigned)p.y, result_name(result));
+            if (result == SHOT_SUNK) {
+                printf(" (length %u, %u/6 ships)", (unsigned)length, sunk_count(&player1));
+            }
+            putchar('\n');
+            if (result == SHOT_MISS && !game.finished) {
+                wait_for_next_player(0);
+            }
+        }
+    }
+    
+    puts(game.winner == 0 ? "\n*** Player 1 wins! ***" : "\n*** Player 2 wins! ***");
+    return 0;
+}
+
 int main(int argc, char **argv)
 {
     AIProfile profile = AI_BALANCED;
@@ -295,5 +372,48 @@ int main(int argc, char **argv)
         }
     }
     if (seed == 0) { seed = WALLSHIP_DEFAULT_SEED; }
-    return play_game(profile, seed, reveal);
+    int mode = 0;
+    char line[80];
+    for (;;) {
+        printf("\n================================\n");
+        printf("   WALLSHIP TERMINAL EDITION    \n");
+        printf("================================\n");
+        printf(" 1. Player vs AI (PvE)\n");
+        printf(" 2. Player vs Player (PvP Hotseat)\n");
+        printf("================================\n");
+        printf("Select game mode (1 or 2): ");
+        fflush(stdout);
+        if (fgets(line, sizeof line, stdin) == NULL) {
+            return 0;
+        }
+        if (sscanf(line, "%d", &mode) == 1 && (mode == 1 || mode == 2)) {
+            break;
+        }
+        puts("Invalid choice. Please enter 1 or 2.");
+    }
+    if (mode == 1) {
+        int diff = 0;
+        for (;;) {
+            printf("\n--- Select AI Difficulty ---\n");
+            printf(" 1. Random (Easy)\n");
+            printf(" 2. Balanced (Normal)\n");
+            printf(" 3. Aggressive (Hard)\n");
+            printf("Choice (1-3): ");
+            fflush(stdout);
+            
+            if (fgets(line, sizeof line, stdin) == NULL) {
+                return 0;
+            }
+            if (sscanf(line, "%d", &diff) == 1 && diff >= 1 && diff <= 3) {
+                if (diff == 1) profile = AI_RANDOM;
+                else if (diff == 2) profile = AI_BALANCED;
+                else if (diff == 3) profile = AI_AGGRESSIVE;
+                break;
+            }
+            puts("Invalid choice. Please enter 1, 2, or 3.");
+        }
+        return play_pve(profile, seed, reveal);
+    } else {
+        return play_pvp(seed, reveal);
+    }
 }
