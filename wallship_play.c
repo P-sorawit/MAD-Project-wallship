@@ -3,6 +3,7 @@
 //add --reveal to show AI generate position ship
 #include "wallship_ai.h"
 #include "wallship_game_rules.h"
+#include "wallship_placement.h"
 
 #include <ctype.h>
 #include <errno.h>
@@ -196,10 +197,11 @@ static int play_game(AIProfile profile, uint32_t seed, bool reveal)
     WallshipTwoPlayerGame game;
     WallshipAI_Init(&ai, seed, profile);
     WallshipAI_Init(&human, seed ^ UINT32_C(0x9E3779B9), AI_RANDOM);
-    if (!WallshipAI_PlaceShips(&ai) || !WallshipAI_PlaceShips(&human)) {
-        fputs("Could not place ships. Start again with another seed.\n", stderr);
+    if (!WallshipAI_PlaceShips(&ai)) {
+        fputs("Could not place AI ships. Start again with another seed.\n", stderr);
         return 1;
     }
+    WallshipPlacement_ManualSetup(&human, 0, NULL);
     if (!WallshipTwoPlayerGame_Init(&game, &human, &ai, 0)) {
         fputs("Could not start game; fleet state is inconsistent.\n", stderr);
         return 1;
