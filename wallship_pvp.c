@@ -190,9 +190,9 @@ static int play_game(AIProfile profile, uint32_t seed, bool reveal)
     WallshipAI_Init(&player1, seed, AI_RANDOM);
     WallshipAI_Init(&player2, seed ^ UINT32_C(0x9E3779B9), AI_RANDOM);
     printf("=== PLAYER 1 FLEET SETUP ===\n");
-    manual_place_ships(&player1, 0);
+    WallshipPlacement_ManualSetup(&player1, 0, wait_for_next_player);
     printf("=== PLAYER 2 FLEET SETUP ===\n");
-    manual_place_ships(&player2, 1);
+    WallshipPlacement_ManualSetup(&player2, 1, wait_for_next_player);
     if (!WallshipTwoPlayerGame_Init(&game, &player1, &player2, 0)) {
         fputs("Could not start game; fleet state is inconsistent.\n", stderr);
         return 1;
