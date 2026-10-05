@@ -1,15 +1,15 @@
 # เล่น Wallship กับ AI บนคอมพิวเตอร์
 
-ตัวเกมจำลองอยู่ใน [wallship_play.c](wallship_play.c) แยกจาก AI หลัก ใช้ [play_wallship.ps1](play_wallship.ps1) คอมไพล์แล้วเริ่มเล่นบน Windows PowerShell:
+ตัวเกมจำลองอยู่ใน [wallship_play.c](../desktop/wallship_play.c) แยกจาก AI หลัก ใช้ [play_wallship.ps1](../desktop/play_wallship.ps1) คอมไพล์แล้วเริ่มเล่นบน Windows PowerShell:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\play_wallship.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\desktop\play_wallship.ps1
 ```
 
 ค่าเริ่มต้นคือ AI แบบ `balanced` และสุ่ม seed จากเวลาของเครื่อง ระบุรูปแบบ AI และ seed เองได้ เช่น:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\play_wallship.ps1 aggressive 123
+powershell -NoProfile -ExecutionPolicy Bypass -File .\desktop\play_wallship.ps1 aggressive 123
 ```
 
 เปลี่ยน `aggressive` เป็น `balanced` หรือ `random` ได้ การใช้ seed เดิมจะได้ตำแหน่งเรือและลำดับการตัดสินใจที่ทำซ้ำได้ สคริปต์คอมไพล์เป็นไฟล์รันชั่วคราวแยกตาม process แล้วลบเมื่อเล่นจบ จึงเปิดเกมอีกหน้าต่างพร้อมกันได้โดยไม่คอมไพล์ทับไฟล์ที่กำลังรันอยู่
@@ -17,8 +17,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\play_wallship.ps1 aggressi
 กระดานซ้ายเป็นเรือของคุณ ส่วนกระดานขวาเป็นข้อมูลที่คุณรู้เกี่ยวกับเรือ AI จึงแสดงเป็น `.` ทั้งหมดตอนเริ่มเกมแม้จะเปลี่ยน seed แล้ว หากต้องการเปรียบเทียบ **ตำแหน่งเรือ AI** ให้เปิดโหมดตรวจสอบ:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\play_wallship.ps1 balanced 123 --reveal
-powershell -NoProfile -ExecutionPolicy Bypass -File .\play_wallship.ps1 balanced 124 --reveal
+powershell -NoProfile -ExecutionPolicy Bypass -File .\desktop\play_wallship.ps1 balanced 123 --reveal
+powershell -NoProfile -ExecutionPolicy Bypass -File .\desktop\play_wallship.ps1 balanced 124 --reveal
 ```
 
 `--reveal` แสดงหมายเลขเรือ AI บนกระดานขวา จึงเห็นว่าตำแหน่งเปลี่ยนตาม seed จริง ระหว่างเล่นปกติไม่ต้องใส่ตัวเลือกนี้ หมายเลข seed ที่ใช้งานจริงจะแสดงที่บรรทัดแรกเสมอ หากไม่ระบุ seed โปรแกรมบน Windows จะผสมเวลาความละเอียดสูงของเครื่องเพื่อช่วยให้การเริ่มเกมติด ๆ กันได้ seed ต่างกัน

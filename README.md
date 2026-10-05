@@ -1,6 +1,18 @@
 # Wallship heuristic AI
 
-คำอธิบาย heuristic แบบหน้าเว็บพร้อม Score Map ทดลองได้อยู่ที่ [heuristic_explained.html](heuristic_explained.html) และวิธีเล่น demo อยู่ที่ [PLAY.md](PLAY.md)
+คำอธิบาย heuristic แบบหน้าเว็บพร้อม Score Map ทดลองได้อยู่ที่ [heuristic_explained.html](docs/heuristic_explained.html) และวิธีเล่น demo อยู่ที่ [PLAY.md](docs/PLAY.md)
+
+## Repository layout
+
+```
+core/      wallship_types.h wallship_heuristic.h wallship_ai.h wallship_game_rules.h  (header-only AI + rules)
+desktop/   wallship_play.c wallship_pve.c wallship_pvp.c wallship_placement.h play_*.ps1  (terminal demos)
+tests/     test_game_rules.c test_header_scoring.c run_tests.ps1
+docs/      heuristic_explained.html PLAY.md
+firmware/  STM32 modules (see firmware/README.md)
+```
+
+Compile with `-Icore` (and `-Idesktop` for the demos); includes use bare file names.
 
 ## 1. Architecture overview
 
@@ -30,7 +42,7 @@ if (WallshipTwoPlayerGame_Init(&game, &player0, &player1, 0)) {
 
 For STM32 code that only needs scoring, include `wallship_heuristic.h` and call `WallshipAI_CalculateScores(&ai, score)` after setting the enemy board, remaining ship counts, profile, and RNG seed. No AI `.c` file needs to be compiled. For the full AI, include `wallship_ai.h`; the board application still compiles its own transport and main loop.
 
-For an interactive desktop game against these profiles, see [PLAY.md](PLAY.md). Its gameplay loop lives separately in `wallship_play.c` and uses the same AI core.
+For an interactive desktop game against these profiles, see [PLAY.md](docs/PLAY.md). Its gameplay loop lives separately in `wallship_play.c` and uses the same AI core.
 
 Initialize, explicitly place ships and check success, then select a shot, send it once, and report its result. Only one shot may be pending. Selection while waiting returns `{255,255}` without consuming RNG state. A selected cell remains UNKNOWN until feedback, but the pending flag prevents another selection. Invalid or mismatched feedback leaves the transaction pending for correction. No API cancels a transmitted shot and makes it selectable again.
 
@@ -39,7 +51,7 @@ SUNK is a two-stage operation: first report SHOT_SUNK at the attacked coordinate
 Run the tests on the provided Windows environment:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\run_tests.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tests\run_tests.ps1
 ```
 
 This sets execution policy only for that PowerShell process. The runner compiles with GCC C99, optimization, strict warnings as errors, and stack-usage reports. It checks each public header independently and links integration tests without an AI object file. It stops at the first compilation error or assertion failure. Output goes into `build/`. Keep assertions enabled; do not compile tests with `-DNDEBUG`.
