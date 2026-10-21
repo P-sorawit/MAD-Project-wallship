@@ -1,0 +1,1220 @@
+{
+ "pins": [
+  {
+   "pin": "PE9",
+   "label": "",
+   "group": "led",
+   "mode": "TIM1_CH1 (AF)",
+   "to": "74AHCT125 1A (pin 2) -> panel 0 P1 fleet",
+   "conn": "CN10",
+   "num": 4,
+   "zio": "D6",
+   "also": []
+  },
+  {
+   "pin": "PE11",
+   "label": "",
+   "group": "led",
+   "mode": "TIM1_CH2 (AF)",
+   "to": "74AHCT125 2A (pin 5) -> panel 1 P1 attack",
+   "conn": "CN10",
+   "num": 6,
+   "zio": "D5",
+   "also": []
+  },
+  {
+   "pin": "PE13",
+   "label": "",
+   "group": "led",
+   "mode": "TIM1_CH3 (AF)",
+   "to": "74AHCT125 3A (pin 9) -> panel 2 P2 fleet",
+   "conn": "CN10",
+   "num": 10,
+   "zio": "D3",
+   "also": []
+  },
+  {
+   "pin": "PE14",
+   "label": "",
+   "group": "led",
+   "mode": "TIM1_CH4 (AF)",
+   "to": "74AHCT125 4A (pin 12) -> panel 3 P2 attack",
+   "conn": "CN10",
+   "num": 28,
+   "zio": "D38",
+   "also": []
+  },
+  {
+   "pin": "PD0",
+   "label": "COL0",
+   "group": "col",
+   "mode": "Output Open Drain",
+   "to": "column A (all 4 panels)",
+   "conn": "CN9",
+   "num": 25,
+   "zio": "D67",
+   "also": []
+  },
+  {
+   "pin": "PD1",
+   "label": "COL1",
+   "group": "col",
+   "mode": "Output Open Drain",
+   "to": "column B",
+   "conn": "CN9",
+   "num": 27,
+   "zio": "D66",
+   "also": []
+  },
+  {
+   "pin": "PD14",
+   "label": "COL2",
+   "group": "col",
+   "mode": "Output Open Drain",
+   "to": "column C",
+   "conn": "CN7",
+   "num": 16,
+   "zio": "D10",
+   "also": []
+  },
+  {
+   "pin": "PD3",
+   "label": "COL3",
+   "group": "col",
+   "mode": "Output Open Drain",
+   "to": "column D",
+   "conn": "CN9",
+   "num": 10,
+   "zio": "D55",
+   "also": []
+  },
+  {
+   "pin": "PD4",
+   "label": "COL4",
+   "group": "col",
+   "mode": "Output Open Drain",
+   "to": "column E",
+   "conn": "CN9",
+   "num": 8,
+   "zio": "D54",
+   "also": []
+  },
+  {
+   "pin": "PD5",
+   "label": "COL5",
+   "group": "col",
+   "mode": "Output Open Drain",
+   "to": "column F",
+   "conn": "CN9",
+   "num": 6,
+   "zio": "D53",
+   "also": []
+  },
+  {
+   "pin": "PD6",
+   "label": "COL6",
+   "group": "col",
+   "mode": "Output Open Drain",
+   "to": "column G",
+   "conn": "CN9",
+   "num": 4,
+   "zio": "D52",
+   "also": []
+  },
+  {
+   "pin": "PD7",
+   "label": "COL7",
+   "group": "col",
+   "mode": "Output Open Drain",
+   "to": "column H",
+   "conn": "CN9",
+   "num": 2,
+   "zio": "D51",
+   "also": []
+  },
+  {
+   "pin": "PF0",
+   "label": "ROW0",
+   "group": "row0",
+   "mode": "Input + pull-up",
+   "to": "panel 0 (P1 fleet) row 1",
+   "conn": "CN9",
+   "num": 21,
+   "zio": "D68",
+   "also": []
+  },
+  {
+   "pin": "PF1",
+   "label": "ROW1",
+   "group": "row0",
+   "mode": "Input + pull-up",
+   "to": "panel 0 row 2",
+   "conn": "CN9",
+   "num": 19,
+   "zio": "D69",
+   "also": []
+  },
+  {
+   "pin": "PF2",
+   "label": "ROW2",
+   "group": "row0",
+   "mode": "Input + pull-up",
+   "to": "panel 0 row 3",
+   "conn": "CN9",
+   "num": 17,
+   "zio": "D70",
+   "also": []
+  },
+  {
+   "pin": "PF3",
+   "label": "ROW3",
+   "group": "row0",
+   "mode": "Input + pull-up",
+   "to": "panel 0 row 4",
+   "conn": "CN9",
+   "num": 7,
+   "zio": "A3",
+   "also": []
+  },
+  {
+   "pin": "PF4",
+   "label": "ROW4",
+   "group": "row0",
+   "mode": "Input + pull-up",
+   "to": "panel 0 row 5",
+   "conn": "CN10",
+   "num": 11,
+   "zio": "A8",
+   "also": []
+  },
+  {
+   "pin": "PF5",
+   "label": "ROW5",
+   "group": "row0",
+   "mode": "Input + pull-up",
+   "to": "panel 0 row 6",
+   "conn": "CN9",
+   "num": 9,
+   "zio": "A4",
+   "also": []
+  },
+  {
+   "pin": "PE15",
+   "label": "ROW6",
+   "group": "row0",
+   "mode": "Input + pull-up",
+   "to": "panel 0 row 7",
+   "conn": "CN10",
+   "num": 30,
+   "zio": "D37",
+   "also": []
+  },
+  {
+   "pin": "PF7",
+   "label": "ROW7",
+   "group": "row1",
+   "mode": "Input + pull-up",
+   "to": "panel 1 (P1 attack) row 1",
+   "conn": "CN9",
+   "num": 26,
+   "zio": "D62",
+   "also": []
+  },
+  {
+   "pin": "PF8",
+   "label": "ROW8",
+   "group": "row1",
+   "mode": "Input + pull-up",
+   "to": "panel 1 row 2",
+   "conn": "CN9",
+   "num": 24,
+   "zio": "D61",
+   "also": []
+  },
+  {
+   "pin": "PF9",
+   "label": "ROW9",
+   "group": "row1",
+   "mode": "Input + pull-up",
+   "to": "panel 1 row 3",
+   "conn": "CN9",
+   "num": 28,
+   "zio": "D63",
+   "also": []
+  },
+  {
+   "pin": "PF10",
+   "label": "ROW10",
+   "group": "row1",
+   "mode": "Input + pull-up",
+   "to": "panel 1 row 4",
+   "conn": "CN9",
+   "num": 11,
+   "zio": "A5",
+   "also": []
+  },
+  {
+   "pin": "PB10",
+   "label": "ROW11",
+   "group": "row1",
+   "mode": "Input + pull-up",
+   "to": "panel 1 row 5",
+   "conn": "CN10",
+   "num": 32,
+   "zio": "D36",
+   "also": []
+  },
+  {
+   "pin": "PF12",
+   "label": "ROW12",
+   "group": "row1",
+   "mode": "Input + pull-up",
+   "to": "panel 1 row 6",
+   "conn": "CN7",
+   "num": 20,
+   "zio": "D8",
+   "also": []
+  },
+  {
+   "pin": "PF13",
+   "label": "ROW13",
+   "group": "row1",
+   "mode": "Input + pull-up",
+   "to": "panel 1 row 7",
+   "conn": "CN10",
+   "num": 2,
+   "zio": "D7",
+   "also": []
+  },
+  {
+   "pin": "PF14",
+   "label": "ROW14",
+   "group": "row2",
+   "mode": "Input + pull-up",
+   "to": "panel 2 (P2 fleet) row 1",
+   "conn": "CN10",
+   "num": 8,
+   "zio": "D4",
+   "also": []
+  },
+  {
+   "pin": "PF15",
+   "label": "ROW15",
+   "group": "row2",
+   "mode": "Input + pull-up",
+   "to": "panel 2 row 2",
+   "conn": "CN10",
+   "num": 12,
+   "zio": "D2",
+   "also": []
+  },
+  {
+   "pin": "PG0",
+   "label": "ROW16",
+   "group": "row2",
+   "mode": "Input + pull-up",
+   "to": "panel 2 row 3",
+   "conn": "CN9",
+   "num": 29,
+   "zio": "D65",
+   "also": []
+  },
+  {
+   "pin": "PG1",
+   "label": "ROW17",
+   "group": "row2",
+   "mode": "Input + pull-up",
+   "to": "panel 2 row 4",
+   "conn": "CN9",
+   "num": 30,
+   "zio": "D64",
+   "also": []
+  },
+  {
+   "pin": "PG2",
+   "label": "ROW18",
+   "group": "row2",
+   "mode": "Input + pull-up",
+   "to": "panel 2 row 5",
+   "conn": "CN8",
+   "num": 14,
+   "zio": "D49",
+   "also": []
+  },
+  {
+   "pin": "PG3",
+   "label": "ROW19",
+   "group": "row2",
+   "mode": "Input + pull-up",
+   "to": "panel 2 row 6",
+   "conn": "CN8",
+   "num": 16,
+   "zio": "D50",
+   "also": []
+  },
+  {
+   "pin": "PB11",
+   "label": "ROW20",
+   "group": "row2",
+   "mode": "Input + pull-up",
+   "to": "panel 2 row 7",
+   "conn": "CN10",
+   "num": 34,
+   "zio": "D35",
+   "also": []
+  },
+  {
+   "pin": "PD11",
+   "label": "ROW21",
+   "group": "row3",
+   "mode": "Input + pull-up",
+   "to": "panel 3 (P2 attack) row 1",
+   "conn": "CN10",
+   "num": 23,
+   "zio": "D30",
+   "also": []
+  },
+  {
+   "pin": "PD12",
+   "label": "ROW22",
+   "group": "row3",
+   "mode": "Input + pull-up",
+   "to": "panel 3 row 2",
+   "conn": "CN10",
+   "num": 21,
+   "zio": "D29",
+   "also": []
+  },
+  {
+   "pin": "PG9",
+   "label": "ROW23",
+   "group": "row3",
+   "mode": "Input + pull-up",
+   "to": "panel 3 row 3",
+   "conn": "CN10",
+   "num": 16,
+   "zio": "D0",
+   "also": []
+  },
+  {
+   "pin": "PD13",
+   "label": "ROW24",
+   "group": "row3",
+   "mode": "Input + pull-up",
+   "to": "panel 3 row 4",
+   "conn": "CN10",
+   "num": 19,
+   "zio": "D28",
+   "also": []
+  },
+  {
+   "pin": "PB2",
+   "label": "ROW25",
+   "group": "row3",
+   "mode": "Input + pull-up",
+   "to": "panel 3 row 5",
+   "conn": "CN10",
+   "num": 15,
+   "zio": "D27",
+   "also": []
+  },
+  {
+   "pin": "PG14",
+   "label": "ROW26",
+   "group": "row3",
+   "mode": "Input + pull-up",
+   "to": "panel 3 row 6",
+   "conn": "CN10",
+   "num": 14,
+   "zio": "D1",
+   "also": []
+  },
+  {
+   "pin": "PB6",
+   "label": "ROW27",
+   "group": "row3",
+   "mode": "Input + pull-up",
+   "to": "panel 3 row 7",
+   "conn": "CN10",
+   "num": 13,
+   "zio": "D26",
+   "also": []
+  },
+  {
+   "pin": "PA5",
+   "label": "",
+   "group": "tft",
+   "mode": "SPI1_SCK",
+   "to": "SCK of both TFTs",
+   "conn": "CN7",
+   "num": 10,
+   "zio": "D13",
+   "also": []
+  },
+  {
+   "pin": "PA6",
+   "label": "",
+   "group": "tft",
+   "mode": "SPI1_MISO",
+   "to": "SDO(MISO) of both TFTs (optional)",
+   "conn": "CN7",
+   "num": 12,
+   "zio": "D12",
+   "also": []
+  },
+  {
+   "pin": "PB5",
+   "label": "",
+   "group": "tft",
+   "mode": "SPI1_MOSI",
+   "to": "SDI(MOSI) of both TFTs",
+   "conn": "CN7",
+   "num": 13,
+   "zio": "D22",
+   "also": []
+  },
+  {
+   "pin": "PC8",
+   "label": "CS",
+   "group": "tft",
+   "mode": "Output, High",
+   "to": "TFT P1 CS",
+   "conn": "CN8",
+   "num": 2,
+   "zio": "D43",
+   "also": []
+  },
+  {
+   "pin": "PC9",
+   "label": "DC",
+   "group": "tft",
+   "mode": "Output",
+   "to": "TFT P1 DC",
+   "conn": "CN8",
+   "num": 4,
+   "zio": "D44",
+   "also": []
+  },
+  {
+   "pin": "PC10",
+   "label": "RST",
+   "group": "tft",
+   "mode": "Output, High",
+   "to": "TFT P1 RESET",
+   "conn": "CN8",
+   "num": 6,
+   "zio": "D45",
+   "also": []
+  },
+  {
+   "pin": "PC11",
+   "label": "CS2",
+   "group": "tft",
+   "mode": "Output, High",
+   "to": "TFT P2 CS",
+   "conn": "CN8",
+   "num": 8,
+   "zio": "D46",
+   "also": []
+  },
+  {
+   "pin": "PC12",
+   "label": "DC2",
+   "group": "tft",
+   "mode": "Output",
+   "to": "TFT P2 DC",
+   "conn": "CN8",
+   "num": 10,
+   "zio": "D47",
+   "also": []
+  },
+  {
+   "pin": "PD2",
+   "label": "RST2",
+   "group": "tft",
+   "mode": "Output, High",
+   "to": "TFT P2 RESET",
+   "conn": "CN8",
+   "num": 12,
+   "zio": "D48",
+   "also": []
+  },
+  {
+   "pin": "PE3",
+   "label": "T_CLK",
+   "group": "touch",
+   "mode": "Output, Very High",
+   "to": "T_CLK of both panels",
+   "conn": "CN9",
+   "num": 22,
+   "zio": "D60",
+   "also": []
+  },
+  {
+   "pin": "PE5",
+   "label": "T_MOSI",
+   "group": "touch",
+   "mode": "Output, Very High",
+   "to": "T_DIN of both panels",
+   "conn": "CN9",
+   "num": 18,
+   "zio": "D58",
+   "also": []
+  },
+  {
+   "pin": "PE4",
+   "label": "T_MISO",
+   "group": "touch",
+   "mode": "Input",
+   "to": "T_DO of both panels",
+   "conn": "CN9",
+   "num": 16,
+   "zio": "D57",
+   "also": []
+  },
+  {
+   "pin": "PE6",
+   "label": "T_CS",
+   "group": "touch",
+   "mode": "Output, High",
+   "to": "T_CS P1",
+   "conn": "CN9",
+   "num": 20,
+   "zio": "D59",
+   "also": []
+  },
+  {
+   "pin": "PE7",
+   "label": "T_CS2",
+   "group": "touch",
+   "mode": "Output, High",
+   "to": "T_CS P2",
+   "conn": "CN10",
+   "num": 20,
+   "zio": "D41",
+   "also": []
+  },
+  {
+   "pin": "PE2",
+   "label": "T_IRQ",
+   "group": "touch",
+   "mode": "EXTI2 falling, pull-up",
+   "to": "T_IRQ P1",
+   "conn": "CN9",
+   "num": 14,
+   "zio": "D56",
+   "also": [
+    "CN10-25"
+   ]
+  },
+  {
+   "pin": "PE8",
+   "label": "T_IRQ2",
+   "group": "touch",
+   "mode": "EXTI8 falling, pull-up",
+   "to": "T_IRQ P2",
+   "conn": "CN10",
+   "num": 18,
+   "zio": "D42",
+   "also": []
+  },
+  {
+   "pin": "PB8",
+   "label": "",
+   "group": "lcd",
+   "mode": "I2C1_SCL",
+   "to": "SCL of both LCD backpacks",
+   "conn": "CN7",
+   "num": 2,
+   "zio": "D15",
+   "also": []
+  },
+  {
+   "pin": "PB9",
+   "label": "",
+   "group": "lcd",
+   "mode": "I2C1_SDA",
+   "to": "SDA of both LCD backpacks",
+   "conn": "CN7",
+   "num": 4,
+   "zio": "D14",
+   "also": []
+  },
+  {
+   "pin": "PC6",
+   "label": "",
+   "group": "sound",
+   "mode": "TIM3_CH1 (AF)",
+   "to": "1k -> 2N2222 base -> buzzer P1",
+   "conn": "CN7",
+   "num": 1,
+   "zio": "D16",
+   "also": []
+  },
+  {
+   "pin": "PC7",
+   "label": "",
+   "group": "sound",
+   "mode": "TIM3_CH2 (AF)",
+   "to": "1k -> 2N2222 base -> buzzer P2",
+   "conn": "CN7",
+   "num": 11,
+   "zio": "D21",
+   "also": []
+  },
+  {
+   "pin": "PE0",
+   "label": "MUTE1",
+   "group": "switch",
+   "mode": "EXTI0 rising+falling, pull-up",
+   "to": "mute slide switch P1 (other leg GND)",
+   "conn": "CN10",
+   "num": 33,
+   "zio": "D34",
+   "also": []
+  },
+  {
+   "pin": "PB1",
+   "label": "MUTE2",
+   "group": "switch",
+   "mode": "EXTI1 rising+falling, pull-up",
+   "to": "mute slide switch P2 (other leg GND)",
+   "conn": "CN10",
+   "num": 7,
+   "zio": "A6",
+   "also": []
+  },
+  {
+   "pin": "PE10",
+   "label": "SURR1",
+   "group": "switch",
+   "mode": "EXTI10 falling, pull-up",
+   "to": "surrender button P1 (other leg GND)",
+   "conn": "CN10",
+   "num": 24,
+   "zio": "D40",
+   "also": []
+  },
+  {
+   "pin": "PE12",
+   "label": "SURR2",
+   "group": "switch",
+   "mode": "EXTI12 falling, pull-up",
+   "to": "surrender button P2 (other leg GND)",
+   "conn": "CN10",
+   "num": 26,
+   "zio": "D39",
+   "also": []
+  }
+ ],
+ "headers": {
+  "CN8": [
+   {
+    "num": 1,
+    "sig": "NC",
+    "zio": ""
+   },
+   {
+    "num": 2,
+    "sig": "PC8",
+    "zio": "D43"
+   },
+   {
+    "num": 3,
+    "sig": "IOREF",
+    "zio": ""
+   },
+   {
+    "num": 4,
+    "sig": "PC9",
+    "zio": "D44"
+   },
+   {
+    "num": 5,
+    "sig": "RESET",
+    "zio": ""
+   },
+   {
+    "num": 6,
+    "sig": "PC10",
+    "zio": "D45"
+   },
+   {
+    "num": 7,
+    "sig": "+3.3V",
+    "zio": ""
+   },
+   {
+    "num": 8,
+    "sig": "PC11",
+    "zio": "D46"
+   },
+   {
+    "num": 9,
+    "sig": "+5V",
+    "zio": ""
+   },
+   {
+    "num": 10,
+    "sig": "PC12",
+    "zio": "D47"
+   },
+   {
+    "num": 11,
+    "sig": "GND",
+    "zio": ""
+   },
+   {
+    "num": 12,
+    "sig": "PD2",
+    "zio": "D48"
+   },
+   {
+    "num": 13,
+    "sig": "GND",
+    "zio": ""
+   },
+   {
+    "num": 14,
+    "sig": "PG2",
+    "zio": "D49"
+   },
+   {
+    "num": 15,
+    "sig": "VIN",
+    "zio": ""
+   },
+   {
+    "num": 16,
+    "sig": "PG3",
+    "zio": "D50"
+   }
+  ],
+  "CN9": [
+   {
+    "num": 1,
+    "sig": "PA3",
+    "zio": "A0"
+   },
+   {
+    "num": 2,
+    "sig": "PD7",
+    "zio": "D51"
+   },
+   {
+    "num": 3,
+    "sig": "PC0",
+    "zio": "A1"
+   },
+   {
+    "num": 4,
+    "sig": "PD6",
+    "zio": "D52"
+   },
+   {
+    "num": 5,
+    "sig": "PC3",
+    "zio": "A2"
+   },
+   {
+    "num": 6,
+    "sig": "PD5",
+    "zio": "D53"
+   },
+   {
+    "num": 7,
+    "sig": "PF3",
+    "zio": "A3"
+   },
+   {
+    "num": 8,
+    "sig": "PD4",
+    "zio": "D54"
+   },
+   {
+    "num": 9,
+    "sig": "PF5",
+    "zio": "A4"
+   },
+   {
+    "num": 10,
+    "sig": "PD3",
+    "zio": "D55"
+   },
+   {
+    "num": 11,
+    "sig": "PF10",
+    "zio": "A5"
+   },
+   {
+    "num": 12,
+    "sig": "GND",
+    "zio": ""
+   },
+   {
+    "num": 13,
+    "sig": "NC",
+    "zio": "D72"
+   },
+   {
+    "num": 14,
+    "sig": "PE2",
+    "zio": "D56"
+   },
+   {
+    "num": 15,
+    "sig": "PA7",
+    "zio": "D71"
+   },
+   {
+    "num": 16,
+    "sig": "PE4",
+    "zio": "D57"
+   },
+   {
+    "num": 17,
+    "sig": "PF2",
+    "zio": "D70"
+   },
+   {
+    "num": 18,
+    "sig": "PE5",
+    "zio": "D58"
+   },
+   {
+    "num": 19,
+    "sig": "PF1",
+    "zio": "D69"
+   },
+   {
+    "num": 20,
+    "sig": "PE6",
+    "zio": "D59"
+   },
+   {
+    "num": 21,
+    "sig": "PF0",
+    "zio": "D68"
+   },
+   {
+    "num": 22,
+    "sig": "PE3",
+    "zio": "D60"
+   },
+   {
+    "num": 23,
+    "sig": "GND",
+    "zio": ""
+   },
+   {
+    "num": 24,
+    "sig": "PF8",
+    "zio": "D61"
+   },
+   {
+    "num": 25,
+    "sig": "PD0",
+    "zio": "D67"
+   },
+   {
+    "num": 26,
+    "sig": "PF7",
+    "zio": "D62"
+   },
+   {
+    "num": 27,
+    "sig": "PD1",
+    "zio": "D66"
+   },
+   {
+    "num": 28,
+    "sig": "PF9",
+    "zio": "D63"
+   },
+   {
+    "num": 29,
+    "sig": "PG0",
+    "zio": "D65"
+   },
+   {
+    "num": 30,
+    "sig": "PG1",
+    "zio": "D64"
+   }
+  ],
+  "CN7": [
+   {
+    "num": 1,
+    "sig": "PC6",
+    "zio": "D16"
+   },
+   {
+    "num": 2,
+    "sig": "PB8",
+    "zio": "D15"
+   },
+   {
+    "num": 3,
+    "sig": "PB15",
+    "zio": "D17"
+   },
+   {
+    "num": 4,
+    "sig": "PB9",
+    "zio": "D14"
+   },
+   {
+    "num": 5,
+    "sig": "PB13",
+    "zio": "D18"
+   },
+   {
+    "num": 6,
+    "sig": "AREF",
+    "zio": ""
+   },
+   {
+    "num": 7,
+    "sig": "PB12",
+    "zio": "D19"
+   },
+   {
+    "num": 8,
+    "sig": "GND",
+    "zio": ""
+   },
+   {
+    "num": 9,
+    "sig": "PA15",
+    "zio": "D20"
+   },
+   {
+    "num": 10,
+    "sig": "PA5",
+    "zio": "D13"
+   },
+   {
+    "num": 11,
+    "sig": "PC7",
+    "zio": "D21"
+   },
+   {
+    "num": 12,
+    "sig": "PA6",
+    "zio": "D12"
+   },
+   {
+    "num": 13,
+    "sig": "PB5",
+    "zio": "D22"
+   },
+   {
+    "num": 14,
+    "sig": "PA7",
+    "zio": "D11"
+   },
+   {
+    "num": 15,
+    "sig": "PB3",
+    "zio": "D23"
+   },
+   {
+    "num": 16,
+    "sig": "PD14",
+    "zio": "D10"
+   },
+   {
+    "num": 17,
+    "sig": "PA4",
+    "zio": "D24"
+   },
+   {
+    "num": 18,
+    "sig": "PD15",
+    "zio": "D9"
+   },
+   {
+    "num": 19,
+    "sig": "PB4",
+    "zio": "D25"
+   },
+   {
+    "num": 20,
+    "sig": "PF12",
+    "zio": "D8"
+   }
+  ],
+  "CN10": [
+   {
+    "num": 1,
+    "sig": "AVDD",
+    "zio": ""
+   },
+   {
+    "num": 2,
+    "sig": "PF13",
+    "zio": "D7"
+   },
+   {
+    "num": 3,
+    "sig": "AGND",
+    "zio": ""
+   },
+   {
+    "num": 4,
+    "sig": "PE9",
+    "zio": "D6"
+   },
+   {
+    "num": 5,
+    "sig": "GND",
+    "zio": ""
+   },
+   {
+    "num": 6,
+    "sig": "PE11",
+    "zio": "D5"
+   },
+   {
+    "num": 7,
+    "sig": "PB1",
+    "zio": "A6"
+   },
+   {
+    "num": 8,
+    "sig": "PF14",
+    "zio": "D4"
+   },
+   {
+    "num": 9,
+    "sig": "PC2",
+    "zio": "A7"
+   },
+   {
+    "num": 10,
+    "sig": "PE13",
+    "zio": "D3"
+   },
+   {
+    "num": 11,
+    "sig": "PF4",
+    "zio": "A8"
+   },
+   {
+    "num": 12,
+    "sig": "PF15",
+    "zio": "D2"
+   },
+   {
+    "num": 13,
+    "sig": "PB6",
+    "zio": "D26"
+   },
+   {
+    "num": 14,
+    "sig": "PG14",
+    "zio": "D1"
+   },
+   {
+    "num": 15,
+    "sig": "PB2",
+    "zio": "D27"
+   },
+   {
+    "num": 16,
+    "sig": "PG9",
+    "zio": "D0"
+   },
+   {
+    "num": 17,
+    "sig": "GND",
+    "zio": ""
+   },
+   {
+    "num": 18,
+    "sig": "PE8",
+    "zio": "D42"
+   },
+   {
+    "num": 19,
+    "sig": "PD13",
+    "zio": "D28"
+   },
+   {
+    "num": 20,
+    "sig": "PE7",
+    "zio": "D41"
+   },
+   {
+    "num": 21,
+    "sig": "PD12",
+    "zio": "D29"
+   },
+   {
+    "num": 22,
+    "sig": "GND",
+    "zio": ""
+   },
+   {
+    "num": 23,
+    "sig": "PD11",
+    "zio": "D30"
+   },
+   {
+    "num": 24,
+    "sig": "PE10",
+    "zio": "D40"
+   },
+   {
+    "num": 25,
+    "sig": "PE2",
+    "zio": "D31"
+   },
+   {
+    "num": 26,
+    "sig": "PE12",
+    "zio": "D39"
+   },
+   {
+    "num": 27,
+    "sig": "GND",
+    "zio": ""
+   },
+   {
+    "num": 28,
+    "sig": "PE14",
+    "zio": "D38"
+   },
+   {
+    "num": 29,
+    "sig": "PA0",
+    "zio": "D32"
+   },
+   {
+    "num": 30,
+    "sig": "PE15",
+    "zio": "D37"
+   },
+   {
+    "num": 31,
+    "sig": "PB0",
+    "zio": "D33"
+   },
+   {
+    "num": 32,
+    "sig": "PB10",
+    "zio": "D36"
+   },
+   {
+    "num": 33,
+    "sig": "PE0",
+    "zio": "D34"
+   },
+   {
+    "num": 34,
+    "sig": "PB11",
+    "zio": "D35"
+   }
+  ]
+ }
+}

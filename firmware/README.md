@@ -17,9 +17,15 @@ App_Loop ─► Game_OnKey / App_OnButton / Game_Tick   (game.c = FSM S1..S6)
 ```
 firmware/
 ├─ app/        app.c app.h app_config.h     ตัวเชื่อม + ค่าตั้งฮาร์ดแวร์ทั้งหมด
+│              hwtest.c                     โหมดทดสอบฮาร์ดแวร์ (APP_HW_TEST 1)
 ├─ 1_switch/   keypad.c keypad_core.c keypad.h
 ├─ 2_led/      ws2812.c/.h ws2812_port_stm32.c led_view.c/.h ws2812_test.c/.h
 ├─ 3_game/     game.c/.h placement.c/.h
+├─ 4_tft/      gfx.c art.c font5x7.c tft_ui.c (วาด, HAL-free) + tft.c touch.c (HAL)
+├─ 5_lcd/      lcd_ui.c (ข้อความ, HAL-free) + lcd1602.c (I2C)
+├─ tools/      pinmap.py (ผังขาต้นทาง + ตัวตรวจ → docs/wiring.html)
+├─ hwtests/    test_led.c test_switch.c test_buzzer.c test_surrender.c test_lcd.c test_tft.c test_touch.c
+│              (ทดสอบทีละอุปกรณ์ + README วิธีทดสอบ)
 ├─ 6_ai/       ai_player.c/.h               (+ ../core/wallship_ai.h)
 ├─ sound/      buzzer.c/.h
 └─ host/       เทสต์บนคอม (ไม่ต้องใส่ใน CubeIDE)
@@ -30,6 +36,8 @@ firmware/
 | 1 | รับค่าสวิตช์ → `{panel, x, y}` | `keypad_core.c` (debounce + คิว) | `keypad.c` (สแกนคอลัมน์ใน TIM6) |
 | 2 | ควบคุมไฟ | `ws2812.c` (buffer สี + เข้ารหัส CCR 86/173), `led_view.c` (สถานะ → สี) | `ws2812_port_stm32.c` (DMA) |
 | 3 | ตัวเกมหลัก (state) | `game.c` (S1–S6), `placement.c` (กติกาวางเรือ) | – |
+| 5 | LCD 16x2 ×2 | `lcd_ui.c` (ข้อความแต่ละ state, เขียนเฉพาะบรรทัดที่เปลี่ยน) | `lcd1602.c` (PCF8574 บน I2C1) |
+| 4 | จอสัมผัส ×2 | `tft_ui.c` (5 หน้าจอ + hit-test), `gfx.c`, `art.c`, `font5x7.c` | `tft.c` (ILI9341 SPI1), `touch.c` (XPT2046 bit-bang) |
 | 6 | AI | `ai_player.c` (ห่อ `wallship_ai.h`) | – |
 | – | เสียง | – | `buzzer.c` (TIM3 CH1/CH2) |
 | – | ตัวเชื่อม | – | `app.c` (loop + HAL callbacks) |
@@ -49,18 +57,19 @@ firmware/
 
 แผง: `0` เรือ P1, `1` โจมตี P1, `2` เรือ P2, `3` โจมตี P2
 
-## ⚠ ปุ่มคำสั่งยังไม่มีอุปกรณ์รับ
+## ปุ่มคำสั่ง มาจากจอ TFT สัมผัส + สวิตช์ยอมแพ้
 
-ตัดโมดูล TFT/LCD ออกแล้ว แต่เกมยังต้องการปุ่มคำสั่งเหล่านี้ (`GameButton` ใน `game.h`):
+โมดูลจอ TFT/LCD1602 แยกทำนอกโฟลเดอร์นี้ (ใช้ไลบรารีจากแล็บ ILI9341) — ผังขาอยู่ใน [PINOUT.md](PINOUT.md)
+เมื่อแตะปุ่มบนจอ ให้เรียก `App_OnButton(player, BTN_...)` จาก main loop:
 
 | ปุ่ม | ใช้ตอน |
 |---|---|
 | `BTN_MODE_1P` / `BTN_MODE_2P` / `BTN_CONFIRM` | S1 เลือกโหมดและเริ่ม (P1 เท่านั้น) |
 | `BTN_SHIP_1..3`, `BTN_CANCEL`, `BTN_CONFIRM` | S2 เลือกความยาวเรือ, ล้าง, ยืนยัน |
-| `BTN_SURRENDER` | S3/S4 ยอมแพ้ |
+| `BTN_SURRENDER` | S3/S4 ยอมแพ้ — มาจาก**สวิตช์ยอมแพ้** (PE10/PE12, จัดการใน `app.c` แล้ว) ไม่ใช่จอ |
 | `BTN_CONFIRM` | S5 เริ่มเกมใหม่ |
 
-อุปกรณ์ที่จะมาแทน (ปุ่มกดแยก, ใช้บางช่องของแผงสวิตช์ ฯลฯ) แค่เรียก `App_OnButton(player, BTN_...)` จาก main loop ถ้ายังไม่ต่อ เกมจะค้างที่ S1
+ข้อมูลที่จอต้องแสดงอ่านได้จาก `Game` (`state`, `mode_cursor`, `placing[p].remaining[]`, `ready[p]`, `last_result`, `winner` ...)
 
 ## State (ตาม proposal 1.3.3)
 
@@ -87,11 +96,22 @@ firmware/
 | DMA2 | TIM1_CH1..CH4, Mem→Periph, Normal, **Half Word** ทั้งสองฝั่ง | – |
 | TIM3 | counter 1 MHz (PSC 107), CH1/CH2 PWM | – |
 | EXTI | rising + falling | `MUTE1` `MUTE2` (เลขขาห้ามซ้ำกัน) |
+| EXTI | falling, pull-up | `SURR1` `SURR2` (สวิตช์ยอมแพ้), `T_IRQ` `T_IRQ2` (จอสัมผัส) |
+| SPI1 | Master, 8-bit, CPOL Low, CPHA 1 Edge, ≤27 Mbit/s | PA5/PA6/PB5 + `CS` `DC` `RST` `CS2` `DC2` `RST2` |
+| DMA2 | SPI1_TX → Stream 5, Memory→Peripheral, Normal, Byte/Byte, NVIC on (TIM1 ใช้ Stream 1, 2, 6, 4) | – |
+| GPIO touch | Output Very High / Input | `T_CLK` `T_MOSI` `T_MISO` `T_CS` `T_CS2` |
+| I2C1 | Standard 100 kHz | PB8/PB9 (LCD 0x27, 0x26) |
+
+ผังขาทั้งหมดอยู่ใน [PINOUT.md](PINOUT.md)
+
+อ่านโค้ดครั้งแรก: [CODE_GUIDE.md](CODE_GUIDE.md) · แผนภาพต่อสาย: [docs/wiring.html](../docs/wiring.html)
+
+แผนการต่อสายและการทดสอบทีละอุปกรณ์: [BRINGUP.md](BRINGUP.md) (ใช้โหมดทดสอบ `APP_HW_TEST 1` → `app/hwtest.c`)
 
 ## นำไปใส่ใน CubeIDE
 
 1. Generate โปรเจกต์จาก `.ioc` ตามตารางข้างบน
-2. Include paths: `app`, `1_switch`, `2_led`, `3_game`, `6_ai`, `sound` และ `../core`
+2. Include paths: `app`, `1_switch`, `2_led`, `3_game`, `4_tft`, `5_lcd`, `6_ai`, `sound` และ `../core`
 3. Source: ลากโฟลเดอร์ `firmware` เข้าโปรเจกต์ (Link/Copy) แล้ว **Exclude from build** โฟลเดอร์ `host/`
 4. ใน `main.c` (เฉพาะช่อง USER CODE): `#include "app.h"`, `App_Init();` หลัง MX_..._Init, `App_Loop();` ใน `while (1)`
 5. ถ้า HAL timebase เป็น TIMx (ไม่ใช่ SysTick) `main.c` จะมี `HAL_TIM_PeriodElapsedCallback` อยู่แล้ว ให้ย้ายบรรทัด `Keypad_ScanIsr()` ไปใส่ในนั้นแล้วลบตัวใน `app.c`
@@ -145,6 +165,13 @@ void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim)
 
 ผ่านแผงแรกแล้วค่อยเพิ่ม CH2–CH4 (Add DMA ทีละ channel แล้วขยาย mask เป็น `0x0FU`)
 
+## ดูหน้าจอ TFT บนคอม
+
+```powershell
+.\firmware\host\render_screens.ps1
+```
+ได้รูปทุกหน้าใน `build/screens/` (BMP 240x320) วาดด้วยโค้ดเดียวกับบนบอร์ด
+
 ## ทดสอบบนคอมพิวเตอร์
 
 ```powershell
@@ -156,7 +183,7 @@ $env:Path = "C:\msys64\ucrt64\bin;" + $env:Path
 
 ## ยังต้องทำ/ตรวจกับฮาร์ดแวร์จริง
 
-- อุปกรณ์รับปุ่มคำสั่ง (ดูหัวข้อ ⚠ ข้างบน)
+- ต่อโมดูลจอ TFT/LCD เข้ากับ `App_OnButton()` และการแสดงผลจาก `Game`
 - ลำดับแผงกับสาย (`KEYPAD_GROUP_TO_PANEL`, `WS2812_CHANNEL_TO_PANEL`), การกลับด้าน (`*_FLIP_X/Y`), ไฟเดินแบบงู (`WS2812_SERPENTINE`)
 - ขั้วสวิตช์ mute (`buzzer.c`, `app.c` ถือว่า LOW = ปิดเสียง)
 - Buzzer สองตัวใช้ TIM3 ตัวเดียว → ARR ร่วมกัน เล่นได้ทีละเพลง ถ้าอยากให้เสียงต่างกันพร้อมกันต้องแยก timer
