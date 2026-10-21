@@ -45,8 +45,10 @@ typedef enum {
     BTN_SHIP_2,
     BTN_SHIP_3,
     BTN_CANCEL,
-    BTN_CONFIRM,   /* S1 start, S2 confirm fleet, S5 new game */
-    BTN_SURRENDER
+    BTN_CONFIRM,   /* S1 start, S2 confirm fleet, S5 main menu */
+    BTN_SURRENDER,
+    BTN_REMATCH,   /* S5: play again in the same mode (skip S1) */
+    BTN_MAIN_MENU  /* S5: back to mode select (via S6) */
 } GameButton;
 
 typedef struct {
@@ -70,6 +72,11 @@ typedef struct {
     Position last_shot;
     ShotResult last_result;
     uint8_t last_sunk_length;
+
+    /* Match statistics for the screens (reset when the match starts). */
+    uint16_t shots[GAME_PLAYERS];
+    uint16_t hits[GAME_PLAYERS];   /* HIT or SUNK */
+    uint16_t round;                /* +1 each time the turn returns to first_player */
 
     uint8_t winner;     /* valid in S5 */
     bool surrendered;

@@ -2,13 +2,15 @@ $ErrorActionPreference = 'Stop'
 Push-Location $PSScriptRoot
 try {
     New-Item -ItemType Directory -Path ..\..\build -Force | Out-Null
-    $modules = @('app', '1_switch', '2_led', '3_game', '6_ai', 'sound')
+    $modules = @('app', '1_switch', '2_led', '3_game', '4_tft', '5_lcd', '6_ai', 'sound')
     $inc = @($modules | ForEach-Object { "-I..\$_" }) + @('-I..\..\core')
     # HAL-free modules + PC stubs. HAL files (keypad.c, ws2812_port_stm32.c,
-    # buzzer.c, app.c) need STM32CubeIDE.
+    # buzzer.c, app.c, tft.c, touch.c) need STM32CubeIDE.
     $src = @('host_test.c', 'host_stubs.c',
              '..\3_game\game.c', '..\3_game\placement.c', '..\6_ai\ai_player.c',
-             '..\1_switch\keypad_core.c', '..\2_led\ws2812.c', '..\2_led\led_view.c')
+             '..\1_switch\keypad_core.c', '..\2_led\ws2812.c', '..\2_led\led_view.c',
+             '..\4_tft\gfx.c', '..\4_tft\font5x7.c', '..\4_tft\art.c', '..\4_tft\tft_ui.c',
+             '..\5_lcd\lcd_ui.c')
     & gcc -std=c99 -O2 -Wall -Wextra -Wpedantic -Wconversion -Wshadow `
           -Wstrict-prototypes -Werror @inc @src -o ..\..\build\fw_host_test.exe
     if ($LASTEXITCODE -ne 0) { throw "gcc failed with exit code $LASTEXITCODE" }

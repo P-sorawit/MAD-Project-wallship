@@ -19,3 +19,27 @@ bool Ws2812_Port_Start(uint8_t ch, const uint16_t *buf, uint32_t len)
     Ws2812_OnChannelDone(ch); /* "DMA" finishes instantly */
     return true;
 }
+
+#include "tft.h"
+#include "lcd1602.h"
+#include <stdio.h>
+char host_lcd[2][2][17];
+unsigned host_lcd_writes;
+void Lcd1602_Init(uint8_t lcd) { (void)lcd; }
+void Lcd1602_Clear(uint8_t lcd) { (void)lcd; }
+void Lcd1602_WriteLine(uint8_t lcd, uint8_t row, const char *text)
+{
+    snprintf(host_lcd[lcd][row], sizeof host_lcd[lcd][row], "%-16s", text);
+    ++host_lcd_writes;
+}
+unsigned host_tft_blits;
+uint32_t host_tft_last_mask;
+void Tft_Init(uint8_t display) { (void)display; }
+bool Tft_SendBands(uint8_t display, uint32_t band_mask)
+{
+    (void)display;
+    host_tft_last_mask = band_mask;
+    ++host_tft_blits;
+    return true;            /* "DMA" finishes instantly */
+}
+bool Tft_IsBusy(void) { return false; }

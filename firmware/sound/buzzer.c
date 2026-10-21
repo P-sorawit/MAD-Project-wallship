@@ -33,6 +33,11 @@ static uint8_t seq_index;
 static uint32_t note_end_ms;
 static bool note_started;
 
+/* Requests may come from the main loop or from an ISR (surrender), so
+ * Buzzer_PlaySound only posts a request; Buzzer_Tick (main loop) starts it. */
+static volatile int8_t req_sound = -1;
+static volatile uint8_t req_mask;
+
 static void output(uint16_t hz)
 {
     uint8_t p;
@@ -62,14 +67,25 @@ void Buzzer_PlaySound(uint8_t mask, BuzzerSound s)
         return;
     }
     /* Only one tune at a time (shared ARR): the newest request wins. */
-    seq = sounds[s];
-    seq_index = 0;
-    active_mask = mask;
-    note_started = false;
+    req_mask = mask;
+    req_sound = (int8_t)s;   /* written last: marks the request complete */
 }
 
 void Buzzer_Tick(uint32_t now_ms)
 {
+    int8_t s;
+    uint8_t mask;
+    __disable_irq();         /* take the request atomically */
+    s = req_sound;
+    mask = req_mask;
+    req_sound = -1;
+    __enable_irq();
+    if (s >= 0) {
+        seq = sounds[s];
+        seq_index = 0;
+        active_mask = mask;
+        note_started = false;
+    }
     if (seq == NULL) {
         return;
     }

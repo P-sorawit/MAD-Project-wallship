@@ -23,5 +23,8 @@ bool Keypad_GetEvent(KeyEvent *event);  /* main loop; false if queue empty */
  * feed the 28-bit row snapshot of one column (bit = 1 means pressed). */
 void Keypad_ProcessColumn(uint8_t col, uint32_t pressed_rows);
 void Keypad_ResetCore(void);
+/* Raw (not debounced) rows seen on each column in the last scan, bit = row
+ * 0..27. Watch it in the debugger to find open/shorted matrix wires. */
+extern volatile uint32_t keypad_debug_raw[8];
 
 #endif

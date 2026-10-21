@@ -89,6 +89,9 @@ static void start_match(Game *g)
     }
     g->has_last_shot = false;
     g->surrendered = false;
+    g->shots[0] = g->shots[1] = 0;
+    g->hits[0] = g->hits[1] = 0;
+    g->round = 1;
     g->ai_next_shot_ms = g->now_ms + GAME_START_SHOW_MS + GAME_AI_SHOT_DELAY_MS;
     Buzzer_PlaySound(BUZZ_BOTH, SND_START);
     enter_state(g, GS_GAME_START);
@@ -111,6 +114,12 @@ static void record_shot(Game *g, uint8_t shooter, Position p, ShotResult r,
     g->last_result = r;
     g->last_sunk_length = sunk_length;
     g->dirty = true;
+    ++g->shots[shooter];
+    if (r != SHOT_MISS) {
+        ++g->hits[shooter];
+    } else if (g->match.current_player == g->first_player) {
+        ++g->round; /* turn came back to whoever opened the match */
+    }
     Buzzer_PlaySound(BUZZ_BOTH, r == SHOT_MISS ? SND_MISS
                                 : (r == SHOT_HIT ? SND_HIT : SND_SUNK));
     if (g->match.finished) {
@@ -222,7 +231,13 @@ void Game_OnButton(Game *g, uint8_t p, GameButton b)
         break;
 
     case GS_RESULT:
-        if (b == BTN_CONFIRM && Game_IsHuman(g, p)) {
+        if (!Game_IsHuman(g, p)) {
+            break;
+        }
+        if (b == BTN_REMATCH) {
+            Buzzer_PlaySound(BUZZ_BOTH, SND_CLICK);
+            start_placement(g); /* same mode, fresh boards */
+        } else if (b == BTN_CONFIRM || b == BTN_MAIN_MENU) {
             enter_state(g, GS_RESET);
         }
         break;

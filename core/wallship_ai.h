@@ -74,7 +74,7 @@ static inline void WallshipAI_Init(WallshipAgent *ai, uint32_t seed,
         return;
     }
     memset(ai, 0, sizeof *ai);
-    ai->profile = (profile >= AI_RANDOM && profile <= AI_AGGRESSIVE)
+    ai->profile = ((unsigned)profile <= (unsigned)AI_AGGRESSIVE)
         ? profile : AI_BALANCED;
     WallshipAI_ResetGame(ai, seed);
 }

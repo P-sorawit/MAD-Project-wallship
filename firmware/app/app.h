@@ -15,5 +15,8 @@ void App_Init(void);
 void App_Loop(void);
 /* Main-loop context only: feed a button press from any input module. */
 void App_OnButton(uint8_t player, GameButton button);
+/* EXTI ISR context: TFT touch pen-down on player 0/1. Weak no-op by default;
+ * the TFT module defines its own to set a "read touch" flag. */
+void App_TouchIrq(uint8_t player);
 
 #endif

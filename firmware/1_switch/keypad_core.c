@@ -7,6 +7,7 @@
 
 static uint8_t counter[KEYPAD_COLS][KEYPAD_ROWS]; /* consecutive equal scans */
 static uint32_t stable[KEYPAD_COLS];              /* debounced state, bit = row */
+volatile uint32_t keypad_debug_raw[KEYPAD_COLS];   /* last raw scan, for debugging */
 
 static KeyEvent queue[KEYPAD_QUEUE_SIZE];
 static volatile uint8_t q_head; /* written by ISR */
@@ -46,6 +47,7 @@ void Keypad_ProcessColumn(uint8_t col, uint32_t pressed_rows)
     if (col >= KEYPAD_COLS) {
         return;
     }
+    keypad_debug_raw[col] = pressed_rows;
     for (row = 0; row < KEYPAD_ROWS; ++row) {
         const uint32_t bit = UINT32_C(1) << row;
         const bool now = (pressed_rows & bit) != 0;

@@ -7,6 +7,11 @@
 
 #include "wallship_types.h" /* BOARD_W = 8 (A-H), BOARD_H = 7 (1-7) */
 
+/* 1 = hardware bring-up test (app/hwtest.c, BRINGUP.md) instead of the game. */
+#ifndef APP_HW_TEST
+#define APP_HW_TEST            0
+#endif
+
 /* ---------- Module 1: switch matrix (TIM6, 200 us per column) ---------- */
 #define KEYPAD_COLS            8U
 #define KEYPAD_ROWS            28U   /* 7 rows x 4 panels */
@@ -37,6 +42,20 @@
 #define WS2812_SERPENTINE      0
 #define WS2812_FLIP_X          { 0U, 0U, 0U, 0U }
 #define WS2812_FLIP_Y          { 0U, 0U, 0U, 0U }
+
+/* ---------- Module 4: touch panels (XPT2046) ---------- */
+/* Raw 12-bit readings at the screen edges, per panel { P1, P2 }.
+ * TODO: calibrate on hardware (see 4_tft/touch.c). min > max is allowed
+ * and flips that axis. */
+#define TOUCH_RAW_X_MIN        { 300U, 300U }
+#define TOUCH_RAW_X_MAX        { 3800U, 3800U }
+#define TOUCH_RAW_Y_MIN        { 300U, 300U }
+#define TOUCH_RAW_Y_MAX        { 3800U, 3800U }
+#define TOUCH_SWAP_XY          { 0U, 0U }
+
+/* ---------- Module 5: LCD1602 via PCF8574 (I2C1) ---------- */
+#define LCD_COUNT              2U
+#define LCD_I2C_ADDR           { (0x27U << 1), (0x26U << 1) } /* P1, P2 (HAL wants 8-bit) */
 
 /* ---------- Module 6: AI ---------- */
 #define GAME_AI_PROFILE        AI_BALANCED /* AI_RANDOM / AI_BALANCED / AI_AGGRESSIVE */
