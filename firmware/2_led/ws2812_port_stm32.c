@@ -11,9 +11,15 @@ extern TIM_HandleTypeDef htim1;
 static const uint32_t tim_channel[WS2812_CHANNELS] = {
     TIM_CHANNEL_1, TIM_CHANNEL_2, TIM_CHANNEL_3, TIM_CHANNEL_4
 };
+static const uint16_t dma_id[WS2812_CHANNELS] = {
+    TIM_DMA_ID_CC1, TIM_DMA_ID_CC2, TIM_DMA_ID_CC3, TIM_DMA_ID_CC4
+};
 
 bool Ws2812_Port_Start(uint8_t channel, const uint16_t *buf, uint32_t len)
 {
+    if (htim1.hdma[dma_id[channel]] == NULL) {
+        return false;   /* no DMA stream for this channel in CubeMX: skip, HAL would crash */
+    }
 #if defined(__DCACHE_PRESENT) && (__DCACHE_PRESENT == 1U)
     /* Cortex-M7: if D-Cache is on, DMA reads RAM, not the cache. Flush first. */
     if (SCB->CCR & SCB_CCR_DC_Msk) {

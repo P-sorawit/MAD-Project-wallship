@@ -26,5 +26,8 @@ void Keypad_ResetCore(void);
 /* Raw (not debounced) rows seen on each column in the last scan, bit = row
  * 0..27. Watch it in the debugger to find open/shorted matrix wires. */
 extern volatile uint32_t keypad_debug_raw[8];
+/* Presses dropped because they may be a ghost (see keypad_core.c). Rising
+ * while you press 3+ keys = a diode on that panel is missing or reversed. */
+extern volatile uint16_t keypad_ghost_drops;
 
 #endif

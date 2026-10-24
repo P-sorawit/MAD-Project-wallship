@@ -13,7 +13,9 @@
 #define HWTESTS_H
 
 void TestLed_Init(void);        void TestLed_Loop(void);        /* test_led.c */
+void TestWs_Init(void);         void TestWs_Loop(void);         /* test_ws2812b.c (no driver files) */
 void TestSwitch_Init(void);     void TestSwitch_Loop(void);     /* test_switch.c */
+void TestTable_Init(void);      void TestTable_Loop(void);      /* test_table.c (one 7x8 table, keys + LEDs) */
 void TestBuzzer_Init(void);     void TestBuzzer_Loop(void);     /* test_buzzer.c (+ mute) */
 void TestSurrender_Init(void);  void TestSurrender_Loop(void);  /* test_surrender.c */
 void TestLcd_Init(void);        void TestLcd_Loop(void);        /* test_lcd.c */

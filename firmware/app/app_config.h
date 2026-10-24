@@ -29,9 +29,8 @@
 #define WS2812_CHANNELS        4U
 #define WS2812_CCR_0           86U   /* 0.40 us high @ 216 MHz, ARR = 269 */
 #define WS2812_CCR_1           173U  /* 0.80 us high */
-/* Which TIM1 channels are wired AND have a DMA stream in CubeMX.
- * bit0 = CH1 ... bit3 = CH4. Start with 0x01 to test a single strip;
- * starting a channel without DMA configured would crash in HAL. */
+/* Which TIM1 channels drive a strip. bit0 = CH1 ... bit3 = CH4.
+ * Channels without a DMA stream in CubeMX are skipped by the port layer. */
 #define WS2812_ACTIVE_MASK     0x0FU
 /* TIM1 CH(n+1) drives which panel. TODO: check wiring. */
 #define WS2812_CHANNEL_TO_PANEL { 0U, 1U, 2U, 3U }

@@ -1,6 +1,7 @@
 /* STM32 side of module 1. CubeMX setup expected:
  *   COL0..COL7  : GPIO_Output, Open Drain, no pull (released = High-Z)
- *   ROW0..ROW27 : GPIO_Input, external 10k pull-up (ROW0-6 panel 0, 7-13 panel 1 ...)
+ *   ROW0..ROW27 : GPIO_Input, external 10k pull-up to 3.3 V, or GPIO Pull-up
+ *                 in CubeMX instead (ROW0-6 panel 0, 7-13 panel 1 ...)
  *   TIM6        : update every 200 us (e.g. PSC 107, ARR 199 @ 108 MHz), NVIC on
  * Name the pins exactly COL0.., ROW0.. in CubeMX so main.h has the labels.
  * Diode anode on the row side, cathode on the column side: pull a column low,

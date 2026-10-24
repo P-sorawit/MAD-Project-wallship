@@ -102,6 +102,32 @@ static void test_keypad(void)
     }
     assert(!Keypad_GetEvent(&e));
     puts("keypad debounce/mapping: OK");
+
+    /* ghost: A1, B1, B2 held (an L) and a bad diode makes A2 read pressed.
+     * A1 and B1 come first and are real; B2 and the ghost A2 then land
+     * together, form a rectangle, and are both dropped. */
+    Keypad_ResetCore();
+    for (i = 0; i < KEYPAD_DEBOUNCE_SCANS; ++i) {
+        Keypad_ProcessColumn(0, UINT32_C(1) << 0);
+        Keypad_ProcessColumn(1, UINT32_C(1) << 0);
+    }
+    assert(Keypad_GetEvent(&e) && e.x == 0 && e.y == 0);
+    assert(Keypad_GetEvent(&e) && e.x == 1 && e.y == 0);
+    for (i = 0; i < KEYPAD_DEBOUNCE_SCANS; ++i) {
+        Keypad_ProcessColumn(0, (UINT32_C(1) << 0) | (UINT32_C(1) << 1));
+        Keypad_ProcessColumn(1, (UINT32_C(1) << 0) | (UINT32_C(1) << 1));
+    }
+    assert(!Keypad_GetEvent(&e));
+    assert(keypad_ghost_drops == 2);
+    /* three real keys in an L with no fourth corner read: all reported */
+    Keypad_ResetCore();
+    for (i = 0; i < KEYPAD_DEBOUNCE_SCANS; ++i) {
+        Keypad_ProcessColumn(4, (UINT32_C(1) << 3) | (UINT32_C(1) << 5));
+        Keypad_ProcessColumn(6, UINT32_C(1) << 3);
+    }
+    assert(Keypad_GetEvent(&e) && Keypad_GetEvent(&e) && Keypad_GetEvent(&e));
+    assert(keypad_ghost_drops == 0);
+    puts("keypad ghost guard: OK");
 }
 
 static void test_ws2812_encode(void)

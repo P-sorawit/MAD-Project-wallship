@@ -8,6 +8,7 @@
 static uint8_t counter[KEYPAD_COLS][KEYPAD_ROWS]; /* consecutive equal scans */
 static uint32_t stable[KEYPAD_COLS];              /* debounced state, bit = row */
 volatile uint32_t keypad_debug_raw[KEYPAD_COLS];   /* last raw scan, for debugging */
+volatile uint16_t keypad_ghost_drops;              /* presses dropped by maybe_ghost() */
 
 static KeyEvent queue[KEYPAD_QUEUE_SIZE];
 static volatile uint8_t q_head; /* written by ISR */
@@ -19,10 +20,32 @@ static const uint8_t flip_y[4] = KEYPAD_FLIP_Y;
 
 void Keypad_ResetCore(void)
 {
+    uint8_t c;
     memset(counter, 0, sizeof counter);
     memset(stable, 0, sizeof stable);
+    for (c = 0; c < KEYPAD_COLS; ++c) {
+        keypad_debug_raw[c] = 0;
+    }
+    keypad_ghost_drops = 0;
     q_head = 0;
     q_tail = 0;
+}
+
+/* With a missing, reversed or shorted diode, three held keys in an L make
+ * the fourth corner of the rectangle read as pressed too. So a key whose
+ * column and row both share held keys with one other column cannot be
+ * trusted: drop it rather than report a cell nobody pressed. */
+static bool maybe_ghost(uint8_t col, uint8_t row)
+{
+    const uint32_t bit = UINT32_C(1) << row;
+    uint8_t c;
+    for (c = 0; c < KEYPAD_COLS; ++c) {
+        if (c != col && (keypad_debug_raw[c] & bit) != 0U &&
+            (keypad_debug_raw[c] & keypad_debug_raw[col] & ~bit) != 0U) {
+            return true;
+        }
+    }
+    return false;
 }
 
 static void push_press(uint8_t col, uint8_t row)
@@ -59,8 +82,12 @@ void Keypad_ProcessColumn(uint8_t col, uint32_t pressed_rows)
         if (++counter[col][row] >= KEYPAD_DEBOUNCE_SCANS) {
             counter[col][row] = 0;
             stable[col] ^= bit;
-            if (now) {
-                push_press(col, row); /* report press edge only */
+            if (now) {                /* report press edge only */
+                if (maybe_ghost(col, row)) {
+                    ++keypad_ghost_drops;
+                } else {
+                    push_press(col, row);
+                }
             }
         }
     }
