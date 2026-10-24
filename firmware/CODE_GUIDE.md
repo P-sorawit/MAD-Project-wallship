@@ -55,7 +55,7 @@ interrupt:  TIM6 → สแกนสวิตช์   ·  DMA → ส่งไ�
 | `sound/` | `buzzer.c` | ✔ | ทำนองเสียง + ปิดเสียง |
 | `hwtests/` | `test_*.c` | ✔ | ทดสอบทีละอุปกรณ์ (ดู README ในโฟลเดอร์) |
 | `host/` | | | เทสต์และวาดภาพหน้าจอบนคอม |
-| `tools/` | `pinmap.py` | | ผังขาต้นทาง → ตรวจ + สร้าง `docs/wiring.html` |
+| `tools/` | `pinmap.py` | | ผังขา + ชุดสายต้นทาง → ตรวจ + สร้าง `docs/wiring.html` และตารางใน `HARNESS.md` |
 
 ## 4. อยากแก้เรื่องนี้ ไปที่ไหน
 
@@ -73,6 +73,7 @@ interrupt:  TIM6 → สแกนสวิตช์   ·  DMA → ส่งไ�
 | กติกายิง / ชนะ | `../core/wallship_game_rules.h` |
 | ความเก่งของ AI | `app_config.h` → `GAME_AI_PROFILE` หรือ `../core/wallship_heuristic.h` |
 | ขาที่ต่อ | แก้ตาราง `PINS` ใน `tools/pinmap.py` แล้วรัน (ตรวจซ้ำ/ชน + สร้าง `docs/wiring.html` ใหม่) จากนั้นแก้ `PINOUT.md` และ CubeMX ให้ตรง |
+| สายในตู้ / ย้ายอุปกรณ์ | แก้ `HARNESS` ใน `tools/pinmap.py` แล้วรัน (ตรวจว่าทุกขาอยู่ในสายเส้นเดียว + เขียนตารางใน `HARNESS.md`) |
 
 ## 5. ชื่อในโค้ด
 

@@ -106,6 +106,38 @@ tr.hl td { background: color-mix(in srgb, var(--focus) 12%, transparent); }
 .note p, .note ul { margin: 0; }
 .note ul { padding-left: 18px; }
 @media (prefers-reduced-motion: no-preference) { .pin, .chip { transition: opacity .15s, background-color .15s; } }
+
+/* enclosure views + cable list */
+.harness { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 900px) { .harness { grid-template-columns: minmax(0, 1fr); } }
+.views { display: grid; gap: 14px; min-width: 0; }
+.view { border: 1px solid var(--line); border-radius: 10px; background: var(--board); padding: 10px 10px 6px; min-width: 0; }
+.view .sub, .hint { color: var(--muted); font-size: 13px; margin: 2px 0 6px; }
+svg.encl { display: block; width: 100%; height: auto; }
+svg.encl text { font-family: var(--body); font-size: 11px; fill: var(--ink); }
+svg.encl text.small { font-size: 9.5px; fill: var(--muted); }
+.shell { fill: color-mix(in srgb, var(--paper) 70%, transparent); stroke: var(--silk); stroke-width: 1.5; }
+.part rect { fill: color-mix(in srgb, var(--c) 28%, var(--board)); stroke: var(--c); stroke-width: 1.5; }
+.brd rect { fill: color-mix(in srgb, var(--ink) 9%, var(--board)); stroke: var(--ink); stroke-width: 1.2; }
+.hole { stroke: var(--focus); stroke-width: 4; stroke-linecap: round; }
+.route { fill: none; stroke: var(--c); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; opacity: 0.85; }
+.focus .route { opacity: 0.08; }
+.focus .route.on { opacity: 1; stroke-width: 4.5; }
+.focus .part:not(.on), .focus .brd:not(.on) { opacity: 0.35; }
+.cables { display: grid; gap: 6px; min-width: 0; }
+.cable { border: 1px solid var(--line); border-left: 5px solid var(--c); border-radius: 8px; background: var(--board); min-width: 0; }
+.cable summary { cursor: pointer; padding: 7px 10px; display: flex; flex-wrap: wrap; gap: 2px 10px; align-items: baseline; list-style: none; }
+.cable summary::-webkit-details-marker { display: none; }
+.cable summary:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.cable .cid { font-family: var(--mono); font-weight: 700; min-width: 2.2em; }
+.cable .meta { color: var(--muted); font-size: 12.5px; margin-left: auto; font-family: var(--mono); }
+.cable[open] { box-shadow: 0 0 0 2px color-mix(in srgb, var(--c) 45%, transparent); }
+.cbody { padding: 0 10px 10px; }
+.cbody .sub { color: var(--muted); font-size: 13px; margin-bottom: 6px; }
+.sw { display: inline-block; width: 12px; height: 12px; border-radius: 3px; border: 1px solid var(--muted); vertical-align: -1px; margin-right: 6px; }
+.boards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+.boards div { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; background: var(--board); font-size: 13.5px; }
+.boards b { font-family: var(--mono); }
 </style>
 
 <div class="wrap">
@@ -148,6 +180,58 @@ tr.hl td { background: color-mix(in srgb, var(--focus) 12%, transparent); }
       <ul>
         <li><span class="mono">CN10-25</span> คือ PE2 ตัวเดียวกับ <span class="mono">CN9-14</span> (T_IRQ) ใช้ CN9-14 ที่เดียว</li>
         <li>ขา morpho CN11/CN12 ไม่ได้บัดกรีมาจากโรงงาน แผนนี้จึงไม่ใช้</li>
+      </ul>
+    </div>
+  </section>
+
+  <header>
+    <h2>เดินสายในตู้</h2>
+    <p class="lede">บอร์ดทั้งหมดอยู่บนพื้นเสากลาง สายไปกล่องผู้เล่นลอดช่อง H1/H2 ส่วนแผงโจมตีกับ LCD ฝังในหน้าเสา
+      ขนาดตู้อ่านจากไฟล์ STL ตำแหน่งอุปกรณ์เป็นข้อเสนอ วัดของจริงก่อนเจาะ · รายละเอียดเต็มใน <span class="mono">firmware/HARNESS.md</span></p>
+  </header>
+
+  <div class="harness">
+    <div class="views">
+      <div class="view">
+        <h3>ภาพตัดด้านข้าง</h3>
+        <p class="sub">ผู้เล่น P1 นั่งซ้าย P2 นั่งขวา · หน่วย mm</p>
+        <svg class="encl" id="side" viewBox="0 0 555 362" role="img" aria-label="ภาพตัดด้านข้างของตู้ กล่องผู้เล่นสองข้างและเสากลาง พร้อมเส้นทางสาย"></svg>
+      </div>
+      <div class="view">
+        <h3>ผังพื้นเสากลาง (มองจากบน)</h3>
+        <p class="sub">ซ้าย = สัญญาณ · ขวา = ไฟกระแสสูง · H8 ช่อง USB · H7 ไฟเข้า</p>
+        <svg class="encl" id="floor" viewBox="0 0 580 250" role="img" aria-label="ผังวางบอร์ดบนพื้นเสากลาง พร้อมเส้นทางสาย"></svg>
+      </div>
+      <div class="boards">
+        <div><b>HUB</b> pull-up 10k × 28 ไป 3.3V · หัว IDC 2×8 × 4 (J0–J3) ขา 1–8 COL, 9–15 ROW, 16 GND</div>
+        <div><b>DRV</b> 74AHCT125 + 330Ω × 4 · 5V เข้าจาก BUS · หัว JST 3 ขา × 4 ไปแผงไฟ</div>
+        <div><b>DSP</b> แยก SPI/touch ไปจอ 2 จอ · หัว 1×14 เรียงตามขาโมดูลจอ · 33Ω ที่ SCK, SDI</div>
+        <div><b>AUD</b> 2N2222 × 2 ขับ buzzer · ส่งต่อสวิตช์ยอมแพ้/ปิดเสียง · I2C + 5V ไป LCD</div>
+        <div><b>BUS</b> ไฟเข้า → สวิตช์ → ฟิวส์ 10A → ขั้ว +5V / GND · GND ร่วมกับ Nucleo (P4)</div>
+      </div>
+    </div>
+    <div>
+      <p class="hint">แตะสายเพื่อดูลำดับเส้นและไฮไลต์เส้นทางในภาพ</p>
+      <div class="cables" id="cables"></div>
+    </div>
+  </div>
+
+  <section class="notes">
+    <div class="note">
+      <h3>ช่องเจาะ</h3>
+      <div class="tablebox"><table id="holes"><thead><tr><th>ช่อง</th><th>ตำแหน่ง</th><th>สาย</th></tr></thead><tbody></tbody></table></div>
+    </div>
+    <div class="note">
+      <h3>สีสาย</h3>
+      <ul id="wirecolors"></ul>
+    </div>
+    <div class="note warn">
+      <h3>ก่อนตัดสาย</h3>
+      <ul>
+        <li>ความยาวเป็นค่าประมาณ วัดเส้นทางจริงด้วยเชือกแล้วเผื่อ 5–10 cm</li>
+        <li>สายไฟ LED/ไฟเลี้ยง เดินแยกจากสายแพสัญญาณ ข้ามกันให้ข้ามตั้งฉาก</li>
+        <li>สาย P5 (E5V) ต่อเฉพาะตอนประกอบจริง ห้ามต่อพร้อม USB</li>
+        <li>ประกอบทีละชุดแล้วทดสอบตามลำดับใน HARNESS.md หัวข้อ 6</li>
       </ul>
     </div>
   </section>
@@ -293,6 +377,207 @@ function select(id) {
   }
 }
 
+/* ---- Enclosure and cable routes ----
+   Millimetres: y = from the P1 player edge toward P2, x = along the console,
+   z = up from the base. The P2 side is the P1 side turned 180 degrees.
+   Positions are a proposal read from the STL sizes, not measured parts. */
+const ENC = {Y: 495, X: 325};
+const turn = p => ({...p, y: [ENC.Y - p.y[1], ENC.Y - p.y[0]], x: [ENC.X - p.x[1], ENC.X - p.x[0]]});
+const P1_PARTS = [
+  {id: "PANEL0", y: [13, 177],  x: [125, 312], z: [62, 92],   c: "--c-col"},
+  {id: "TFT1",   y: [70, 120],  x: [18, 104],  z: [80, 92],   c: "--c-tft"},
+  {id: "CTRL1",  y: [0, 25],    x: [30, 100],  z: [25, 65],   c: "--c-sound"},
+  {id: "PANEL1", y: [190, 220], x: [125, 312], z: [100, 264], c: "--c-col"},
+  {id: "LCD1",   y: [190, 215], x: [25, 105],  z: [214, 250], c: "--c-lcd"},
+];
+const P2_ID = {PANEL0: "PANEL2", TFT1: "TFT2", CTRL1: "CTRL2", PANEL1: "PANEL3", LCD1: "LCD2"};
+const PARTS = P1_PARTS.concat(P1_PARTS.map(p => ({...turn(p), id: P2_ID[p.id]})));
+const BOARDS = [  /* on the tower floor, z 3-30 */
+  {id: "NUC", name: "Nucleo", x: [6, 139],   y: [220, 290]},
+  {id: "HUB", name: "HUB",    x: [148, 208], y: [215, 295]},
+  {id: "DSP", name: "DSP",    x: [216, 256], y: [200, 245]},
+  {id: "AUD", name: "AUD",    x: [216, 256], y: [252, 297]},
+  {id: "DRV", name: "DRV",    x: [264, 294], y: [225, 275]},
+  {id: "BUS", name: "BUS",    x: [300, 320], y: [215, 285]},
+];
+const HOLE_AT = {
+  H1: {face: 190, x: [150, 210], z: [8, 33]},
+  H2: {face: 305, x: [150, 210], z: [8, 33]},
+  H7: {wall: 325, y: [232, 262]},
+  H8: {wall: 0,   y: [238, 252]},
+};
+/* each cable: polylines of [y, x, z] waypoints */
+const ROUTES = {
+  N1: [[[255, 139, 20], [255, 148, 20]]],
+  M1: [[[215, 178, 20], [190, 180, 20], [120, 200, 45], [95, 218, 62]]],
+  M2: [[[215, 160, 25], [198, 160, 45], [198, 160, 100]]],
+  M3: [[[295, 178, 20], [305, 180, 20], [375, 135, 45], [400, 107, 62]]],
+  M4: [[[295, 165, 25], [298, 140, 50], [298, 107, 100]]],
+  N2: [[[290, 120, 12], [299, 125, 12], [299, 260, 12], [260, 264, 12]]],
+  L1: [[[225, 272, 15], [196, 262, 15], [190, 205, 15], [120, 260, 45], [95, 305, 62]]],
+  L2: [[[225, 285, 15], [198, 300, 45], [198, 300, 100]]],
+  L3: [[[275, 272, 15], [300, 262, 15], [305, 205, 15], [375, 215, 45], [400, 20, 62]]],
+  L4: [[[275, 285, 15], [298, 290, 45], [298, 190, 100]]],
+  N3: [[[222, 139, 20], [209, 145, 20], [209, 212, 20], [215, 216, 20]]],
+  J1: [[[230, 208, 20], [230, 216, 20]]],
+  D1: [[[200, 236, 20], [193, 200, 25], [190, 190, 25], [110, 61, 55], [95, 61, 80]]],
+  D2: [[[245, 236, 25], [249, 260, 25], [300, 260, 25], [305, 195, 25], [385, 264, 55], [400, 264, 80]]],
+  N5: [[[286, 139, 15], [297, 145, 15], [297, 210, 15], [280, 216, 15]]],
+  I1: [[[252, 236, 30], [247, 212, 45], [247, 212, 200], [202, 65, 214]],
+       [[202, 65, 250], [247, 140, 262], [293, 260, 250]]],
+  S1: [[[252, 258, 12], [196, 260, 10], [190, 165, 10], [60, 90, 25], [12, 65, 40]]],
+  S2: [[[297, 236, 12], [305, 170, 10], [430, 240, 25], [483, 260, 40]]],
+  P1: [[[247, 350, 30], [247, 325, 30], [247, 310, 25]]],
+  P2: [[[240, 300, 15], [245, 294, 15]]],
+  P3: [[[282, 300, 12], [300, 296, 12], [300, 262, 12], [285, 256, 12]]],
+  P4: [[[218, 305, 8], [195, 300, 8], [195, 139, 8], [222, 130, 8]]],
+  P5: [[[282, 310, 8], [301, 305, 8], [301, 130, 8], [288, 120, 8]]],
+};
+const CABLE_C = {N1: "--c-row", M: "--c-col", N2: "--c-led", L: "--c-led", N3: "--c-tft", J1: "--c-tft",
+                 D: "--c-tft", N5: "--c-sound", S: "--c-sound", I1: "--c-lcd", P: "--pwr"};
+const cableC = id => "var(" + (CABLE_C[id] || CABLE_C[id[0]]) + ")";
+const END_NAME = {NUC: "Nucleo", BUS: "BUS 5V", PANEL0: "แผงเรือ P1", PANEL1: "แผงโจมตี P1", PANEL2: "แผงเรือ P2",
+                  PANEL3: "แผงโจมตี P2", TFT1: "TFT P1", TFT2: "TFT P2", CTRL1: "ปุ่ม/buzzer P1",
+                  CTRL2: "ปุ่ม/buzzer P2", "LCD1 > LCD2": "LCD P1 → LCD P2"};
+const endName = e => END_NAME[e] || e;
+const WIRE = {red: ["#d0342c", "แดง"], black: ["#1f2328", "ดำ"], orange: ["#f08a24", "ส้ม"], yellow: ["#e8c31a", "เหลือง"],
+              white: ["#f4f5f6", "ขาว"], grey: ["#9aa3ab", "เทา"], blue: ["#2f6fd6", "น้ำเงิน"], green: ["#2e9d48", "เขียว"],
+              purple: ["#8a4fd0", "ม่วง"], brown: ["#8b5a2b", "น้ำตาล"],
+              ribbon: ["repeating-linear-gradient(90deg, #c8ccd0 0 3px, #8f969d 3px 4px)", "สายแพ"]};
+const WIRE_USE = {red: "+5V", black: "GND", orange: "+3.3V", yellow: "DIN ไฟ LED", white: "COL สวิตช์, SCL",
+                  grey: "ROW สวิตช์", blue: "SPI จอ", green: "CS/DC/RST จอ, SDA", purple: "touch, PWM buzzer",
+                  brown: "ยอมแพ้ / ปิดเสียง", ribbon: "ขีดแดง = เส้นที่ 1"};
+
+function label(s, txt, x, y, anchor, cls, rotate) {
+  const t = el("text", {x, y, "text-anchor": anchor || "middle"}, s);
+  if (cls) t.setAttribute("class", cls);
+  if (rotate) t.setAttribute("transform", "rotate(" + rotate + " " + x + " " + y + ")");
+  t.textContent = txt;
+  return t;
+}
+function drawRoutes(s, project, keep) {
+  for (const id in ROUTES) {
+    for (const line of ROUTES[id]) {
+      const pts = line.filter(keep || (() => true));
+      if (pts.length < 2) continue;
+      el("polyline", {class: "route", "data-id": id, style: "--c:" + cableC(id),
+                      points: pts.map(p => project(p).join(",")).join(" ")}, s);
+    }
+  }
+}
+
+function drawSide() {
+  const s = document.getElementById("side");
+  const X = y => 30 + y, Y = z => 330 - z;
+  const rect = (y0, y1, z0, z1, attrs, parent) =>
+    el("rect", {x: X(y0), y: Y(z1), width: y1 - y0, height: z1 - z0, ...attrs}, parent);
+  rect(0, 190, 0, 92, {class: "shell", rx: 3}, s);
+  rect(190, 305, 0, 282, {class: "shell", rx: 3}, s);
+  rect(305, 495, 0, 92, {class: "shell", rx: 3}, s);
+  el("line", {x1: 12, y1: Y(0), x2: 543, y2: Y(0), stroke: "var(--silk)", "stroke-width": 2}, s);
+  for (const p of PARTS) {
+    const g = el("g", {class: "part", "data-id": p.id, style: "--c:var(" + p.c + ")"}, s);
+    rect(p.y[0], p.y[1], p.z[0], p.z[1], {rx: 2}, g);
+  }
+  const b = el("g", {class: "brd", "data-id": BOARDS.map(b => b.id).join(" ")}, s);
+  rect(196, 300, 3, 30, {rx: 2}, b);
+  for (const h of ["H1", "H2"]) {
+    const a = HOLE_AT[h];
+    el("line", {class: "hole", x1: X(a.face), y1: Y(a.z[0]), x2: X(a.face), y2: Y(a.z[1])}, s);
+    label(s, h, X(a.face + (h === "H1" ? -6 : 6)), Y(44), h === "H1" ? "end" : "start");
+  }
+  drawRoutes(s, p => [X(p[0]), Y(p[2])]);
+  label(s, "แผงเรือ + TFT P1", X(95), Y(100));
+  label(s, "แผงเรือ + TFT P2", X(400), Y(100));
+  label(s, "ปุ่ม · buzzer", X(30), Y(48), "start");
+  label(s, "ปุ่ม · buzzer", X(465), Y(48), "end");
+  label(s, "แผงโจมตี P1", X(208), Y(160), "middle", "", -90);
+  label(s, "แผงโจมตี P2", X(287), Y(160), "middle", "", -90);
+  label(s, "LCD P1", X(222), Y(244), "start");
+  label(s, "LCD P2", X(273), Y(222), "end");
+  label(s, "บอร์ดทั้งหมด", X(248), Y(42));
+  label(s, "ฝาเปิดซ่อม", X(247), Y(288), "middle", "small");
+  label(s, "P1", 14, Y(110)).setAttribute("font-weight", 700);
+  label(s, "P2", 541, Y(110)).setAttribute("font-weight", 700);
+  label(s, "กล่อง P1 · 190", X(95), 350, "middle", "small");
+  label(s, "เสากลาง · 115", X(247), 350, "middle", "small");
+  label(s, "กล่อง P2 · 190", X(400), 350, "middle", "small");
+}
+
+function drawFloor() {
+  const s = document.getElementById("floor");
+  const S = 1.5, X = x => 24 + x * S, Y = y => 40 + (y - 190) * S;
+  el("rect", {class: "shell", x: X(0), y: Y(190), width: 325 * S, height: 115 * S, rx: 3}, s);
+  label(s, "หน้าเสาฝั่ง P1 ↑", X(4), Y(190) - 8, "start", "small");
+  label(s, "หน้าเสาฝั่ง P2 ↓", X(4), Y(305) + 16, "start", "small");
+  for (const h in HOLE_AT) {
+    const a = HOLE_AT[h];
+    if (a.face) {
+      el("line", {class: "hole", x1: X(a.x[0]), y1: Y(a.face), x2: X(a.x[1]), y2: Y(a.face)}, s);
+      label(s, h, X((a.x[0] + a.x[1]) / 2), Y(a.face) + (a.face === 190 ? -8 : 16));
+    } else {
+      el("line", {class: "hole", x1: X(a.wall), y1: Y(a.y[0]), x2: X(a.wall), y2: Y(a.y[1])}, s);
+      label(s, h, X(a.wall) + (a.wall ? 8 : -8), Y((a.y[0] + a.y[1]) / 2) + 4, a.wall ? "start" : "end");
+    }
+  }
+  for (const b of BOARDS) {
+    const g = el("g", {class: "brd", "data-id": b.id}, s);
+    el("rect", {x: X(b.x[0]), y: Y(b.y[0]), width: (b.x[1] - b.x[0]) * S, height: (b.y[1] - b.y[0]) * S, rx: 3}, g);
+    label(g, b.name, X((b.x[0] + b.x[1]) / 2), Y((b.y[0] + b.y[1]) / 2) + 4);
+  }
+  /* only the part of each route that runs on the tower floor */
+  drawRoutes(s, p => [X(p[1]), Y(p[0])], p => p[0] >= 190 && p[0] <= 305 && p[2] <= 60);
+}
+
+let cableOn = null;
+function setCable(id) {
+  cableOn = id;
+  const cab = DATA.harness.find(c => c.id === id);
+  const ends = cab ? (cab.a + " " + cab.b).split(/[ >]+/) : [];
+  document.querySelectorAll("svg.encl").forEach(s => s.classList.toggle("focus", !!id));
+  document.querySelectorAll(".route").forEach(r => r.classList.toggle("on", r.dataset.id === id));
+  document.querySelectorAll(".part, .brd").forEach(g =>
+    g.classList.toggle("on", g.dataset.id.split(" ").some(e => ends.includes(e))));
+}
+
+function drawCables() {
+  const box = document.getElementById("cables");
+  for (const c of DATA.harness) {
+    const d = document.createElement("details");
+    d.className = "cable"; d.dataset.id = c.id;
+    d.style.setProperty("--c", cableC(c.id));
+    const nucleo = c.wires.some(w => w.at);
+    let html = '<summary><span class="cid">' + c.id + "</span><span>" + endName(c.a) + " → " + endName(c.b) +
+      '</span><span class="meta">' + c.len + " cm · " + c.wires.length + " เส้น" +
+      (c.holes.length ? " · " + c.holes.join(" ") : "") + "</span></summary>" +
+      '<div class="cbody"><div class="sub">' + c.name + "<br>" + c.conn_a + " → " + c.conn_b + " · " + c.gauge +
+      (c.same_as ? " · ลำดับเหมือน " + c.same_as : "") + '</div><div class="tablebox"><table><thead><tr><th>#</th><th>สัญญาณ</th>' +
+      (nucleo ? "<th>Nucleo</th>" : "") + "<th>สี</th></tr></thead><tbody>";
+    for (const w of c.wires) {
+      const [bg, th] = WIRE[w.color];
+      html += "<tr><td class=\"mono\">" + w.n + "</td><td class=\"mono\">" + w.sig + "</td>" +
+        (nucleo ? '<td class="where">' + (w.at || "–") + "</td>" : "") +
+        '<td><span class="sw" style="background:' + bg + '"></span>' + th + "</td></tr>";
+    }
+    d.innerHTML = html + "</tbody></table></div></div>";
+    d.addEventListener("toggle", () => {
+      if (d.open) setCable(c.id);
+      else if (cableOn === c.id) setCable(null);
+    });
+    box.appendChild(d);
+  }
+  const tb = document.querySelector("#holes tbody");
+  for (const h in DATA.holes) {
+    const used = DATA.harness.filter(c => c.holes.includes(h)).map(c => c.id).join(", ") || "–";
+    tb.insertAdjacentHTML("beforeend", '<tr><td class="where">' + h + "</td><td>" + DATA.holes[h] + '</td><td class="mono">' + used + "</td></tr>");
+  }
+  const ul = document.getElementById("wirecolors");
+  for (const k in WIRE_USE) {
+    ul.insertAdjacentHTML("beforeend", '<li><span class="sw" style="background:' + WIRE[k][0] + '"></span>' + WIRE[k][1] + " — " + WIRE_USE[k] + "</li>");
+  }
+}
+
 drawBoard(); drawChips(); drawSheet();
+drawSide(); drawFloor(); drawCables();
 try { const k = localStorage.getItem("wiring-active"); if (k) setActive(k); } catch (e) {}
 </script>

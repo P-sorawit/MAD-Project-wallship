@@ -108,6 +108,8 @@ firmware/
 
 แผนการต่อสายและการทดสอบทีละอุปกรณ์: [BRINGUP.md](BRINGUP.md) (ใช้โหมดทดสอบ `APP_HW_TEST 1` → `app/hwtest.c`)
 
+วางบอร์ดในตู้ ชุดสาย และการเดินสาย: [HARNESS.md](HARNESS.md)
+
 ## นำไปใส่ใน CubeIDE
 
 1. Generate โปรเจกต์จาก `.ioc` ตามตารางข้างบน

@@ -1216,5 +1216,1537 @@
     "zio": "D35"
    }
   ]
+ },
+ "harness": [
+  {
+   "id": "N1",
+   "name": "Nucleo -> matrix hub",
+   "a": "NUC",
+   "b": "HUB",
+   "len": 15,
+   "gauge": "AWG26",
+   "conn_a": "Dupont male x38",
+   "conn_b": "header on HUB",
+   "holes": [],
+   "wires": [
+    {
+     "n": 1,
+     "sig": "COL0",
+     "color": "white",
+     "at": "CN9-25"
+    },
+    {
+     "n": 2,
+     "sig": "COL1",
+     "color": "white",
+     "at": "CN9-27"
+    },
+    {
+     "n": 3,
+     "sig": "COL2",
+     "color": "white",
+     "at": "CN7-16"
+    },
+    {
+     "n": 4,
+     "sig": "COL3",
+     "color": "white",
+     "at": "CN9-10"
+    },
+    {
+     "n": 5,
+     "sig": "COL4",
+     "color": "white",
+     "at": "CN9-8"
+    },
+    {
+     "n": 6,
+     "sig": "COL5",
+     "color": "white",
+     "at": "CN9-6"
+    },
+    {
+     "n": 7,
+     "sig": "COL6",
+     "color": "white",
+     "at": "CN9-4"
+    },
+    {
+     "n": 8,
+     "sig": "COL7",
+     "color": "white",
+     "at": "CN9-2"
+    },
+    {
+     "n": 9,
+     "sig": "ROW0",
+     "color": "grey",
+     "at": "CN9-21"
+    },
+    {
+     "n": 10,
+     "sig": "ROW1",
+     "color": "grey",
+     "at": "CN9-19"
+    },
+    {
+     "n": 11,
+     "sig": "ROW2",
+     "color": "grey",
+     "at": "CN9-17"
+    },
+    {
+     "n": 12,
+     "sig": "ROW3",
+     "color": "grey",
+     "at": "CN9-7"
+    },
+    {
+     "n": 13,
+     "sig": "ROW4",
+     "color": "grey",
+     "at": "CN10-11"
+    },
+    {
+     "n": 14,
+     "sig": "ROW5",
+     "color": "grey",
+     "at": "CN9-9"
+    },
+    {
+     "n": 15,
+     "sig": "ROW6",
+     "color": "grey",
+     "at": "CN10-30"
+    },
+    {
+     "n": 16,
+     "sig": "ROW7",
+     "color": "grey",
+     "at": "CN9-26"
+    },
+    {
+     "n": 17,
+     "sig": "ROW8",
+     "color": "grey",
+     "at": "CN9-24"
+    },
+    {
+     "n": 18,
+     "sig": "ROW9",
+     "color": "grey",
+     "at": "CN9-28"
+    },
+    {
+     "n": 19,
+     "sig": "ROW10",
+     "color": "grey",
+     "at": "CN9-11"
+    },
+    {
+     "n": 20,
+     "sig": "ROW11",
+     "color": "grey",
+     "at": "CN10-32"
+    },
+    {
+     "n": 21,
+     "sig": "ROW12",
+     "color": "grey",
+     "at": "CN7-20"
+    },
+    {
+     "n": 22,
+     "sig": "ROW13",
+     "color": "grey",
+     "at": "CN10-2"
+    },
+    {
+     "n": 23,
+     "sig": "ROW14",
+     "color": "grey",
+     "at": "CN10-8"
+    },
+    {
+     "n": 24,
+     "sig": "ROW15",
+     "color": "grey",
+     "at": "CN10-12"
+    },
+    {
+     "n": 25,
+     "sig": "ROW16",
+     "color": "grey",
+     "at": "CN9-29"
+    },
+    {
+     "n": 26,
+     "sig": "ROW17",
+     "color": "grey",
+     "at": "CN9-30"
+    },
+    {
+     "n": 27,
+     "sig": "ROW18",
+     "color": "grey",
+     "at": "CN8-14"
+    },
+    {
+     "n": 28,
+     "sig": "ROW19",
+     "color": "grey",
+     "at": "CN8-16"
+    },
+    {
+     "n": 29,
+     "sig": "ROW20",
+     "color": "grey",
+     "at": "CN10-34"
+    },
+    {
+     "n": 30,
+     "sig": "ROW21",
+     "color": "grey",
+     "at": "CN10-23"
+    },
+    {
+     "n": 31,
+     "sig": "ROW22",
+     "color": "grey",
+     "at": "CN10-21"
+    },
+    {
+     "n": 32,
+     "sig": "ROW23",
+     "color": "grey",
+     "at": "CN10-16"
+    },
+    {
+     "n": 33,
+     "sig": "ROW24",
+     "color": "grey",
+     "at": "CN10-19"
+    },
+    {
+     "n": 34,
+     "sig": "ROW25",
+     "color": "grey",
+     "at": "CN10-15"
+    },
+    {
+     "n": 35,
+     "sig": "ROW26",
+     "color": "grey",
+     "at": "CN10-14"
+    },
+    {
+     "n": 36,
+     "sig": "ROW27",
+     "color": "grey",
+     "at": "CN10-13"
+    },
+    {
+     "n": 37,
+     "sig": "3V3",
+     "color": "orange",
+     "at": "CN8-7"
+    },
+    {
+     "n": 38,
+     "sig": "GND",
+     "color": "black",
+     "at": "CN9-12"
+    }
+   ]
+  },
+  {
+   "id": "M1",
+   "name": "Hub -> P1 fleet panel switches",
+   "a": "HUB",
+   "b": "PANEL0",
+   "len": 30,
+   "gauge": "ribbon 16",
+   "conn_a": "IDC 2x8",
+   "conn_b": "IDC 2x8",
+   "holes": [
+    "H1"
+   ],
+   "ribbon": true,
+   "wires": [
+    {
+     "n": 1,
+     "sig": "COL A",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 2,
+     "sig": "COL B",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 3,
+     "sig": "COL C",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 4,
+     "sig": "COL D",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 5,
+     "sig": "COL E",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 6,
+     "sig": "COL F",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 7,
+     "sig": "COL G",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 8,
+     "sig": "COL H",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 9,
+     "sig": "ROW 1",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 10,
+     "sig": "ROW 2",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 11,
+     "sig": "ROW 3",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 12,
+     "sig": "ROW 4",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 13,
+     "sig": "ROW 5",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 14,
+     "sig": "ROW 6",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 15,
+     "sig": "ROW 7",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 16,
+     "sig": "GND",
+     "color": "ribbon",
+     "at": ""
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "name": "Hub -> P1 attack panel switches",
+   "a": "HUB",
+   "b": "PANEL1",
+   "len": 30,
+   "gauge": "ribbon 16",
+   "conn_a": "IDC 2x8",
+   "conn_b": "IDC 2x8",
+   "holes": [
+    "H3"
+   ],
+   "ribbon": true,
+   "same_as": "M1",
+   "wires": [
+    {
+     "n": 1,
+     "sig": "COL A",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 2,
+     "sig": "COL B",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 3,
+     "sig": "COL C",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 4,
+     "sig": "COL D",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 5,
+     "sig": "COL E",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 6,
+     "sig": "COL F",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 7,
+     "sig": "COL G",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 8,
+     "sig": "COL H",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 9,
+     "sig": "ROW 1",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 10,
+     "sig": "ROW 2",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 11,
+     "sig": "ROW 3",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 12,
+     "sig": "ROW 4",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 13,
+     "sig": "ROW 5",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 14,
+     "sig": "ROW 6",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 15,
+     "sig": "ROW 7",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 16,
+     "sig": "GND",
+     "color": "ribbon",
+     "at": ""
+    }
+   ]
+  },
+  {
+   "id": "M3",
+   "name": "Hub -> P2 fleet panel switches",
+   "a": "HUB",
+   "b": "PANEL2",
+   "len": 30,
+   "gauge": "ribbon 16",
+   "conn_a": "IDC 2x8",
+   "conn_b": "IDC 2x8",
+   "holes": [
+    "H2"
+   ],
+   "ribbon": true,
+   "same_as": "M1",
+   "wires": [
+    {
+     "n": 1,
+     "sig": "COL A",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 2,
+     "sig": "COL B",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 3,
+     "sig": "COL C",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 4,
+     "sig": "COL D",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 5,
+     "sig": "COL E",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 6,
+     "sig": "COL F",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 7,
+     "sig": "COL G",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 8,
+     "sig": "COL H",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 9,
+     "sig": "ROW 1",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 10,
+     "sig": "ROW 2",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 11,
+     "sig": "ROW 3",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 12,
+     "sig": "ROW 4",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 13,
+     "sig": "ROW 5",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 14,
+     "sig": "ROW 6",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 15,
+     "sig": "ROW 7",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 16,
+     "sig": "GND",
+     "color": "ribbon",
+     "at": ""
+    }
+   ]
+  },
+  {
+   "id": "M4",
+   "name": "Hub -> P2 attack panel switches",
+   "a": "HUB",
+   "b": "PANEL3",
+   "len": 30,
+   "gauge": "ribbon 16",
+   "conn_a": "IDC 2x8",
+   "conn_b": "IDC 2x8",
+   "holes": [
+    "H4"
+   ],
+   "ribbon": true,
+   "same_as": "M1",
+   "wires": [
+    {
+     "n": 1,
+     "sig": "COL A",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 2,
+     "sig": "COL B",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 3,
+     "sig": "COL C",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 4,
+     "sig": "COL D",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 5,
+     "sig": "COL E",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 6,
+     "sig": "COL F",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 7,
+     "sig": "COL G",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 8,
+     "sig": "COL H",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 9,
+     "sig": "ROW 1",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 10,
+     "sig": "ROW 2",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 11,
+     "sig": "ROW 3",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 12,
+     "sig": "ROW 4",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 13,
+     "sig": "ROW 5",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 14,
+     "sig": "ROW 6",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 15,
+     "sig": "ROW 7",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 16,
+     "sig": "GND",
+     "color": "ribbon",
+     "at": ""
+    }
+   ]
+  },
+  {
+   "id": "N2",
+   "name": "Nucleo -> LED driver",
+   "a": "NUC",
+   "b": "DRV",
+   "len": 15,
+   "gauge": "AWG26",
+   "conn_a": "Dupont male x5",
+   "conn_b": "JST-XH 5",
+   "holes": [],
+   "wires": [
+    {
+     "n": 1,
+     "sig": "PE9",
+     "color": "yellow",
+     "at": "CN10-4"
+    },
+    {
+     "n": 2,
+     "sig": "PE11",
+     "color": "yellow",
+     "at": "CN10-6"
+    },
+    {
+     "n": 3,
+     "sig": "PE13",
+     "color": "yellow",
+     "at": "CN10-10"
+    },
+    {
+     "n": 4,
+     "sig": "PE14",
+     "color": "yellow",
+     "at": "CN10-28"
+    },
+    {
+     "n": 5,
+     "sig": "GND",
+     "color": "black",
+     "at": "CN10-22"
+    }
+   ]
+  },
+  {
+   "id": "L1",
+   "name": "LED driver -> P1 fleet LEDs",
+   "a": "DRV",
+   "b": "PANEL0",
+   "len": 35,
+   "gauge": "AWG20 (DIN AWG26)",
+   "conn_a": "JST-XH 3",
+   "conn_b": "JST-XH 3",
+   "holes": [
+    "H1"
+   ],
+   "wires": [
+    {
+     "n": 1,
+     "sig": "5V",
+     "color": "red",
+     "at": ""
+    },
+    {
+     "n": 2,
+     "sig": "DIN 1Y",
+     "color": "yellow",
+     "at": ""
+    },
+    {
+     "n": 3,
+     "sig": "GND",
+     "color": "black",
+     "at": ""
+    }
+   ]
+  },
+  {
+   "id": "L2",
+   "name": "LED driver -> P1 attack LEDs",
+   "a": "DRV",
+   "b": "PANEL1",
+   "len": 35,
+   "gauge": "AWG20 (DIN AWG26)",
+   "conn_a": "JST-XH 3",
+   "conn_b": "JST-XH 3",
+   "holes": [
+    "H3"
+   ],
+   "wires": [
+    {
+     "n": 1,
+     "sig": "5V",
+     "color": "red",
+     "at": ""
+    },
+    {
+     "n": 2,
+     "sig": "DIN 2Y",
+     "color": "yellow",
+     "at": ""
+    },
+    {
+     "n": 3,
+     "sig": "GND",
+     "color": "black",
+     "at": ""
+    }
+   ]
+  },
+  {
+   "id": "L3",
+   "name": "LED driver -> P2 fleet LEDs",
+   "a": "DRV",
+   "b": "PANEL2",
+   "len": 35,
+   "gauge": "AWG20 (DIN AWG26)",
+   "conn_a": "JST-XH 3",
+   "conn_b": "JST-XH 3",
+   "holes": [
+    "H2"
+   ],
+   "wires": [
+    {
+     "n": 1,
+     "sig": "5V",
+     "color": "red",
+     "at": ""
+    },
+    {
+     "n": 2,
+     "sig": "DIN 3Y",
+     "color": "yellow",
+     "at": ""
+    },
+    {
+     "n": 3,
+     "sig": "GND",
+     "color": "black",
+     "at": ""
+    }
+   ]
+  },
+  {
+   "id": "L4",
+   "name": "LED driver -> P2 attack LEDs",
+   "a": "DRV",
+   "b": "PANEL3",
+   "len": 35,
+   "gauge": "AWG20 (DIN AWG26)",
+   "conn_a": "JST-XH 3",
+   "conn_b": "JST-XH 3",
+   "holes": [
+    "H4"
+   ],
+   "wires": [
+    {
+     "n": 1,
+     "sig": "5V",
+     "color": "red",
+     "at": ""
+    },
+    {
+     "n": 2,
+     "sig": "DIN 4Y",
+     "color": "yellow",
+     "at": ""
+    },
+    {
+     "n": 3,
+     "sig": "GND",
+     "color": "black",
+     "at": ""
+    }
+   ]
+  },
+  {
+   "id": "N3",
+   "name": "Nucleo -> display hub",
+   "a": "NUC",
+   "b": "DSP",
+   "len": 15,
+   "gauge": "AWG26",
+   "conn_a": "Dupont male x17",
+   "conn_b": "header on DSP",
+   "holes": [],
+   "wires": [
+    {
+     "n": 1,
+     "sig": "PA5",
+     "color": "blue",
+     "at": "CN7-10"
+    },
+    {
+     "n": 2,
+     "sig": "PB5",
+     "color": "blue",
+     "at": "CN7-13"
+    },
+    {
+     "n": 3,
+     "sig": "PA6",
+     "color": "blue",
+     "at": "CN7-12"
+    },
+    {
+     "n": 4,
+     "sig": "CS",
+     "color": "green",
+     "at": "CN8-2"
+    },
+    {
+     "n": 5,
+     "sig": "DC",
+     "color": "green",
+     "at": "CN8-4"
+    },
+    {
+     "n": 6,
+     "sig": "RST",
+     "color": "green",
+     "at": "CN8-6"
+    },
+    {
+     "n": 7,
+     "sig": "CS2",
+     "color": "green",
+     "at": "CN8-8"
+    },
+    {
+     "n": 8,
+     "sig": "DC2",
+     "color": "green",
+     "at": "CN8-10"
+    },
+    {
+     "n": 9,
+     "sig": "RST2",
+     "color": "green",
+     "at": "CN8-12"
+    },
+    {
+     "n": 10,
+     "sig": "T_CLK",
+     "color": "purple",
+     "at": "CN9-22"
+    },
+    {
+     "n": 11,
+     "sig": "T_MOSI",
+     "color": "purple",
+     "at": "CN9-18"
+    },
+    {
+     "n": 12,
+     "sig": "T_MISO",
+     "color": "purple",
+     "at": "CN9-16"
+    },
+    {
+     "n": 13,
+     "sig": "T_CS",
+     "color": "purple",
+     "at": "CN9-20"
+    },
+    {
+     "n": 14,
+     "sig": "T_CS2",
+     "color": "purple",
+     "at": "CN10-20"
+    },
+    {
+     "n": 15,
+     "sig": "T_IRQ",
+     "color": "purple",
+     "at": "CN9-14"
+    },
+    {
+     "n": 16,
+     "sig": "T_IRQ2",
+     "color": "purple",
+     "at": "CN10-18"
+    },
+    {
+     "n": 17,
+     "sig": "GND",
+     "color": "black",
+     "at": "CN7-8"
+    }
+   ]
+  },
+  {
+   "id": "J1",
+   "name": "Hub -> display hub (3.3 V share)",
+   "a": "HUB",
+   "b": "DSP",
+   "len": 10,
+   "gauge": "AWG24",
+   "conn_a": "JST-XH 2",
+   "conn_b": "JST-XH 2",
+   "holes": [],
+   "wires": [
+    {
+     "n": 1,
+     "sig": "3V3",
+     "color": "orange",
+     "at": ""
+    },
+    {
+     "n": 2,
+     "sig": "GND",
+     "color": "black",
+     "at": ""
+    }
+   ]
+  },
+  {
+   "id": "D1",
+   "name": "Display hub -> TFT P1",
+   "a": "DSP",
+   "b": "TFT1",
+   "len": 35,
+   "gauge": "ribbon 14",
+   "conn_a": "header 1x14",
+   "conn_b": "Dupont female 1x14 (module order)",
+   "holes": [
+    "H1"
+   ],
+   "ribbon": true,
+   "wires": [
+    {
+     "n": 1,
+     "sig": "VCC 3V3",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 2,
+     "sig": "GND",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 3,
+     "sig": "CS",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 4,
+     "sig": "RESET",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 5,
+     "sig": "DC",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 6,
+     "sig": "SDI(MOSI)",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 7,
+     "sig": "SCK",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 8,
+     "sig": "LED 3V3",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 9,
+     "sig": "SDO(MISO)",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 10,
+     "sig": "T_CLK",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 11,
+     "sig": "T_CS",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 12,
+     "sig": "T_DIN",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 13,
+     "sig": "T_DO",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 14,
+     "sig": "T_IRQ",
+     "color": "ribbon",
+     "at": ""
+    }
+   ]
+  },
+  {
+   "id": "D2",
+   "name": "Display hub -> TFT P2",
+   "a": "DSP",
+   "b": "TFT2",
+   "len": 35,
+   "gauge": "ribbon 14",
+   "conn_a": "header 1x14",
+   "conn_b": "Dupont female 1x14 (module order)",
+   "holes": [
+    "H2"
+   ],
+   "ribbon": true,
+   "same_as": "D1",
+   "wires": [
+    {
+     "n": 1,
+     "sig": "VCC 3V3",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 2,
+     "sig": "GND",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 3,
+     "sig": "CS",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 4,
+     "sig": "RESET",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 5,
+     "sig": "DC",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 6,
+     "sig": "SDI(MOSI)",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 7,
+     "sig": "SCK",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 8,
+     "sig": "LED 3V3",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 9,
+     "sig": "SDO(MISO)",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 10,
+     "sig": "T_CLK",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 11,
+     "sig": "T_CS",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 12,
+     "sig": "T_DIN",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 13,
+     "sig": "T_DO",
+     "color": "ribbon",
+     "at": ""
+    },
+    {
+     "n": 14,
+     "sig": "T_IRQ",
+     "color": "ribbon",
+     "at": ""
+    }
+   ]
+  },
+  {
+   "id": "N5",
+   "name": "Nucleo -> audio/switch/LCD board",
+   "a": "NUC",
+   "b": "AUD",
+   "len": 15,
+   "gauge": "AWG26",
+   "conn_a": "Dupont male x9",
+   "conn_b": "header on AUD",
+   "holes": [],
+   "wires": [
+    {
+     "n": 1,
+     "sig": "PC6",
+     "color": "purple",
+     "at": "CN7-1"
+    },
+    {
+     "n": 2,
+     "sig": "PC7",
+     "color": "purple",
+     "at": "CN7-11"
+    },
+    {
+     "n": 3,
+     "sig": "MUTE1",
+     "color": "brown",
+     "at": "CN10-33"
+    },
+    {
+     "n": 4,
+     "sig": "SURR1",
+     "color": "brown",
+     "at": "CN10-24"
+    },
+    {
+     "n": 5,
+     "sig": "MUTE2",
+     "color": "brown",
+     "at": "CN10-7"
+    },
+    {
+     "n": 6,
+     "sig": "SURR2",
+     "color": "brown",
+     "at": "CN10-26"
+    },
+    {
+     "n": 7,
+     "sig": "PB8",
+     "color": "white",
+     "at": "CN7-2"
+    },
+    {
+     "n": 8,
+     "sig": "PB9",
+     "color": "green",
+     "at": "CN7-4"
+    },
+    {
+     "n": 9,
+     "sig": "GND",
+     "color": "black",
+     "at": "CN10-27"
+    }
+   ]
+  },
+  {
+   "id": "I1",
+   "name": "AUD -> LCD P1 -> LCD P2 (I2C daisy chain, 45 + 30 cm)",
+   "a": "AUD",
+   "b": "LCD1 > LCD2",
+   "len": 75,
+   "gauge": "AWG24",
+   "conn_a": "JST-XH 4",
+   "conn_b": "Dupont female 1x4 at each LCD",
+   "holes": [
+    "H5",
+    "H6"
+   ],
+   "wires": [
+    {
+     "n": 1,
+     "sig": "GND",
+     "color": "black",
+     "at": ""
+    },
+    {
+     "n": 2,
+     "sig": "5V",
+     "color": "red",
+     "at": ""
+    },
+    {
+     "n": 3,
+     "sig": "SDA",
+     "color": "green",
+     "at": ""
+    },
+    {
+     "n": 4,
+     "sig": "SCL",
+     "color": "white",
+     "at": ""
+    }
+   ]
+  },
+  {
+   "id": "S1",
+   "name": "Audio board -> P1 controls (buzzer, mute, surrender)",
+   "a": "AUD",
+   "b": "CTRL1",
+   "len": 40,
+   "gauge": "AWG24",
+   "conn_a": "JST-XH 5",
+   "conn_b": "solder + heatshrink",
+   "holes": [
+    "H1"
+   ],
+   "wires": [
+    {
+     "n": 1,
+     "sig": "BUZ+ 5V",
+     "color": "red",
+     "at": ""
+    },
+    {
+     "n": 2,
+     "sig": "BUZ- (2N2222 C)",
+     "color": "purple",
+     "at": ""
+    },
+    {
+     "n": 3,
+     "sig": "MUTE1",
+     "color": "brown",
+     "at": ""
+    },
+    {
+     "n": 4,
+     "sig": "SURR1",
+     "color": "brown",
+     "at": ""
+    },
+    {
+     "n": 5,
+     "sig": "GND",
+     "color": "black",
+     "at": ""
+    }
+   ]
+  },
+  {
+   "id": "S2",
+   "name": "Audio board -> P2 controls",
+   "a": "AUD",
+   "b": "CTRL2",
+   "len": 40,
+   "gauge": "AWG24",
+   "conn_a": "JST-XH 5",
+   "conn_b": "solder + heatshrink",
+   "holes": [
+    "H2"
+   ],
+   "wires": [
+    {
+     "n": 1,
+     "sig": "BUZ+ 5V",
+     "color": "red",
+     "at": ""
+    },
+    {
+     "n": 2,
+     "sig": "BUZ- (2N2222 C)",
+     "color": "purple",
+     "at": ""
+    },
+    {
+     "n": 3,
+     "sig": "MUTE2",
+     "color": "brown",
+     "at": ""
+    },
+    {
+     "n": 4,
+     "sig": "SURR2",
+     "color": "brown",
+     "at": ""
+    },
+    {
+     "n": 5,
+     "sig": "GND",
+     "color": "black",
+     "at": ""
+    }
+   ]
+  },
+  {
+   "id": "P1",
+   "name": "PSU -> 5 V bus",
+   "a": "PSU",
+   "b": "BUS",
+   "len": 15,
+   "gauge": "AWG18",
+   "conn_a": "XT60 / GX16-2",
+   "conn_b": "terminal block",
+   "holes": [
+    "H7"
+   ],
+   "wires": [
+    {
+     "n": 1,
+     "sig": "+5V",
+     "color": "red",
+     "at": ""
+    },
+    {
+     "n": 2,
+     "sig": "GND",
+     "color": "black",
+     "at": ""
+    }
+   ]
+  },
+  {
+   "id": "P2",
+   "name": "5 V bus -> LED driver (feeds L1-L4)",
+   "a": "BUS",
+   "b": "DRV",
+   "len": 10,
+   "gauge": "AWG18",
+   "conn_a": "terminal block",
+   "conn_b": "screw terminal",
+   "holes": [],
+   "wires": [
+    {
+     "n": 1,
+     "sig": "+5V",
+     "color": "red",
+     "at": ""
+    },
+    {
+     "n": 2,
+     "sig": "GND",
+     "color": "black",
+     "at": ""
+    }
+   ]
+  },
+  {
+   "id": "P3",
+   "name": "5 V bus -> audio board + LCDs",
+   "a": "BUS",
+   "b": "AUD",
+   "len": 10,
+   "gauge": "AWG22",
+   "conn_a": "terminal block",
+   "conn_b": "JST-XH 2",
+   "holes": [],
+   "wires": [
+    {
+     "n": 1,
+     "sig": "+5V",
+     "color": "red",
+     "at": ""
+    },
+    {
+     "n": 2,
+     "sig": "GND",
+     "color": "black",
+     "at": ""
+    }
+   ]
+  },
+  {
+   "id": "P4",
+   "name": "Bus GND -> Nucleo GND (star ground)",
+   "a": "BUS",
+   "b": "NUC",
+   "len": 10,
+   "gauge": "AWG22",
+   "conn_a": "terminal block",
+   "conn_b": "Dupont male",
+   "holes": [],
+   "wires": [
+    {
+     "n": 1,
+     "sig": "GND",
+     "color": "black",
+     "at": "CN8-11"
+    }
+   ]
+  },
+  {
+   "id": "P5",
+   "name": "5 V bus -> Nucleo E5V (final build only, JP3 = E5V)",
+   "a": "BUS",
+   "b": "NUC",
+   "len": 25,
+   "gauge": "AWG22",
+   "conn_a": "terminal block",
+   "conn_b": "pin soldered into morpho CN11-6",
+   "holes": [],
+   "wires": [
+    {
+     "n": 1,
+     "sig": "E5V",
+     "color": "red",
+     "at": "CN11-6"
+    }
+   ]
+  }
+ ],
+ "holes": {
+  "H1": "tower face toward P1, low (hidden inside the P1 box), slot 60 x 25 mm, x 150-210 / z 8-33",
+  "H2": "tower face toward P2, low (hidden inside the P2 box), slot 60 x 25 mm, x 150-210 / z 8-33",
+  "H3": "cut-out of the P1 attack panel in the tower face; the panel back is inside the tower, no extra hole",
+  "H4": "cut-out of the P2 attack panel in the tower face; the panel back is inside the tower, no extra hole",
+  "H5": "cut-out of LCD P1 in the tower face (window 72 x 25 mm); pins end inside the tower",
+  "H6": "cut-out of LCD P2 in the tower face (window 72 x 25 mm); pins end inside the tower",
+  "H7": "tower side wall at the power end: 5 V inlet (XT60 / GX16-2) + power switch",
+  "H8": "tower side wall at the Nucleo end: ST-LINK USB access ~14 x 10 mm, z 8-20"
  }
 }

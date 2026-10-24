@@ -3,7 +3,9 @@
 Run:  python firmware/tools/pinmap.py
   - checks every pin is on a Zio header (CN7..CN10), unique, not board-reserved,
     and that EXTI lines do not clash
-  - writes firmware/tools/pinmap.json (used by the wiring infographic)
+  - checks every pin is carried by exactly one cable of HARNESS
+  - writes firmware/tools/pinmap.json, docs/wiring.html (infographic) and the
+    generated tables inside firmware/HARNESS.md
 
 Zio table: UM1974 Rev 7, Table 13 (NUCLEO-F746ZG/F756ZG/F767ZI pin assignments).
 The ST morpho headers CN11/CN12 are NOT soldered by default, so only Zio pins
@@ -127,6 +129,147 @@ PINS = [
 ]
 
 
+# ---------------------------------------------------------------------------
+# Cable harness. Boards (all inside the bottom of the hollow centre tower):
+#   NUC  Nucleo-F767ZI          HUB  matrix hub (28 row pull-ups, 4 ribbon sockets)
+#   DRV  LED driver (74AHCT125 + 330R)   DSP  display hub (splits SPI/touch to 2 TFTs)
+#   AUD  audio/switch board (2x 2N2222 buzzer drivers)   BUS  5 V terminal block
+# Openings (see HOLES): H1/H2 low slots to the P1/P2 boxes, H3-H6 the cut-outs
+# the attack panels and LCDs sit in, H7/H8 the tower side walls.
+# A wire is (signal, colour). A signal that is a pin label or port pin gets its
+# Zio position automatically; "3V3" and "NAME@CNx-n" (GND, E5V) are Nucleo power pins.
+# ---------------------------------------------------------------------------
+NUCLEO_POWER = {"3V3": "CN8-7"}
+
+HARNESS = [
+    {"id": "N1", "name": "Nucleo -> matrix hub", "a": "NUC", "b": "HUB", "len": 15, "gauge": "AWG26",
+     "conn_a": "Dupont male x38", "conn_b": "header on HUB", "holes": [],
+     "wires": [(f"COL{i}", "white") for i in range(8)] + [(f"ROW{i}", "grey") for i in range(28)]
+              + [("3V3", "orange"), ("GND@CN9-12", "black")]},
+    {"id": "M1", "name": "Hub -> P1 fleet panel switches", "a": "HUB", "b": "PANEL0", "len": 30, "gauge": "ribbon 16",
+     "conn_a": "IDC 2x8", "conn_b": "IDC 2x8", "holes": ["H1"], "ribbon": True,
+     "wires": [(f"COL {c}", "ribbon") for c in "ABCDEFGH"] + [(f"ROW {r}", "ribbon") for r in range(1, 8)] + [("GND", "ribbon")]},
+    {"id": "M2", "name": "Hub -> P1 attack panel switches", "a": "HUB", "b": "PANEL1", "len": 30, "gauge": "ribbon 16",
+     "conn_a": "IDC 2x8", "conn_b": "IDC 2x8", "holes": ["H3"], "ribbon": True, "same_as": "M1"},
+    {"id": "M3", "name": "Hub -> P2 fleet panel switches", "a": "HUB", "b": "PANEL2", "len": 30, "gauge": "ribbon 16",
+     "conn_a": "IDC 2x8", "conn_b": "IDC 2x8", "holes": ["H2"], "ribbon": True, "same_as": "M1"},
+    {"id": "M4", "name": "Hub -> P2 attack panel switches", "a": "HUB", "b": "PANEL3", "len": 30, "gauge": "ribbon 16",
+     "conn_a": "IDC 2x8", "conn_b": "IDC 2x8", "holes": ["H4"], "ribbon": True, "same_as": "M1"},
+    {"id": "N2", "name": "Nucleo -> LED driver", "a": "NUC", "b": "DRV", "len": 15, "gauge": "AWG26",
+     "conn_a": "Dupont male x5", "conn_b": "JST-XH 5", "holes": [],
+     "wires": [("PE9", "yellow"), ("PE11", "yellow"), ("PE13", "yellow"), ("PE14", "yellow"), ("GND@CN10-22", "black")]},
+    {"id": "L1", "name": "LED driver -> P1 fleet LEDs", "a": "DRV", "b": "PANEL0", "len": 35, "gauge": "AWG20 (DIN AWG26)",
+     "conn_a": "JST-XH 3", "conn_b": "JST-XH 3", "holes": ["H1"],
+     "wires": [("5V", "red"), ("DIN 1Y", "yellow"), ("GND", "black")]},
+    {"id": "L2", "name": "LED driver -> P1 attack LEDs", "a": "DRV", "b": "PANEL1", "len": 35, "gauge": "AWG20 (DIN AWG26)",
+     "conn_a": "JST-XH 3", "conn_b": "JST-XH 3", "holes": ["H3"],
+     "wires": [("5V", "red"), ("DIN 2Y", "yellow"), ("GND", "black")]},
+    {"id": "L3", "name": "LED driver -> P2 fleet LEDs", "a": "DRV", "b": "PANEL2", "len": 35, "gauge": "AWG20 (DIN AWG26)",
+     "conn_a": "JST-XH 3", "conn_b": "JST-XH 3", "holes": ["H2"],
+     "wires": [("5V", "red"), ("DIN 3Y", "yellow"), ("GND", "black")]},
+    {"id": "L4", "name": "LED driver -> P2 attack LEDs", "a": "DRV", "b": "PANEL3", "len": 35, "gauge": "AWG20 (DIN AWG26)",
+     "conn_a": "JST-XH 3", "conn_b": "JST-XH 3", "holes": ["H4"],
+     "wires": [("5V", "red"), ("DIN 4Y", "yellow"), ("GND", "black")]},
+    {"id": "N3", "name": "Nucleo -> display hub", "a": "NUC", "b": "DSP", "len": 15, "gauge": "AWG26",
+     "conn_a": "Dupont male x17", "conn_b": "header on DSP", "holes": [],
+     "wires": [("PA5", "blue"), ("PB5", "blue"), ("PA6", "blue"), ("CS", "green"), ("DC", "green"),
+               ("RST", "green"), ("CS2", "green"), ("DC2", "green"), ("RST2", "green"),
+               ("T_CLK", "purple"), ("T_MOSI", "purple"), ("T_MISO", "purple"), ("T_CS", "purple"),
+               ("T_CS2", "purple"), ("T_IRQ", "purple"), ("T_IRQ2", "purple"), ("GND@CN7-8", "black")]},
+    {"id": "J1", "name": "Hub -> display hub (3.3 V share)", "a": "HUB", "b": "DSP", "len": 10, "gauge": "AWG24",
+     "conn_a": "JST-XH 2", "conn_b": "JST-XH 2", "holes": [],
+     "wires": [("3V3", "orange"), ("GND", "black")]},
+    {"id": "D1", "name": "Display hub -> TFT P1", "a": "DSP", "b": "TFT1", "len": 35, "gauge": "ribbon 14",
+     "conn_a": "header 1x14", "conn_b": "Dupont female 1x14 (module order)", "holes": ["H1"], "ribbon": True,
+     "wires": [("VCC 3V3", "ribbon"), ("GND", "ribbon"), ("CS", "ribbon"), ("RESET", "ribbon"), ("DC", "ribbon"),
+               ("SDI(MOSI)", "ribbon"), ("SCK", "ribbon"), ("LED 3V3", "ribbon"), ("SDO(MISO)", "ribbon"),
+               ("T_CLK", "ribbon"), ("T_CS", "ribbon"), ("T_DIN", "ribbon"), ("T_DO", "ribbon"), ("T_IRQ", "ribbon")]},
+    {"id": "D2", "name": "Display hub -> TFT P2", "a": "DSP", "b": "TFT2", "len": 35, "gauge": "ribbon 14",
+     "conn_a": "header 1x14", "conn_b": "Dupont female 1x14 (module order)", "holes": ["H2"], "ribbon": True,
+     "same_as": "D1"},
+    {"id": "N5", "name": "Nucleo -> audio/switch/LCD board", "a": "NUC", "b": "AUD", "len": 15, "gauge": "AWG26",
+     "conn_a": "Dupont male x9", "conn_b": "header on AUD", "holes": [],
+     "wires": [("PC6", "purple"), ("PC7", "purple"), ("MUTE1", "brown"), ("SURR1", "brown"),
+               ("MUTE2", "brown"), ("SURR2", "brown"), ("PB8", "white"), ("PB9", "green"), ("GND@CN10-27", "black")]},
+    {"id": "I1", "name": "AUD -> LCD P1 -> LCD P2 (I2C daisy chain, 45 + 30 cm)", "a": "AUD", "b": "LCD1 > LCD2",
+     "len": 75, "gauge": "AWG24", "conn_a": "JST-XH 4", "conn_b": "Dupont female 1x4 at each LCD", "holes": ["H5", "H6"],
+     "wires": [("GND", "black"), ("5V", "red"), ("SDA", "green"), ("SCL", "white")]},
+    {"id": "S1", "name": "Audio board -> P1 controls (buzzer, mute, surrender)", "a": "AUD", "b": "CTRL1", "len": 40,
+     "gauge": "AWG24", "conn_a": "JST-XH 5", "conn_b": "solder + heatshrink", "holes": ["H1"],
+     "wires": [("BUZ+ 5V", "red"), ("BUZ- (2N2222 C)", "purple"), ("MUTE1", "brown"), ("SURR1", "brown"), ("GND", "black")]},
+    {"id": "S2", "name": "Audio board -> P2 controls", "a": "AUD", "b": "CTRL2", "len": 40,
+     "gauge": "AWG24", "conn_a": "JST-XH 5", "conn_b": "solder + heatshrink", "holes": ["H2"],
+     "wires": [("BUZ+ 5V", "red"), ("BUZ- (2N2222 C)", "purple"), ("MUTE2", "brown"), ("SURR2", "brown"), ("GND", "black")]},
+    {"id": "P1", "name": "PSU -> 5 V bus", "a": "PSU", "b": "BUS", "len": 15, "gauge": "AWG18",
+     "conn_a": "XT60 / GX16-2", "conn_b": "terminal block", "holes": ["H7"],
+     "wires": [("+5V", "red"), ("GND", "black")]},
+    {"id": "P2", "name": "5 V bus -> LED driver (feeds L1-L4)", "a": "BUS", "b": "DRV", "len": 10, "gauge": "AWG18",
+     "conn_a": "terminal block", "conn_b": "screw terminal", "holes": [],
+     "wires": [("+5V", "red"), ("GND", "black")]},
+    {"id": "P3", "name": "5 V bus -> audio board + LCDs", "a": "BUS", "b": "AUD", "len": 10, "gauge": "AWG22",
+     "conn_a": "terminal block", "conn_b": "JST-XH 2", "holes": [],
+     "wires": [("+5V", "red"), ("GND", "black")]},
+    {"id": "P4", "name": "Bus GND -> Nucleo GND (star ground)", "a": "BUS", "b": "NUC", "len": 10, "gauge": "AWG22",
+     "conn_a": "terminal block", "conn_b": "Dupont male", "holes": [],
+     "wires": [("GND@CN8-11", "black")]},
+    {"id": "P5", "name": "5 V bus -> Nucleo E5V (final build only, JP3 = E5V)", "a": "BUS", "b": "NUC", "len": 25,
+     "gauge": "AWG22", "conn_a": "terminal block", "conn_b": "pin soldered into morpho CN11-6", "holes": [],
+     "wires": [("E5V@CN11-6", "red")]},
+]
+
+HOLES = {
+    "H1": "tower face toward P1, low (hidden inside the P1 box), slot 60 x 25 mm, x 150-210 / z 8-33",
+    "H2": "tower face toward P2, low (hidden inside the P2 box), slot 60 x 25 mm, x 150-210 / z 8-33",
+    "H3": "cut-out of the P1 attack panel in the tower face; the panel back is inside the tower, no extra hole",
+    "H4": "cut-out of the P2 attack panel in the tower face; the panel back is inside the tower, no extra hole",
+    "H5": "cut-out of LCD P1 in the tower face (window 72 x 25 mm); pins end inside the tower",
+    "H6": "cut-out of LCD P2 in the tower face (window 72 x 25 mm); pins end inside the tower",
+    "H7": "tower side wall at the power end: 5 V inlet (XT60 / GX16-2) + power switch",
+    "H8": "tower side wall at the Nucleo end: ST-LINK USB access ~14 x 10 mm, z 8-20",
+}
+
+
+def resolve_wire(sig, pins_by_label, pins_by_port, where):
+    """Header position of a wire's Nucleo end, or '' when it does not land on the Nucleo."""
+    if "@" in sig:
+        return sig.split("@")[1]
+    if sig in NUCLEO_POWER:
+        return NUCLEO_POWER[sig]
+    p = pins_by_label.get(sig) or pins_by_port.get(sig)
+    if p:
+        conn, num, _ = where[p][0]
+        return f"{conn}-{num}"
+    return ""
+
+
+MD_BEGIN = "<!-- BEGIN generated by tools/pinmap.py -->"
+MD_END = "<!-- END generated -->"
+
+
+def harness_markdown(harness):
+    """Openings, cable list and wire order of every multi-wire cable, for HARNESS.md."""
+    md = ["### ช่องเจาะ", "| ช่อง | ตำแหน่ง | สายที่ผ่าน |", "|---|---|---|"]
+    for h, text in HOLES.items():
+        md.append(f"| **{h}** | {text} | {', '.join(c['id'] for c in harness if h in c['holes']) or '–'} |")
+    md += ["", "### รายการสาย", "| สาย | จาก → ไป | ยาว cm | เส้น | หัวต่อ ต้นทาง / ปลายทาง | ผ่าน |", "|---|---|---|---|---|---|"]
+    for c in harness:
+        md.append(f"| **{c['id']}** | {c['a']} → {c['b']}<br>{c['name']} | {c['len']} | "
+                  f"{len(c['wires'])} × {c['gauge']} | {c['conn_a']} / {c['conn_b']} | {', '.join(c['holes']) or '–'} |")
+    for c in harness:
+        if len(c["wires"]) <= 3:
+            continue
+        md += ["", f"#### {c['id']} · {c['name']}"]
+        if c.get("same_as"):
+            md.append(f"ลำดับสายเหมือน {c['same_as']}")
+            continue
+        nucleo = any(w["at"] for w in c["wires"])
+        md += ["| # | สัญญาณ | " + ("Nucleo | " if nucleo else "") + "สี |",
+               "|---|---|" + ("---|" if nucleo else "") + "---|"]
+        for w in c["wires"]:
+            md.append(f"| {w['n']} | {w['sig']} | " + (f"**{w['at']}** | " if nucleo else "") + f"{w['color']} |")
+    return "\n".join(md) + "\n"
+
+
 def locate():
     where = {}
     for conn, pins in ZIO.items():
@@ -165,8 +308,32 @@ def main():
                     "also": [f"{c}-{n}" for c, n, _ in where[pin][1:]]})
     headers = {c: [{"num": n, "sig": s, "zio": z} for n, (s, z) in sorted(p.items())]
                for c, p in ZIO.items()}
+    # harness: resolve the Nucleo end of every wire, check nothing is wired twice
+    by_label = {label: pin for pin, label, *_ in PINS if label}
+    by_port = {pin: pin for pin, *_ in PINS}
+    harness = []
+    landed = {}
+    for cab in HARNESS:
+        wires = cab.get("wires") or next(c["wires"] for c in HARNESS if c["id"] == cab["same_as"])
+        rows = []
+        for i, (sig, color) in enumerate(wires, 1):
+            at = resolve_wire(sig, by_label, by_port, where) if cab["a"] == "NUC" or cab["b"] == "NUC" else ""
+            if at and sig not in NUCLEO_POWER and "@" not in sig:
+                if at in landed:
+                    errors.append(f"{at} wired by {landed[at]} and {cab['id']}")
+                landed[at] = cab["id"]
+            rows.append({"n": i, "sig": sig.split("@")[0], "color": color, "at": at})
+        harness.append({k: v for k, v in cab.items() if k != "wires"} | {"wires": rows})
+    used_signal_pins = {f"{c}-{n}" for c, n in ((p["conn"], p["num"]) for p in out)}
+    missing = sorted(used_signal_pins - set(landed))
+    if missing:
+        errors.append("pins in PINS but in no cable: " + ", ".join(missing))
+    if errors:
+        print("ERRORS:\n  " + "\n  ".join(errors))
+        sys.exit(1)
+
     here = os.path.dirname(os.path.abspath(__file__))
-    data = {"pins": out, "headers": headers}
+    data = {"pins": out, "headers": headers, "harness": harness, "holes": HOLES}
     path = os.path.join(here, "pinmap.json")
     with open(path, "w", encoding="utf8") as f:
         json.dump(data, f, indent=1)
@@ -177,8 +344,19 @@ def main():
     html = os.path.join(here, "..", "..", "docs", "wiring.html")
     with open(html, "w", encoding="utf8") as f:
         f.write(page)
+
+    # cable tables inside HARNESS.md, between the BEGIN/END markers
+    md = os.path.join(here, "..", "HARNESS.md")
+    with open(md, encoding="utf8") as f:
+        doc = f.read()
+    begin, end = doc.index(MD_BEGIN) + len(MD_BEGIN), doc.index(MD_END)
+    with open(md, "w", encoding="utf8", newline="\n") as f:
+        f.write(doc[:begin] + "\n" + harness_markdown(harness) + doc[end:])
+
     print(f"OK: {len(out)} pins, all on Zio, unique, EXTI lines {sorted(exti)}")
-    print(f"   -> {os.path.normpath(path)}\n   -> {os.path.normpath(html)}")
+    print(f"OK: {len(harness)} cables, every pin in exactly one cable")
+    for p in (path, html, md):
+        print(f"   -> {os.path.normpath(p)}")
 
 
 if __name__ == "__main__":

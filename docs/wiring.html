@@ -106,6 +106,38 @@ tr.hl td { background: color-mix(in srgb, var(--focus) 12%, transparent); }
 .note p, .note ul { margin: 0; }
 .note ul { padding-left: 18px; }
 @media (prefers-reduced-motion: no-preference) { .pin, .chip { transition: opacity .15s, background-color .15s; } }
+
+/* enclosure views + cable list */
+.harness { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 900px) { .harness { grid-template-columns: minmax(0, 1fr); } }
+.views { display: grid; gap: 14px; min-width: 0; }
+.view { border: 1px solid var(--line); border-radius: 10px; background: var(--board); padding: 10px 10px 6px; min-width: 0; }
+.view .sub, .hint { color: var(--muted); font-size: 13px; margin: 2px 0 6px; }
+svg.encl { display: block; width: 100%; height: auto; }
+svg.encl text { font-family: var(--body); font-size: 11px; fill: var(--ink); }
+svg.encl text.small { font-size: 9.5px; fill: var(--muted); }
+.shell { fill: color-mix(in srgb, var(--paper) 70%, transparent); stroke: var(--silk); stroke-width: 1.5; }
+.part rect { fill: color-mix(in srgb, var(--c) 28%, var(--board)); stroke: var(--c); stroke-width: 1.5; }
+.brd rect { fill: color-mix(in srgb, var(--ink) 9%, var(--board)); stroke: var(--ink); stroke-width: 1.2; }
+.hole { stroke: var(--focus); stroke-width: 4; stroke-linecap: round; }
+.route { fill: none; stroke: var(--c); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; opacity: 0.85; }
+.focus .route { opacity: 0.08; }
+.focus .route.on { opacity: 1; stroke-width: 4.5; }
+.focus .part:not(.on), .focus .brd:not(.on) { opacity: 0.35; }
+.cables { display: grid; gap: 6px; min-width: 0; }
+.cable { border: 1px solid var(--line); border-left: 5px solid var(--c); border-radius: 8px; background: var(--board); min-width: 0; }
+.cable summary { cursor: pointer; padding: 7px 10px; display: flex; flex-wrap: wrap; gap: 2px 10px; align-items: baseline; list-style: none; }
+.cable summary::-webkit-details-marker { display: none; }
+.cable summary:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.cable .cid { font-family: var(--mono); font-weight: 700; min-width: 2.2em; }
+.cable .meta { color: var(--muted); font-size: 12.5px; margin-left: auto; font-family: var(--mono); }
+.cable[open] { box-shadow: 0 0 0 2px color-mix(in srgb, var(--c) 45%, transparent); }
+.cbody { padding: 0 10px 10px; }
+.cbody .sub { color: var(--muted); font-size: 13px; margin-bottom: 6px; }
+.sw { display: inline-block; width: 12px; height: 12px; border-radius: 3px; border: 1px solid var(--muted); vertical-align: -1px; margin-right: 6px; }
+.boards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+.boards div { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; background: var(--board); font-size: 13.5px; }
+.boards b { font-family: var(--mono); }
 </style>
 
 <div class="wrap">
@@ -151,10 +183,62 @@ tr.hl td { background: color-mix(in srgb, var(--focus) 12%, transparent); }
       </ul>
     </div>
   </section>
+
+  <header>
+    <h2>เดินสายในตู้</h2>
+    <p class="lede">บอร์ดทั้งหมดอยู่บนพื้นเสากลาง สายไปกล่องผู้เล่นลอดช่อง H1/H2 ส่วนแผงโจมตีกับ LCD ฝังในหน้าเสา
+      ขนาดตู้อ่านจากไฟล์ STL ตำแหน่งอุปกรณ์เป็นข้อเสนอ วัดของจริงก่อนเจาะ · รายละเอียดเต็มใน <span class="mono">firmware/HARNESS.md</span></p>
+  </header>
+
+  <div class="harness">
+    <div class="views">
+      <div class="view">
+        <h3>ภาพตัดด้านข้าง</h3>
+        <p class="sub">ผู้เล่น P1 นั่งซ้าย P2 นั่งขวา · หน่วย mm</p>
+        <svg class="encl" id="side" viewBox="0 0 555 362" role="img" aria-label="ภาพตัดด้านข้างของตู้ กล่องผู้เล่นสองข้างและเสากลาง พร้อมเส้นทางสาย"></svg>
+      </div>
+      <div class="view">
+        <h3>ผังพื้นเสากลาง (มองจากบน)</h3>
+        <p class="sub">ซ้าย = สัญญาณ · ขวา = ไฟกระแสสูง · H8 ช่อง USB · H7 ไฟเข้า</p>
+        <svg class="encl" id="floor" viewBox="0 0 580 250" role="img" aria-label="ผังวางบอร์ดบนพื้นเสากลาง พร้อมเส้นทางสาย"></svg>
+      </div>
+      <div class="boards">
+        <div><b>HUB</b> pull-up 10k × 28 ไป 3.3V · หัว IDC 2×8 × 4 (J0–J3) ขา 1–8 COL, 9–15 ROW, 16 GND</div>
+        <div><b>DRV</b> 74AHCT125 + 330Ω × 4 · 5V เข้าจาก BUS · หัว JST 3 ขา × 4 ไปแผงไฟ</div>
+        <div><b>DSP</b> แยก SPI/touch ไปจอ 2 จอ · หัว 1×14 เรียงตามขาโมดูลจอ · 33Ω ที่ SCK, SDI</div>
+        <div><b>AUD</b> 2N2222 × 2 ขับ buzzer · ส่งต่อสวิตช์ยอมแพ้/ปิดเสียง · I2C + 5V ไป LCD</div>
+        <div><b>BUS</b> ไฟเข้า → สวิตช์ → ฟิวส์ 10A → ขั้ว +5V / GND · GND ร่วมกับ Nucleo (P4)</div>
+      </div>
+    </div>
+    <div>
+      <p class="hint">แตะสายเพื่อดูลำดับเส้นและไฮไลต์เส้นทางในภาพ</p>
+      <div class="cables" id="cables"></div>
+    </div>
+  </div>
+
+  <section class="notes">
+    <div class="note">
+      <h3>ช่องเจาะ</h3>
+      <div class="tablebox"><table id="holes"><thead><tr><th>ช่อง</th><th>ตำแหน่ง</th><th>สาย</th></tr></thead><tbody></tbody></table></div>
+    </div>
+    <div class="note">
+      <h3>สีสาย</h3>
+      <ul id="wirecolors"></ul>
+    </div>
+    <div class="note warn">
+      <h3>ก่อนตัดสาย</h3>
+      <ul>
+        <li>ความยาวเป็นค่าประมาณ วัดเส้นทางจริงด้วยเชือกแล้วเผื่อ 5–10 cm</li>
+        <li>สายไฟ LED/ไฟเลี้ยง เดินแยกจากสายแพสัญญาณ ข้ามกันให้ข้ามตั้งฉาก</li>
+        <li>สาย P5 (E5V) ต่อเฉพาะตอนประกอบจริง ห้ามต่อพร้อม USB</li>
+        <li>ประกอบทีละชุดแล้วทดสอบตามลำดับใน HARNESS.md หัวข้อ 6</li>
+      </ul>
+    </div>
+  </section>
 </div>
 
 <script>
-const DATA = {"pins": [{"pin": "PE9", "label": "", "group": "led", "mode": "TIM1_CH1 (AF)", "to": "74AHCT125 1A (pin 2) -> panel 0 P1 fleet", "conn": "CN10", "num": 4, "zio": "D6", "also": []}, {"pin": "PE11", "label": "", "group": "led", "mode": "TIM1_CH2 (AF)", "to": "74AHCT125 2A (pin 5) -> panel 1 P1 attack", "conn": "CN10", "num": 6, "zio": "D5", "also": []}, {"pin": "PE13", "label": "", "group": "led", "mode": "TIM1_CH3 (AF)", "to": "74AHCT125 3A (pin 9) -> panel 2 P2 fleet", "conn": "CN10", "num": 10, "zio": "D3", "also": []}, {"pin": "PE14", "label": "", "group": "led", "mode": "TIM1_CH4 (AF)", "to": "74AHCT125 4A (pin 12) -> panel 3 P2 attack", "conn": "CN10", "num": 28, "zio": "D38", "also": []}, {"pin": "PD0", "label": "COL0", "group": "col", "mode": "Output Open Drain", "to": "column A (all 4 panels)", "conn": "CN9", "num": 25, "zio": "D67", "also": []}, {"pin": "PD1", "label": "COL1", "group": "col", "mode": "Output Open Drain", "to": "column B", "conn": "CN9", "num": 27, "zio": "D66", "also": []}, {"pin": "PD14", "label": "COL2", "group": "col", "mode": "Output Open Drain", "to": "column C", "conn": "CN7", "num": 16, "zio": "D10", "also": []}, {"pin": "PD3", "label": "COL3", "group": "col", "mode": "Output Open Drain", "to": "column D", "conn": "CN9", "num": 10, "zio": "D55", "also": []}, {"pin": "PD4", "label": "COL4", "group": "col", "mode": "Output Open Drain", "to": "column E", "conn": "CN9", "num": 8, "zio": "D54", "also": []}, {"pin": "PD5", "label": "COL5", "group": "col", "mode": "Output Open Drain", "to": "column F", "conn": "CN9", "num": 6, "zio": "D53", "also": []}, {"pin": "PD6", "label": "COL6", "group": "col", "mode": "Output Open Drain", "to": "column G", "conn": "CN9", "num": 4, "zio": "D52", "also": []}, {"pin": "PD7", "label": "COL7", "group": "col", "mode": "Output Open Drain", "to": "column H", "conn": "CN9", "num": 2, "zio": "D51", "also": []}, {"pin": "PF0", "label": "ROW0", "group": "row0", "mode": "Input + pull-up", "to": "panel 0 (P1 fleet) row 1", "conn": "CN9", "num": 21, "zio": "D68", "also": []}, {"pin": "PF1", "label": "ROW1", "group": "row0", "mode": "Input + pull-up", "to": "panel 0 row 2", "conn": "CN9", "num": 19, "zio": "D69", "also": []}, {"pin": "PF2", "label": "ROW2", "group": "row0", "mode": "Input + pull-up", "to": "panel 0 row 3", "conn": "CN9", "num": 17, "zio": "D70", "also": []}, {"pin": "PF3", "label": "ROW3", "group": "row0", "mode": "Input + pull-up", "to": "panel 0 row 4", "conn": "CN9", "num": 7, "zio": "A3", "also": []}, {"pin": "PF4", "label": "ROW4", "group": "row0", "mode": "Input + pull-up", "to": "panel 0 row 5", "conn": "CN10", "num": 11, "zio": "A8", "also": []}, {"pin": "PF5", "label": "ROW5", "group": "row0", "mode": "Input + pull-up", "to": "panel 0 row 6", "conn": "CN9", "num": 9, "zio": "A4", "also": []}, {"pin": "PE15", "label": "ROW6", "group": "row0", "mode": "Input + pull-up", "to": "panel 0 row 7", "conn": "CN10", "num": 30, "zio": "D37", "also": []}, {"pin": "PF7", "label": "ROW7", "group": "row1", "mode": "Input + pull-up", "to": "panel 1 (P1 attack) row 1", "conn": "CN9", "num": 26, "zio": "D62", "also": []}, {"pin": "PF8", "label": "ROW8", "group": "row1", "mode": "Input + pull-up", "to": "panel 1 row 2", "conn": "CN9", "num": 24, "zio": "D61", "also": []}, {"pin": "PF9", "label": "ROW9", "group": "row1", "mode": "Input + pull-up", "to": "panel 1 row 3", "conn": "CN9", "num": 28, "zio": "D63", "also": []}, {"pin": "PF10", "label": "ROW10", "group": "row1", "mode": "Input + pull-up", "to": "panel 1 row 4", "conn": "CN9", "num": 11, "zio": "A5", "also": []}, {"pin": "PB10", "label": "ROW11", "group": "row1", "mode": "Input + pull-up", "to": "panel 1 row 5", "conn": "CN10", "num": 32, "zio": "D36", "also": []}, {"pin": "PF12", "label": "ROW12", "group": "row1", "mode": "Input + pull-up", "to": "panel 1 row 6", "conn": "CN7", "num": 20, "zio": "D8", "also": []}, {"pin": "PF13", "label": "ROW13", "group": "row1", "mode": "Input + pull-up", "to": "panel 1 row 7", "conn": "CN10", "num": 2, "zio": "D7", "also": []}, {"pin": "PF14", "label": "ROW14", "group": "row2", "mode": "Input + pull-up", "to": "panel 2 (P2 fleet) row 1", "conn": "CN10", "num": 8, "zio": "D4", "also": []}, {"pin": "PF15", "label": "ROW15", "group": "row2", "mode": "Input + pull-up", "to": "panel 2 row 2", "conn": "CN10", "num": 12, "zio": "D2", "also": []}, {"pin": "PG0", "label": "ROW16", "group": "row2", "mode": "Input + pull-up", "to": "panel 2 row 3", "conn": "CN9", "num": 29, "zio": "D65", "also": []}, {"pin": "PG1", "label": "ROW17", "group": "row2", "mode": "Input + pull-up", "to": "panel 2 row 4", "conn": "CN9", "num": 30, "zio": "D64", "also": []}, {"pin": "PG2", "label": "ROW18", "group": "row2", "mode": "Input + pull-up", "to": "panel 2 row 5", "conn": "CN8", "num": 14, "zio": "D49", "also": []}, {"pin": "PG3", "label": "ROW19", "group": "row2", "mode": "Input + pull-up", "to": "panel 2 row 6", "conn": "CN8", "num": 16, "zio": "D50", "also": []}, {"pin": "PB11", "label": "ROW20", "group": "row2", "mode": "Input + pull-up", "to": "panel 2 row 7", "conn": "CN10", "num": 34, "zio": "D35", "also": []}, {"pin": "PD11", "label": "ROW21", "group": "row3", "mode": "Input + pull-up", "to": "panel 3 (P2 attack) row 1", "conn": "CN10", "num": 23, "zio": "D30", "also": []}, {"pin": "PD12", "label": "ROW22", "group": "row3", "mode": "Input + pull-up", "to": "panel 3 row 2", "conn": "CN10", "num": 21, "zio": "D29", "also": []}, {"pin": "PG9", "label": "ROW23", "group": "row3", "mode": "Input + pull-up", "to": "panel 3 row 3", "conn": "CN10", "num": 16, "zio": "D0", "also": []}, {"pin": "PD13", "label": "ROW24", "group": "row3", "mode": "Input + pull-up", "to": "panel 3 row 4", "conn": "CN10", "num": 19, "zio": "D28", "also": []}, {"pin": "PB2", "label": "ROW25", "group": "row3", "mode": "Input + pull-up", "to": "panel 3 row 5", "conn": "CN10", "num": 15, "zio": "D27", "also": []}, {"pin": "PG14", "label": "ROW26", "group": "row3", "mode": "Input + pull-up", "to": "panel 3 row 6", "conn": "CN10", "num": 14, "zio": "D1", "also": []}, {"pin": "PB6", "label": "ROW27", "group": "row3", "mode": "Input + pull-up", "to": "panel 3 row 7", "conn": "CN10", "num": 13, "zio": "D26", "also": []}, {"pin": "PA5", "label": "", "group": "tft", "mode": "SPI1_SCK", "to": "SCK of both TFTs", "conn": "CN7", "num": 10, "zio": "D13", "also": []}, {"pin": "PA6", "label": "", "group": "tft", "mode": "SPI1_MISO", "to": "SDO(MISO) of both TFTs (optional)", "conn": "CN7", "num": 12, "zio": "D12", "also": []}, {"pin": "PB5", "label": "", "group": "tft", "mode": "SPI1_MOSI", "to": "SDI(MOSI) of both TFTs", "conn": "CN7", "num": 13, "zio": "D22", "also": []}, {"pin": "PC8", "label": "CS", "group": "tft", "mode": "Output, High", "to": "TFT P1 CS", "conn": "CN8", "num": 2, "zio": "D43", "also": []}, {"pin": "PC9", "label": "DC", "group": "tft", "mode": "Output", "to": "TFT P1 DC", "conn": "CN8", "num": 4, "zio": "D44", "also": []}, {"pin": "PC10", "label": "RST", "group": "tft", "mode": "Output, High", "to": "TFT P1 RESET", "conn": "CN8", "num": 6, "zio": "D45", "also": []}, {"pin": "PC11", "label": "CS2", "group": "tft", "mode": "Output, High", "to": "TFT P2 CS", "conn": "CN8", "num": 8, "zio": "D46", "also": []}, {"pin": "PC12", "label": "DC2", "group": "tft", "mode": "Output", "to": "TFT P2 DC", "conn": "CN8", "num": 10, "zio": "D47", "also": []}, {"pin": "PD2", "label": "RST2", "group": "tft", "mode": "Output, High", "to": "TFT P2 RESET", "conn": "CN8", "num": 12, "zio": "D48", "also": []}, {"pin": "PE3", "label": "T_CLK", "group": "touch", "mode": "Output, Very High", "to": "T_CLK of both panels", "conn": "CN9", "num": 22, "zio": "D60", "also": []}, {"pin": "PE5", "label": "T_MOSI", "group": "touch", "mode": "Output, Very High", "to": "T_DIN of both panels", "conn": "CN9", "num": 18, "zio": "D58", "also": []}, {"pin": "PE4", "label": "T_MISO", "group": "touch", "mode": "Input", "to": "T_DO of both panels", "conn": "CN9", "num": 16, "zio": "D57", "also": []}, {"pin": "PE6", "label": "T_CS", "group": "touch", "mode": "Output, High", "to": "T_CS P1", "conn": "CN9", "num": 20, "zio": "D59", "also": []}, {"pin": "PE7", "label": "T_CS2", "group": "touch", "mode": "Output, High", "to": "T_CS P2", "conn": "CN10", "num": 20, "zio": "D41", "also": []}, {"pin": "PE2", "label": "T_IRQ", "group": "touch", "mode": "EXTI2 falling, pull-up", "to": "T_IRQ P1", "conn": "CN9", "num": 14, "zio": "D56", "also": ["CN10-25"]}, {"pin": "PE8", "label": "T_IRQ2", "group": "touch", "mode": "EXTI8 falling, pull-up", "to": "T_IRQ P2", "conn": "CN10", "num": 18, "zio": "D42", "also": []}, {"pin": "PB8", "label": "", "group": "lcd", "mode": "I2C1_SCL", "to": "SCL of both LCD backpacks", "conn": "CN7", "num": 2, "zio": "D15", "also": []}, {"pin": "PB9", "label": "", "group": "lcd", "mode": "I2C1_SDA", "to": "SDA of both LCD backpacks", "conn": "CN7", "num": 4, "zio": "D14", "also": []}, {"pin": "PC6", "label": "", "group": "sound", "mode": "TIM3_CH1 (AF)", "to": "1k -> 2N2222 base -> buzzer P1", "conn": "CN7", "num": 1, "zio": "D16", "also": []}, {"pin": "PC7", "label": "", "group": "sound", "mode": "TIM3_CH2 (AF)", "to": "1k -> 2N2222 base -> buzzer P2", "conn": "CN7", "num": 11, "zio": "D21", "also": []}, {"pin": "PE0", "label": "MUTE1", "group": "switch", "mode": "EXTI0 rising+falling, pull-up", "to": "mute slide switch P1 (other leg GND)", "conn": "CN10", "num": 33, "zio": "D34", "also": []}, {"pin": "PB1", "label": "MUTE2", "group": "switch", "mode": "EXTI1 rising+falling, pull-up", "to": "mute slide switch P2 (other leg GND)", "conn": "CN10", "num": 7, "zio": "A6", "also": []}, {"pin": "PE10", "label": "SURR1", "group": "switch", "mode": "EXTI10 falling, pull-up", "to": "surrender button P1 (other leg GND)", "conn": "CN10", "num": 24, "zio": "D40", "also": []}, {"pin": "PE12", "label": "SURR2", "group": "switch", "mode": "EXTI12 falling, pull-up", "to": "surrender button P2 (other leg GND)", "conn": "CN10", "num": 26, "zio": "D39", "also": []}], "headers": {"CN8": [{"num": 1, "sig": "NC", "zio": ""}, {"num": 2, "sig": "PC8", "zio": "D43"}, {"num": 3, "sig": "IOREF", "zio": ""}, {"num": 4, "sig": "PC9", "zio": "D44"}, {"num": 5, "sig": "RESET", "zio": ""}, {"num": 6, "sig": "PC10", "zio": "D45"}, {"num": 7, "sig": "+3.3V", "zio": ""}, {"num": 8, "sig": "PC11", "zio": "D46"}, {"num": 9, "sig": "+5V", "zio": ""}, {"num": 10, "sig": "PC12", "zio": "D47"}, {"num": 11, "sig": "GND", "zio": ""}, {"num": 12, "sig": "PD2", "zio": "D48"}, {"num": 13, "sig": "GND", "zio": ""}, {"num": 14, "sig": "PG2", "zio": "D49"}, {"num": 15, "sig": "VIN", "zio": ""}, {"num": 16, "sig": "PG3", "zio": "D50"}], "CN9": [{"num": 1, "sig": "PA3", "zio": "A0"}, {"num": 2, "sig": "PD7", "zio": "D51"}, {"num": 3, "sig": "PC0", "zio": "A1"}, {"num": 4, "sig": "PD6", "zio": "D52"}, {"num": 5, "sig": "PC3", "zio": "A2"}, {"num": 6, "sig": "PD5", "zio": "D53"}, {"num": 7, "sig": "PF3", "zio": "A3"}, {"num": 8, "sig": "PD4", "zio": "D54"}, {"num": 9, "sig": "PF5", "zio": "A4"}, {"num": 10, "sig": "PD3", "zio": "D55"}, {"num": 11, "sig": "PF10", "zio": "A5"}, {"num": 12, "sig": "GND", "zio": ""}, {"num": 13, "sig": "NC", "zio": "D72"}, {"num": 14, "sig": "PE2", "zio": "D56"}, {"num": 15, "sig": "PA7", "zio": "D71"}, {"num": 16, "sig": "PE4", "zio": "D57"}, {"num": 17, "sig": "PF2", "zio": "D70"}, {"num": 18, "sig": "PE5", "zio": "D58"}, {"num": 19, "sig": "PF1", "zio": "D69"}, {"num": 20, "sig": "PE6", "zio": "D59"}, {"num": 21, "sig": "PF0", "zio": "D68"}, {"num": 22, "sig": "PE3", "zio": "D60"}, {"num": 23, "sig": "GND", "zio": ""}, {"num": 24, "sig": "PF8", "zio": "D61"}, {"num": 25, "sig": "PD0", "zio": "D67"}, {"num": 26, "sig": "PF7", "zio": "D62"}, {"num": 27, "sig": "PD1", "zio": "D66"}, {"num": 28, "sig": "PF9", "zio": "D63"}, {"num": 29, "sig": "PG0", "zio": "D65"}, {"num": 30, "sig": "PG1", "zio": "D64"}], "CN7": [{"num": 1, "sig": "PC6", "zio": "D16"}, {"num": 2, "sig": "PB8", "zio": "D15"}, {"num": 3, "sig": "PB15", "zio": "D17"}, {"num": 4, "sig": "PB9", "zio": "D14"}, {"num": 5, "sig": "PB13", "zio": "D18"}, {"num": 6, "sig": "AREF", "zio": ""}, {"num": 7, "sig": "PB12", "zio": "D19"}, {"num": 8, "sig": "GND", "zio": ""}, {"num": 9, "sig": "PA15", "zio": "D20"}, {"num": 10, "sig": "PA5", "zio": "D13"}, {"num": 11, "sig": "PC7", "zio": "D21"}, {"num": 12, "sig": "PA6", "zio": "D12"}, {"num": 13, "sig": "PB5", "zio": "D22"}, {"num": 14, "sig": "PA7", "zio": "D11"}, {"num": 15, "sig": "PB3", "zio": "D23"}, {"num": 16, "sig": "PD14", "zio": "D10"}, {"num": 17, "sig": "PA4", "zio": "D24"}, {"num": 18, "sig": "PD15", "zio": "D9"}, {"num": 19, "sig": "PB4", "zio": "D25"}, {"num": 20, "sig": "PF12", "zio": "D8"}], "CN10": [{"num": 1, "sig": "AVDD", "zio": ""}, {"num": 2, "sig": "PF13", "zio": "D7"}, {"num": 3, "sig": "AGND", "zio": ""}, {"num": 4, "sig": "PE9", "zio": "D6"}, {"num": 5, "sig": "GND", "zio": ""}, {"num": 6, "sig": "PE11", "zio": "D5"}, {"num": 7, "sig": "PB1", "zio": "A6"}, {"num": 8, "sig": "PF14", "zio": "D4"}, {"num": 9, "sig": "PC2", "zio": "A7"}, {"num": 10, "sig": "PE13", "zio": "D3"}, {"num": 11, "sig": "PF4", "zio": "A8"}, {"num": 12, "sig": "PF15", "zio": "D2"}, {"num": 13, "sig": "PB6", "zio": "D26"}, {"num": 14, "sig": "PG14", "zio": "D1"}, {"num": 15, "sig": "PB2", "zio": "D27"}, {"num": 16, "sig": "PG9", "zio": "D0"}, {"num": 17, "sig": "GND", "zio": ""}, {"num": 18, "sig": "PE8", "zio": "D42"}, {"num": 19, "sig": "PD13", "zio": "D28"}, {"num": 20, "sig": "PE7", "zio": "D41"}, {"num": 21, "sig": "PD12", "zio": "D29"}, {"num": 22, "sig": "GND", "zio": ""}, {"num": 23, "sig": "PD11", "zio": "D30"}, {"num": 24, "sig": "PE10", "zio": "D40"}, {"num": 25, "sig": "PE2", "zio": "D31"}, {"num": 26, "sig": "PE12", "zio": "D39"}, {"num": 27, "sig": "GND", "zio": ""}, {"num": 28, "sig": "PE14", "zio": "D38"}, {"num": 29, "sig": "PA0", "zio": "D32"}, {"num": 30, "sig": "PE15", "zio": "D37"}, {"num": 31, "sig": "PB0", "zio": "D33"}, {"num": 32, "sig": "PB10", "zio": "D36"}, {"num": 33, "sig": "PE0", "zio": "D34"}, {"num": 34, "sig": "PB11", "zio": "D35"}]}};
+const DATA = {"pins": [{"pin": "PE9", "label": "", "group": "led", "mode": "TIM1_CH1 (AF)", "to": "74AHCT125 1A (pin 2) -> panel 0 P1 fleet", "conn": "CN10", "num": 4, "zio": "D6", "also": []}, {"pin": "PE11", "label": "", "group": "led", "mode": "TIM1_CH2 (AF)", "to": "74AHCT125 2A (pin 5) -> panel 1 P1 attack", "conn": "CN10", "num": 6, "zio": "D5", "also": []}, {"pin": "PE13", "label": "", "group": "led", "mode": "TIM1_CH3 (AF)", "to": "74AHCT125 3A (pin 9) -> panel 2 P2 fleet", "conn": "CN10", "num": 10, "zio": "D3", "also": []}, {"pin": "PE14", "label": "", "group": "led", "mode": "TIM1_CH4 (AF)", "to": "74AHCT125 4A (pin 12) -> panel 3 P2 attack", "conn": "CN10", "num": 28, "zio": "D38", "also": []}, {"pin": "PD0", "label": "COL0", "group": "col", "mode": "Output Open Drain", "to": "column A (all 4 panels)", "conn": "CN9", "num": 25, "zio": "D67", "also": []}, {"pin": "PD1", "label": "COL1", "group": "col", "mode": "Output Open Drain", "to": "column B", "conn": "CN9", "num": 27, "zio": "D66", "also": []}, {"pin": "PD14", "label": "COL2", "group": "col", "mode": "Output Open Drain", "to": "column C", "conn": "CN7", "num": 16, "zio": "D10", "also": []}, {"pin": "PD3", "label": "COL3", "group": "col", "mode": "Output Open Drain", "to": "column D", "conn": "CN9", "num": 10, "zio": "D55", "also": []}, {"pin": "PD4", "label": "COL4", "group": "col", "mode": "Output Open Drain", "to": "column E", "conn": "CN9", "num": 8, "zio": "D54", "also": []}, {"pin": "PD5", "label": "COL5", "group": "col", "mode": "Output Open Drain", "to": "column F", "conn": "CN9", "num": 6, "zio": "D53", "also": []}, {"pin": "PD6", "label": "COL6", "group": "col", "mode": "Output Open Drain", "to": "column G", "conn": "CN9", "num": 4, "zio": "D52", "also": []}, {"pin": "PD7", "label": "COL7", "group": "col", "mode": "Output Open Drain", "to": "column H", "conn": "CN9", "num": 2, "zio": "D51", "also": []}, {"pin": "PF0", "label": "ROW0", "group": "row0", "mode": "Input + pull-up", "to": "panel 0 (P1 fleet) row 1", "conn": "CN9", "num": 21, "zio": "D68", "also": []}, {"pin": "PF1", "label": "ROW1", "group": "row0", "mode": "Input + pull-up", "to": "panel 0 row 2", "conn": "CN9", "num": 19, "zio": "D69", "also": []}, {"pin": "PF2", "label": "ROW2", "group": "row0", "mode": "Input + pull-up", "to": "panel 0 row 3", "conn": "CN9", "num": 17, "zio": "D70", "also": []}, {"pin": "PF3", "label": "ROW3", "group": "row0", "mode": "Input + pull-up", "to": "panel 0 row 4", "conn": "CN9", "num": 7, "zio": "A3", "also": []}, {"pin": "PF4", "label": "ROW4", "group": "row0", "mode": "Input + pull-up", "to": "panel 0 row 5", "conn": "CN10", "num": 11, "zio": "A8", "also": []}, {"pin": "PF5", "label": "ROW5", "group": "row0", "mode": "Input + pull-up", "to": "panel 0 row 6", "conn": "CN9", "num": 9, "zio": "A4", "also": []}, {"pin": "PE15", "label": "ROW6", "group": "row0", "mode": "Input + pull-up", "to": "panel 0 row 7", "conn": "CN10", "num": 30, "zio": "D37", "also": []}, {"pin": "PF7", "label": "ROW7", "group": "row1", "mode": "Input + pull-up", "to": "panel 1 (P1 attack) row 1", "conn": "CN9", "num": 26, "zio": "D62", "also": []}, {"pin": "PF8", "label": "ROW8", "group": "row1", "mode": "Input + pull-up", "to": "panel 1 row 2", "conn": "CN9", "num": 24, "zio": "D61", "also": []}, {"pin": "PF9", "label": "ROW9", "group": "row1", "mode": "Input + pull-up", "to": "panel 1 row 3", "conn": "CN9", "num": 28, "zio": "D63", "also": []}, {"pin": "PF10", "label": "ROW10", "group": "row1", "mode": "Input + pull-up", "to": "panel 1 row 4", "conn": "CN9", "num": 11, "zio": "A5", "also": []}, {"pin": "PB10", "label": "ROW11", "group": "row1", "mode": "Input + pull-up", "to": "panel 1 row 5", "conn": "CN10", "num": 32, "zio": "D36", "also": []}, {"pin": "PF12", "label": "ROW12", "group": "row1", "mode": "Input + pull-up", "to": "panel 1 row 6", "conn": "CN7", "num": 20, "zio": "D8", "also": []}, {"pin": "PF13", "label": "ROW13", "group": "row1", "mode": "Input + pull-up", "to": "panel 1 row 7", "conn": "CN10", "num": 2, "zio": "D7", "also": []}, {"pin": "PF14", "label": "ROW14", "group": "row2", "mode": "Input + pull-up", "to": "panel 2 (P2 fleet) row 1", "conn": "CN10", "num": 8, "zio": "D4", "also": []}, {"pin": "PF15", "label": "ROW15", "group": "row2", "mode": "Input + pull-up", "to": "panel 2 row 2", "conn": "CN10", "num": 12, "zio": "D2", "also": []}, {"pin": "PG0", "label": "ROW16", "group": "row2", "mode": "Input + pull-up", "to": "panel 2 row 3", "conn": "CN9", "num": 29, "zio": "D65", "also": []}, {"pin": "PG1", "label": "ROW17", "group": "row2", "mode": "Input + pull-up", "to": "panel 2 row 4", "conn": "CN9", "num": 30, "zio": "D64", "also": []}, {"pin": "PG2", "label": "ROW18", "group": "row2", "mode": "Input + pull-up", "to": "panel 2 row 5", "conn": "CN8", "num": 14, "zio": "D49", "also": []}, {"pin": "PG3", "label": "ROW19", "group": "row2", "mode": "Input + pull-up", "to": "panel 2 row 6", "conn": "CN8", "num": 16, "zio": "D50", "also": []}, {"pin": "PB11", "label": "ROW20", "group": "row2", "mode": "Input + pull-up", "to": "panel 2 row 7", "conn": "CN10", "num": 34, "zio": "D35", "also": []}, {"pin": "PD11", "label": "ROW21", "group": "row3", "mode": "Input + pull-up", "to": "panel 3 (P2 attack) row 1", "conn": "CN10", "num": 23, "zio": "D30", "also": []}, {"pin": "PD12", "label": "ROW22", "group": "row3", "mode": "Input + pull-up", "to": "panel 3 row 2", "conn": "CN10", "num": 21, "zio": "D29", "also": []}, {"pin": "PG9", "label": "ROW23", "group": "row3", "mode": "Input + pull-up", "to": "panel 3 row 3", "conn": "CN10", "num": 16, "zio": "D0", "also": []}, {"pin": "PD13", "label": "ROW24", "group": "row3", "mode": "Input + pull-up", "to": "panel 3 row 4", "conn": "CN10", "num": 19, "zio": "D28", "also": []}, {"pin": "PB2", "label": "ROW25", "group": "row3", "mode": "Input + pull-up", "to": "panel 3 row 5", "conn": "CN10", "num": 15, "zio": "D27", "also": []}, {"pin": "PG14", "label": "ROW26", "group": "row3", "mode": "Input + pull-up", "to": "panel 3 row 6", "conn": "CN10", "num": 14, "zio": "D1", "also": []}, {"pin": "PB6", "label": "ROW27", "group": "row3", "mode": "Input + pull-up", "to": "panel 3 row 7", "conn": "CN10", "num": 13, "zio": "D26", "also": []}, {"pin": "PA5", "label": "", "group": "tft", "mode": "SPI1_SCK", "to": "SCK of both TFTs", "conn": "CN7", "num": 10, "zio": "D13", "also": []}, {"pin": "PA6", "label": "", "group": "tft", "mode": "SPI1_MISO", "to": "SDO(MISO) of both TFTs (optional)", "conn": "CN7", "num": 12, "zio": "D12", "also": []}, {"pin": "PB5", "label": "", "group": "tft", "mode": "SPI1_MOSI", "to": "SDI(MOSI) of both TFTs", "conn": "CN7", "num": 13, "zio": "D22", "also": []}, {"pin": "PC8", "label": "CS", "group": "tft", "mode": "Output, High", "to": "TFT P1 CS", "conn": "CN8", "num": 2, "zio": "D43", "also": []}, {"pin": "PC9", "label": "DC", "group": "tft", "mode": "Output", "to": "TFT P1 DC", "conn": "CN8", "num": 4, "zio": "D44", "also": []}, {"pin": "PC10", "label": "RST", "group": "tft", "mode": "Output, High", "to": "TFT P1 RESET", "conn": "CN8", "num": 6, "zio": "D45", "also": []}, {"pin": "PC11", "label": "CS2", "group": "tft", "mode": "Output, High", "to": "TFT P2 CS", "conn": "CN8", "num": 8, "zio": "D46", "also": []}, {"pin": "PC12", "label": "DC2", "group": "tft", "mode": "Output", "to": "TFT P2 DC", "conn": "CN8", "num": 10, "zio": "D47", "also": []}, {"pin": "PD2", "label": "RST2", "group": "tft", "mode": "Output, High", "to": "TFT P2 RESET", "conn": "CN8", "num": 12, "zio": "D48", "also": []}, {"pin": "PE3", "label": "T_CLK", "group": "touch", "mode": "Output, Very High", "to": "T_CLK of both panels", "conn": "CN9", "num": 22, "zio": "D60", "also": []}, {"pin": "PE5", "label": "T_MOSI", "group": "touch", "mode": "Output, Very High", "to": "T_DIN of both panels", "conn": "CN9", "num": 18, "zio": "D58", "also": []}, {"pin": "PE4", "label": "T_MISO", "group": "touch", "mode": "Input", "to": "T_DO of both panels", "conn": "CN9", "num": 16, "zio": "D57", "also": []}, {"pin": "PE6", "label": "T_CS", "group": "touch", "mode": "Output, High", "to": "T_CS P1", "conn": "CN9", "num": 20, "zio": "D59", "also": []}, {"pin": "PE7", "label": "T_CS2", "group": "touch", "mode": "Output, High", "to": "T_CS P2", "conn": "CN10", "num": 20, "zio": "D41", "also": []}, {"pin": "PE2", "label": "T_IRQ", "group": "touch", "mode": "EXTI2 falling, pull-up", "to": "T_IRQ P1", "conn": "CN9", "num": 14, "zio": "D56", "also": ["CN10-25"]}, {"pin": "PE8", "label": "T_IRQ2", "group": "touch", "mode": "EXTI8 falling, pull-up", "to": "T_IRQ P2", "conn": "CN10", "num": 18, "zio": "D42", "also": []}, {"pin": "PB8", "label": "", "group": "lcd", "mode": "I2C1_SCL", "to": "SCL of both LCD backpacks", "conn": "CN7", "num": 2, "zio": "D15", "also": []}, {"pin": "PB9", "label": "", "group": "lcd", "mode": "I2C1_SDA", "to": "SDA of both LCD backpacks", "conn": "CN7", "num": 4, "zio": "D14", "also": []}, {"pin": "PC6", "label": "", "group": "sound", "mode": "TIM3_CH1 (AF)", "to": "1k -> 2N2222 base -> buzzer P1", "conn": "CN7", "num": 1, "zio": "D16", "also": []}, {"pin": "PC7", "label": "", "group": "sound", "mode": "TIM3_CH2 (AF)", "to": "1k -> 2N2222 base -> buzzer P2", "conn": "CN7", "num": 11, "zio": "D21", "also": []}, {"pin": "PE0", "label": "MUTE1", "group": "switch", "mode": "EXTI0 rising+falling, pull-up", "to": "mute slide switch P1 (other leg GND)", "conn": "CN10", "num": 33, "zio": "D34", "also": []}, {"pin": "PB1", "label": "MUTE2", "group": "switch", "mode": "EXTI1 rising+falling, pull-up", "to": "mute slide switch P2 (other leg GND)", "conn": "CN10", "num": 7, "zio": "A6", "also": []}, {"pin": "PE10", "label": "SURR1", "group": "switch", "mode": "EXTI10 falling, pull-up", "to": "surrender button P1 (other leg GND)", "conn": "CN10", "num": 24, "zio": "D40", "also": []}, {"pin": "PE12", "label": "SURR2", "group": "switch", "mode": "EXTI12 falling, pull-up", "to": "surrender button P2 (other leg GND)", "conn": "CN10", "num": 26, "zio": "D39", "also": []}], "headers": {"CN8": [{"num": 1, "sig": "NC", "zio": ""}, {"num": 2, "sig": "PC8", "zio": "D43"}, {"num": 3, "sig": "IOREF", "zio": ""}, {"num": 4, "sig": "PC9", "zio": "D44"}, {"num": 5, "sig": "RESET", "zio": ""}, {"num": 6, "sig": "PC10", "zio": "D45"}, {"num": 7, "sig": "+3.3V", "zio": ""}, {"num": 8, "sig": "PC11", "zio": "D46"}, {"num": 9, "sig": "+5V", "zio": ""}, {"num": 10, "sig": "PC12", "zio": "D47"}, {"num": 11, "sig": "GND", "zio": ""}, {"num": 12, "sig": "PD2", "zio": "D48"}, {"num": 13, "sig": "GND", "zio": ""}, {"num": 14, "sig": "PG2", "zio": "D49"}, {"num": 15, "sig": "VIN", "zio": ""}, {"num": 16, "sig": "PG3", "zio": "D50"}], "CN9": [{"num": 1, "sig": "PA3", "zio": "A0"}, {"num": 2, "sig": "PD7", "zio": "D51"}, {"num": 3, "sig": "PC0", "zio": "A1"}, {"num": 4, "sig": "PD6", "zio": "D52"}, {"num": 5, "sig": "PC3", "zio": "A2"}, {"num": 6, "sig": "PD5", "zio": "D53"}, {"num": 7, "sig": "PF3", "zio": "A3"}, {"num": 8, "sig": "PD4", "zio": "D54"}, {"num": 9, "sig": "PF5", "zio": "A4"}, {"num": 10, "sig": "PD3", "zio": "D55"}, {"num": 11, "sig": "PF10", "zio": "A5"}, {"num": 12, "sig": "GND", "zio": ""}, {"num": 13, "sig": "NC", "zio": "D72"}, {"num": 14, "sig": "PE2", "zio": "D56"}, {"num": 15, "sig": "PA7", "zio": "D71"}, {"num": 16, "sig": "PE4", "zio": "D57"}, {"num": 17, "sig": "PF2", "zio": "D70"}, {"num": 18, "sig": "PE5", "zio": "D58"}, {"num": 19, "sig": "PF1", "zio": "D69"}, {"num": 20, "sig": "PE6", "zio": "D59"}, {"num": 21, "sig": "PF0", "zio": "D68"}, {"num": 22, "sig": "PE3", "zio": "D60"}, {"num": 23, "sig": "GND", "zio": ""}, {"num": 24, "sig": "PF8", "zio": "D61"}, {"num": 25, "sig": "PD0", "zio": "D67"}, {"num": 26, "sig": "PF7", "zio": "D62"}, {"num": 27, "sig": "PD1", "zio": "D66"}, {"num": 28, "sig": "PF9", "zio": "D63"}, {"num": 29, "sig": "PG0", "zio": "D65"}, {"num": 30, "sig": "PG1", "zio": "D64"}], "CN7": [{"num": 1, "sig": "PC6", "zio": "D16"}, {"num": 2, "sig": "PB8", "zio": "D15"}, {"num": 3, "sig": "PB15", "zio": "D17"}, {"num": 4, "sig": "PB9", "zio": "D14"}, {"num": 5, "sig": "PB13", "zio": "D18"}, {"num": 6, "sig": "AREF", "zio": ""}, {"num": 7, "sig": "PB12", "zio": "D19"}, {"num": 8, "sig": "GND", "zio": ""}, {"num": 9, "sig": "PA15", "zio": "D20"}, {"num": 10, "sig": "PA5", "zio": "D13"}, {"num": 11, "sig": "PC7", "zio": "D21"}, {"num": 12, "sig": "PA6", "zio": "D12"}, {"num": 13, "sig": "PB5", "zio": "D22"}, {"num": 14, "sig": "PA7", "zio": "D11"}, {"num": 15, "sig": "PB3", "zio": "D23"}, {"num": 16, "sig": "PD14", "zio": "D10"}, {"num": 17, "sig": "PA4", "zio": "D24"}, {"num": 18, "sig": "PD15", "zio": "D9"}, {"num": 19, "sig": "PB4", "zio": "D25"}, {"num": 20, "sig": "PF12", "zio": "D8"}], "CN10": [{"num": 1, "sig": "AVDD", "zio": ""}, {"num": 2, "sig": "PF13", "zio": "D7"}, {"num": 3, "sig": "AGND", "zio": ""}, {"num": 4, "sig": "PE9", "zio": "D6"}, {"num": 5, "sig": "GND", "zio": ""}, {"num": 6, "sig": "PE11", "zio": "D5"}, {"num": 7, "sig": "PB1", "zio": "A6"}, {"num": 8, "sig": "PF14", "zio": "D4"}, {"num": 9, "sig": "PC2", "zio": "A7"}, {"num": 10, "sig": "PE13", "zio": "D3"}, {"num": 11, "sig": "PF4", "zio": "A8"}, {"num": 12, "sig": "PF15", "zio": "D2"}, {"num": 13, "sig": "PB6", "zio": "D26"}, {"num": 14, "sig": "PG14", "zio": "D1"}, {"num": 15, "sig": "PB2", "zio": "D27"}, {"num": 16, "sig": "PG9", "zio": "D0"}, {"num": 17, "sig": "GND", "zio": ""}, {"num": 18, "sig": "PE8", "zio": "D42"}, {"num": 19, "sig": "PD13", "zio": "D28"}, {"num": 20, "sig": "PE7", "zio": "D41"}, {"num": 21, "sig": "PD12", "zio": "D29"}, {"num": 22, "sig": "GND", "zio": ""}, {"num": 23, "sig": "PD11", "zio": "D30"}, {"num": 24, "sig": "PE10", "zio": "D40"}, {"num": 25, "sig": "PE2", "zio": "D31"}, {"num": 26, "sig": "PE12", "zio": "D39"}, {"num": 27, "sig": "GND", "zio": ""}, {"num": 28, "sig": "PE14", "zio": "D38"}, {"num": 29, "sig": "PA0", "zio": "D32"}, {"num": 30, "sig": "PE15", "zio": "D37"}, {"num": 31, "sig": "PB0", "zio": "D33"}, {"num": 32, "sig": "PB10", "zio": "D36"}, {"num": 33, "sig": "PE0", "zio": "D34"}, {"num": 34, "sig": "PB11", "zio": "D35"}]}, "harness": [{"id": "N1", "name": "Nucleo -> matrix hub", "a": "NUC", "b": "HUB", "len": 15, "gauge": "AWG26", "conn_a": "Dupont male x38", "conn_b": "header on HUB", "holes": [], "wires": [{"n": 1, "sig": "COL0", "color": "white", "at": "CN9-25"}, {"n": 2, "sig": "COL1", "color": "white", "at": "CN9-27"}, {"n": 3, "sig": "COL2", "color": "white", "at": "CN7-16"}, {"n": 4, "sig": "COL3", "color": "white", "at": "CN9-10"}, {"n": 5, "sig": "COL4", "color": "white", "at": "CN9-8"}, {"n": 6, "sig": "COL5", "color": "white", "at": "CN9-6"}, {"n": 7, "sig": "COL6", "color": "white", "at": "CN9-4"}, {"n": 8, "sig": "COL7", "color": "white", "at": "CN9-2"}, {"n": 9, "sig": "ROW0", "color": "grey", "at": "CN9-21"}, {"n": 10, "sig": "ROW1", "color": "grey", "at": "CN9-19"}, {"n": 11, "sig": "ROW2", "color": "grey", "at": "CN9-17"}, {"n": 12, "sig": "ROW3", "color": "grey", "at": "CN9-7"}, {"n": 13, "sig": "ROW4", "color": "grey", "at": "CN10-11"}, {"n": 14, "sig": "ROW5", "color": "grey", "at": "CN9-9"}, {"n": 15, "sig": "ROW6", "color": "grey", "at": "CN10-30"}, {"n": 16, "sig": "ROW7", "color": "grey", "at": "CN9-26"}, {"n": 17, "sig": "ROW8", "color": "grey", "at": "CN9-24"}, {"n": 18, "sig": "ROW9", "color": "grey", "at": "CN9-28"}, {"n": 19, "sig": "ROW10", "color": "grey", "at": "CN9-11"}, {"n": 20, "sig": "ROW11", "color": "grey", "at": "CN10-32"}, {"n": 21, "sig": "ROW12", "color": "grey", "at": "CN7-20"}, {"n": 22, "sig": "ROW13", "color": "grey", "at": "CN10-2"}, {"n": 23, "sig": "ROW14", "color": "grey", "at": "CN10-8"}, {"n": 24, "sig": "ROW15", "color": "grey", "at": "CN10-12"}, {"n": 25, "sig": "ROW16", "color": "grey", "at": "CN9-29"}, {"n": 26, "sig": "ROW17", "color": "grey", "at": "CN9-30"}, {"n": 27, "sig": "ROW18", "color": "grey", "at": "CN8-14"}, {"n": 28, "sig": "ROW19", "color": "grey", "at": "CN8-16"}, {"n": 29, "sig": "ROW20", "color": "grey", "at": "CN10-34"}, {"n": 30, "sig": "ROW21", "color": "grey", "at": "CN10-23"}, {"n": 31, "sig": "ROW22", "color": "grey", "at": "CN10-21"}, {"n": 32, "sig": "ROW23", "color": "grey", "at": "CN10-16"}, {"n": 33, "sig": "ROW24", "color": "grey", "at": "CN10-19"}, {"n": 34, "sig": "ROW25", "color": "grey", "at": "CN10-15"}, {"n": 35, "sig": "ROW26", "color": "grey", "at": "CN10-14"}, {"n": 36, "sig": "ROW27", "color": "grey", "at": "CN10-13"}, {"n": 37, "sig": "3V3", "color": "orange", "at": "CN8-7"}, {"n": 38, "sig": "GND", "color": "black", "at": "CN9-12"}]}, {"id": "M1", "name": "Hub -> P1 fleet panel switches", "a": "HUB", "b": "PANEL0", "len": 30, "gauge": "ribbon 16", "conn_a": "IDC 2x8", "conn_b": "IDC 2x8", "holes": ["H1"], "ribbon": true, "wires": [{"n": 1, "sig": "COL A", "color": "ribbon", "at": ""}, {"n": 2, "sig": "COL B", "color": "ribbon", "at": ""}, {"n": 3, "sig": "COL C", "color": "ribbon", "at": ""}, {"n": 4, "sig": "COL D", "color": "ribbon", "at": ""}, {"n": 5, "sig": "COL E", "color": "ribbon", "at": ""}, {"n": 6, "sig": "COL F", "color": "ribbon", "at": ""}, {"n": 7, "sig": "COL G", "color": "ribbon", "at": ""}, {"n": 8, "sig": "COL H", "color": "ribbon", "at": ""}, {"n": 9, "sig": "ROW 1", "color": "ribbon", "at": ""}, {"n": 10, "sig": "ROW 2", "color": "ribbon", "at": ""}, {"n": 11, "sig": "ROW 3", "color": "ribbon", "at": ""}, {"n": 12, "sig": "ROW 4", "color": "ribbon", "at": ""}, {"n": 13, "sig": "ROW 5", "color": "ribbon", "at": ""}, {"n": 14, "sig": "ROW 6", "color": "ribbon", "at": ""}, {"n": 15, "sig": "ROW 7", "color": "ribbon", "at": ""}, {"n": 16, "sig": "GND", "color": "ribbon", "at": ""}]}, {"id": "M2", "name": "Hub -> P1 attack panel switches", "a": "HUB", "b": "PANEL1", "len": 30, "gauge": "ribbon 16", "conn_a": "IDC 2x8", "conn_b": "IDC 2x8", "holes": ["H3"], "ribbon": true, "same_as": "M1", "wires": [{"n": 1, "sig": "COL A", "color": "ribbon", "at": ""}, {"n": 2, "sig": "COL B", "color": "ribbon", "at": ""}, {"n": 3, "sig": "COL C", "color": "ribbon", "at": ""}, {"n": 4, "sig": "COL D", "color": "ribbon", "at": ""}, {"n": 5, "sig": "COL E", "color": "ribbon", "at": ""}, {"n": 6, "sig": "COL F", "color": "ribbon", "at": ""}, {"n": 7, "sig": "COL G", "color": "ribbon", "at": ""}, {"n": 8, "sig": "COL H", "color": "ribbon", "at": ""}, {"n": 9, "sig": "ROW 1", "color": "ribbon", "at": ""}, {"n": 10, "sig": "ROW 2", "color": "ribbon", "at": ""}, {"n": 11, "sig": "ROW 3", "color": "ribbon", "at": ""}, {"n": 12, "sig": "ROW 4", "color": "ribbon", "at": ""}, {"n": 13, "sig": "ROW 5", "color": "ribbon", "at": ""}, {"n": 14, "sig": "ROW 6", "color": "ribbon", "at": ""}, {"n": 15, "sig": "ROW 7", "color": "ribbon", "at": ""}, {"n": 16, "sig": "GND", "color": "ribbon", "at": ""}]}, {"id": "M3", "name": "Hub -> P2 fleet panel switches", "a": "HUB", "b": "PANEL2", "len": 30, "gauge": "ribbon 16", "conn_a": "IDC 2x8", "conn_b": "IDC 2x8", "holes": ["H2"], "ribbon": true, "same_as": "M1", "wires": [{"n": 1, "sig": "COL A", "color": "ribbon", "at": ""}, {"n": 2, "sig": "COL B", "color": "ribbon", "at": ""}, {"n": 3, "sig": "COL C", "color": "ribbon", "at": ""}, {"n": 4, "sig": "COL D", "color": "ribbon", "at": ""}, {"n": 5, "sig": "COL E", "color": "ribbon", "at": ""}, {"n": 6, "sig": "COL F", "color": "ribbon", "at": ""}, {"n": 7, "sig": "COL G", "color": "ribbon", "at": ""}, {"n": 8, "sig": "COL H", "color": "ribbon", "at": ""}, {"n": 9, "sig": "ROW 1", "color": "ribbon", "at": ""}, {"n": 10, "sig": "ROW 2", "color": "ribbon", "at": ""}, {"n": 11, "sig": "ROW 3", "color": "ribbon", "at": ""}, {"n": 12, "sig": "ROW 4", "color": "ribbon", "at": ""}, {"n": 13, "sig": "ROW 5", "color": "ribbon", "at": ""}, {"n": 14, "sig": "ROW 6", "color": "ribbon", "at": ""}, {"n": 15, "sig": "ROW 7", "color": "ribbon", "at": ""}, {"n": 16, "sig": "GND", "color": "ribbon", "at": ""}]}, {"id": "M4", "name": "Hub -> P2 attack panel switches", "a": "HUB", "b": "PANEL3", "len": 30, "gauge": "ribbon 16", "conn_a": "IDC 2x8", "conn_b": "IDC 2x8", "holes": ["H4"], "ribbon": true, "same_as": "M1", "wires": [{"n": 1, "sig": "COL A", "color": "ribbon", "at": ""}, {"n": 2, "sig": "COL B", "color": "ribbon", "at": ""}, {"n": 3, "sig": "COL C", "color": "ribbon", "at": ""}, {"n": 4, "sig": "COL D", "color": "ribbon", "at": ""}, {"n": 5, "sig": "COL E", "color": "ribbon", "at": ""}, {"n": 6, "sig": "COL F", "color": "ribbon", "at": ""}, {"n": 7, "sig": "COL G", "color": "ribbon", "at": ""}, {"n": 8, "sig": "COL H", "color": "ribbon", "at": ""}, {"n": 9, "sig": "ROW 1", "color": "ribbon", "at": ""}, {"n": 10, "sig": "ROW 2", "color": "ribbon", "at": ""}, {"n": 11, "sig": "ROW 3", "color": "ribbon", "at": ""}, {"n": 12, "sig": "ROW 4", "color": "ribbon", "at": ""}, {"n": 13, "sig": "ROW 5", "color": "ribbon", "at": ""}, {"n": 14, "sig": "ROW 6", "color": "ribbon", "at": ""}, {"n": 15, "sig": "ROW 7", "color": "ribbon", "at": ""}, {"n": 16, "sig": "GND", "color": "ribbon", "at": ""}]}, {"id": "N2", "name": "Nucleo -> LED driver", "a": "NUC", "b": "DRV", "len": 15, "gauge": "AWG26", "conn_a": "Dupont male x5", "conn_b": "JST-XH 5", "holes": [], "wires": [{"n": 1, "sig": "PE9", "color": "yellow", "at": "CN10-4"}, {"n": 2, "sig": "PE11", "color": "yellow", "at": "CN10-6"}, {"n": 3, "sig": "PE13", "color": "yellow", "at": "CN10-10"}, {"n": 4, "sig": "PE14", "color": "yellow", "at": "CN10-28"}, {"n": 5, "sig": "GND", "color": "black", "at": "CN10-22"}]}, {"id": "L1", "name": "LED driver -> P1 fleet LEDs", "a": "DRV", "b": "PANEL0", "len": 35, "gauge": "AWG20 (DIN AWG26)", "conn_a": "JST-XH 3", "conn_b": "JST-XH 3", "holes": ["H1"], "wires": [{"n": 1, "sig": "5V", "color": "red", "at": ""}, {"n": 2, "sig": "DIN 1Y", "color": "yellow", "at": ""}, {"n": 3, "sig": "GND", "color": "black", "at": ""}]}, {"id": "L2", "name": "LED driver -> P1 attack LEDs", "a": "DRV", "b": "PANEL1", "len": 35, "gauge": "AWG20 (DIN AWG26)", "conn_a": "JST-XH 3", "conn_b": "JST-XH 3", "holes": ["H3"], "wires": [{"n": 1, "sig": "5V", "color": "red", "at": ""}, {"n": 2, "sig": "DIN 2Y", "color": "yellow", "at": ""}, {"n": 3, "sig": "GND", "color": "black", "at": ""}]}, {"id": "L3", "name": "LED driver -> P2 fleet LEDs", "a": "DRV", "b": "PANEL2", "len": 35, "gauge": "AWG20 (DIN AWG26)", "conn_a": "JST-XH 3", "conn_b": "JST-XH 3", "holes": ["H2"], "wires": [{"n": 1, "sig": "5V", "color": "red", "at": ""}, {"n": 2, "sig": "DIN 3Y", "color": "yellow", "at": ""}, {"n": 3, "sig": "GND", "color": "black", "at": ""}]}, {"id": "L4", "name": "LED driver -> P2 attack LEDs", "a": "DRV", "b": "PANEL3", "len": 35, "gauge": "AWG20 (DIN AWG26)", "conn_a": "JST-XH 3", "conn_b": "JST-XH 3", "holes": ["H4"], "wires": [{"n": 1, "sig": "5V", "color": "red", "at": ""}, {"n": 2, "sig": "DIN 4Y", "color": "yellow", "at": ""}, {"n": 3, "sig": "GND", "color": "black", "at": ""}]}, {"id": "N3", "name": "Nucleo -> display hub", "a": "NUC", "b": "DSP", "len": 15, "gauge": "AWG26", "conn_a": "Dupont male x17", "conn_b": "header on DSP", "holes": [], "wires": [{"n": 1, "sig": "PA5", "color": "blue", "at": "CN7-10"}, {"n": 2, "sig": "PB5", "color": "blue", "at": "CN7-13"}, {"n": 3, "sig": "PA6", "color": "blue", "at": "CN7-12"}, {"n": 4, "sig": "CS", "color": "green", "at": "CN8-2"}, {"n": 5, "sig": "DC", "color": "green", "at": "CN8-4"}, {"n": 6, "sig": "RST", "color": "green", "at": "CN8-6"}, {"n": 7, "sig": "CS2", "color": "green", "at": "CN8-8"}, {"n": 8, "sig": "DC2", "color": "green", "at": "CN8-10"}, {"n": 9, "sig": "RST2", "color": "green", "at": "CN8-12"}, {"n": 10, "sig": "T_CLK", "color": "purple", "at": "CN9-22"}, {"n": 11, "sig": "T_MOSI", "color": "purple", "at": "CN9-18"}, {"n": 12, "sig": "T_MISO", "color": "purple", "at": "CN9-16"}, {"n": 13, "sig": "T_CS", "color": "purple", "at": "CN9-20"}, {"n": 14, "sig": "T_CS2", "color": "purple", "at": "CN10-20"}, {"n": 15, "sig": "T_IRQ", "color": "purple", "at": "CN9-14"}, {"n": 16, "sig": "T_IRQ2", "color": "purple", "at": "CN10-18"}, {"n": 17, "sig": "GND", "color": "black", "at": "CN7-8"}]}, {"id": "J1", "name": "Hub -> display hub (3.3 V share)", "a": "HUB", "b": "DSP", "len": 10, "gauge": "AWG24", "conn_a": "JST-XH 2", "conn_b": "JST-XH 2", "holes": [], "wires": [{"n": 1, "sig": "3V3", "color": "orange", "at": ""}, {"n": 2, "sig": "GND", "color": "black", "at": ""}]}, {"id": "D1", "name": "Display hub -> TFT P1", "a": "DSP", "b": "TFT1", "len": 35, "gauge": "ribbon 14", "conn_a": "header 1x14", "conn_b": "Dupont female 1x14 (module order)", "holes": ["H1"], "ribbon": true, "wires": [{"n": 1, "sig": "VCC 3V3", "color": "ribbon", "at": ""}, {"n": 2, "sig": "GND", "color": "ribbon", "at": ""}, {"n": 3, "sig": "CS", "color": "ribbon", "at": ""}, {"n": 4, "sig": "RESET", "color": "ribbon", "at": ""}, {"n": 5, "sig": "DC", "color": "ribbon", "at": ""}, {"n": 6, "sig": "SDI(MOSI)", "color": "ribbon", "at": ""}, {"n": 7, "sig": "SCK", "color": "ribbon", "at": ""}, {"n": 8, "sig": "LED 3V3", "color": "ribbon", "at": ""}, {"n": 9, "sig": "SDO(MISO)", "color": "ribbon", "at": ""}, {"n": 10, "sig": "T_CLK", "color": "ribbon", "at": ""}, {"n": 11, "sig": "T_CS", "color": "ribbon", "at": ""}, {"n": 12, "sig": "T_DIN", "color": "ribbon", "at": ""}, {"n": 13, "sig": "T_DO", "color": "ribbon", "at": ""}, {"n": 14, "sig": "T_IRQ", "color": "ribbon", "at": ""}]}, {"id": "D2", "name": "Display hub -> TFT P2", "a": "DSP", "b": "TFT2", "len": 35, "gauge": "ribbon 14", "conn_a": "header 1x14", "conn_b": "Dupont female 1x14 (module order)", "holes": ["H2"], "ribbon": true, "same_as": "D1", "wires": [{"n": 1, "sig": "VCC 3V3", "color": "ribbon", "at": ""}, {"n": 2, "sig": "GND", "color": "ribbon", "at": ""}, {"n": 3, "sig": "CS", "color": "ribbon", "at": ""}, {"n": 4, "sig": "RESET", "color": "ribbon", "at": ""}, {"n": 5, "sig": "DC", "color": "ribbon", "at": ""}, {"n": 6, "sig": "SDI(MOSI)", "color": "ribbon", "at": ""}, {"n": 7, "sig": "SCK", "color": "ribbon", "at": ""}, {"n": 8, "sig": "LED 3V3", "color": "ribbon", "at": ""}, {"n": 9, "sig": "SDO(MISO)", "color": "ribbon", "at": ""}, {"n": 10, "sig": "T_CLK", "color": "ribbon", "at": ""}, {"n": 11, "sig": "T_CS", "color": "ribbon", "at": ""}, {"n": 12, "sig": "T_DIN", "color": "ribbon", "at": ""}, {"n": 13, "sig": "T_DO", "color": "ribbon", "at": ""}, {"n": 14, "sig": "T_IRQ", "color": "ribbon", "at": ""}]}, {"id": "N5", "name": "Nucleo -> audio/switch/LCD board", "a": "NUC", "b": "AUD", "len": 15, "gauge": "AWG26", "conn_a": "Dupont male x9", "conn_b": "header on AUD", "holes": [], "wires": [{"n": 1, "sig": "PC6", "color": "purple", "at": "CN7-1"}, {"n": 2, "sig": "PC7", "color": "purple", "at": "CN7-11"}, {"n": 3, "sig": "MUTE1", "color": "brown", "at": "CN10-33"}, {"n": 4, "sig": "SURR1", "color": "brown", "at": "CN10-24"}, {"n": 5, "sig": "MUTE2", "color": "brown", "at": "CN10-7"}, {"n": 6, "sig": "SURR2", "color": "brown", "at": "CN10-26"}, {"n": 7, "sig": "PB8", "color": "white", "at": "CN7-2"}, {"n": 8, "sig": "PB9", "color": "green", "at": "CN7-4"}, {"n": 9, "sig": "GND", "color": "black", "at": "CN10-27"}]}, {"id": "I1", "name": "AUD -> LCD P1 -> LCD P2 (I2C daisy chain, 45 + 30 cm)", "a": "AUD", "b": "LCD1 > LCD2", "len": 75, "gauge": "AWG24", "conn_a": "JST-XH 4", "conn_b": "Dupont female 1x4 at each LCD", "holes": ["H5", "H6"], "wires": [{"n": 1, "sig": "GND", "color": "black", "at": ""}, {"n": 2, "sig": "5V", "color": "red", "at": ""}, {"n": 3, "sig": "SDA", "color": "green", "at": ""}, {"n": 4, "sig": "SCL", "color": "white", "at": ""}]}, {"id": "S1", "name": "Audio board -> P1 controls (buzzer, mute, surrender)", "a": "AUD", "b": "CTRL1", "len": 40, "gauge": "AWG24", "conn_a": "JST-XH 5", "conn_b": "solder + heatshrink", "holes": ["H1"], "wires": [{"n": 1, "sig": "BUZ+ 5V", "color": "red", "at": ""}, {"n": 2, "sig": "BUZ- (2N2222 C)", "color": "purple", "at": ""}, {"n": 3, "sig": "MUTE1", "color": "brown", "at": ""}, {"n": 4, "sig": "SURR1", "color": "brown", "at": ""}, {"n": 5, "sig": "GND", "color": "black", "at": ""}]}, {"id": "S2", "name": "Audio board -> P2 controls", "a": "AUD", "b": "CTRL2", "len": 40, "gauge": "AWG24", "conn_a": "JST-XH 5", "conn_b": "solder + heatshrink", "holes": ["H2"], "wires": [{"n": 1, "sig": "BUZ+ 5V", "color": "red", "at": ""}, {"n": 2, "sig": "BUZ- (2N2222 C)", "color": "purple", "at": ""}, {"n": 3, "sig": "MUTE2", "color": "brown", "at": ""}, {"n": 4, "sig": "SURR2", "color": "brown", "at": ""}, {"n": 5, "sig": "GND", "color": "black", "at": ""}]}, {"id": "P1", "name": "PSU -> 5 V bus", "a": "PSU", "b": "BUS", "len": 15, "gauge": "AWG18", "conn_a": "XT60 / GX16-2", "conn_b": "terminal block", "holes": ["H7"], "wires": [{"n": 1, "sig": "+5V", "color": "red", "at": ""}, {"n": 2, "sig": "GND", "color": "black", "at": ""}]}, {"id": "P2", "name": "5 V bus -> LED driver (feeds L1-L4)", "a": "BUS", "b": "DRV", "len": 10, "gauge": "AWG18", "conn_a": "terminal block", "conn_b": "screw terminal", "holes": [], "wires": [{"n": 1, "sig": "+5V", "color": "red", "at": ""}, {"n": 2, "sig": "GND", "color": "black", "at": ""}]}, {"id": "P3", "name": "5 V bus -> audio board + LCDs", "a": "BUS", "b": "AUD", "len": 10, "gauge": "AWG22", "conn_a": "terminal block", "conn_b": "JST-XH 2", "holes": [], "wires": [{"n": 1, "sig": "+5V", "color": "red", "at": ""}, {"n": 2, "sig": "GND", "color": "black", "at": ""}]}, {"id": "P4", "name": "Bus GND -> Nucleo GND (star ground)", "a": "BUS", "b": "NUC", "len": 10, "gauge": "AWG22", "conn_a": "terminal block", "conn_b": "Dupont male", "holes": [], "wires": [{"n": 1, "sig": "GND", "color": "black", "at": "CN8-11"}]}, {"id": "P5", "name": "5 V bus -> Nucleo E5V (final build only, JP3 = E5V)", "a": "BUS", "b": "NUC", "len": 25, "gauge": "AWG22", "conn_a": "terminal block", "conn_b": "pin soldered into morpho CN11-6", "holes": [], "wires": [{"n": 1, "sig": "E5V", "color": "red", "at": "CN11-6"}]}], "holes": {"H1": "tower face toward P1, low (hidden inside the P1 box), slot 60 x 25 mm, x 150-210 / z 8-33", "H2": "tower face toward P2, low (hidden inside the P2 box), slot 60 x 25 mm, x 150-210 / z 8-33", "H3": "cut-out of the P1 attack panel in the tower face; the panel back is inside the tower, no extra hole", "H4": "cut-out of the P2 attack panel in the tower face; the panel back is inside the tower, no extra hole", "H5": "cut-out of LCD P1 in the tower face (window 72 x 25 mm); pins end inside the tower", "H6": "cut-out of LCD P2 in the tower face (window 72 x 25 mm); pins end inside the tower", "H7": "tower side wall at the power end: 5 V inlet (XT60 / GX16-2) + power switch", "H8": "tower side wall at the Nucleo end: ST-LINK USB access ~14 x 10 mm, z 8-20"}};
 const GROUPS = [
   {key: "led",    name: "ไฟ WS2812",           c: "--c-led",    members: ["led"]},
   {key: "col",    name: "สวิตช์ คอลัมน์",       c: "--c-col",    members: ["col"]},
@@ -293,6 +377,207 @@ function select(id) {
   }
 }
 
+/* ---- Enclosure and cable routes ----
+   Millimetres: y = from the P1 player edge toward P2, x = along the console,
+   z = up from the base. The P2 side is the P1 side turned 180 degrees.
+   Positions are a proposal read from the STL sizes, not measured parts. */
+const ENC = {Y: 495, X: 325};
+const turn = p => ({...p, y: [ENC.Y - p.y[1], ENC.Y - p.y[0]], x: [ENC.X - p.x[1], ENC.X - p.x[0]]});
+const P1_PARTS = [
+  {id: "PANEL0", y: [13, 177],  x: [125, 312], z: [62, 92],   c: "--c-col"},
+  {id: "TFT1",   y: [70, 120],  x: [18, 104],  z: [80, 92],   c: "--c-tft"},
+  {id: "CTRL1",  y: [0, 25],    x: [30, 100],  z: [25, 65],   c: "--c-sound"},
+  {id: "PANEL1", y: [190, 220], x: [125, 312], z: [100, 264], c: "--c-col"},
+  {id: "LCD1",   y: [190, 215], x: [25, 105],  z: [214, 250], c: "--c-lcd"},
+];
+const P2_ID = {PANEL0: "PANEL2", TFT1: "TFT2", CTRL1: "CTRL2", PANEL1: "PANEL3", LCD1: "LCD2"};
+const PARTS = P1_PARTS.concat(P1_PARTS.map(p => ({...turn(p), id: P2_ID[p.id]})));
+const BOARDS = [  /* on the tower floor, z 3-30 */
+  {id: "NUC", name: "Nucleo", x: [6, 139],   y: [220, 290]},
+  {id: "HUB", name: "HUB",    x: [148, 208], y: [215, 295]},
+  {id: "DSP", name: "DSP",    x: [216, 256], y: [200, 245]},
+  {id: "AUD", name: "AUD",    x: [216, 256], y: [252, 297]},
+  {id: "DRV", name: "DRV",    x: [264, 294], y: [225, 275]},
+  {id: "BUS", name: "BUS",    x: [300, 320], y: [215, 285]},
+];
+const HOLE_AT = {
+  H1: {face: 190, x: [150, 210], z: [8, 33]},
+  H2: {face: 305, x: [150, 210], z: [8, 33]},
+  H7: {wall: 325, y: [232, 262]},
+  H8: {wall: 0,   y: [238, 252]},
+};
+/* each cable: polylines of [y, x, z] waypoints */
+const ROUTES = {
+  N1: [[[255, 139, 20], [255, 148, 20]]],
+  M1: [[[215, 178, 20], [190, 180, 20], [120, 200, 45], [95, 218, 62]]],
+  M2: [[[215, 160, 25], [198, 160, 45], [198, 160, 100]]],
+  M3: [[[295, 178, 20], [305, 180, 20], [375, 135, 45], [400, 107, 62]]],
+  M4: [[[295, 165, 25], [298, 140, 50], [298, 107, 100]]],
+  N2: [[[290, 120, 12], [299, 125, 12], [299, 260, 12], [260, 264, 12]]],
+  L1: [[[225, 272, 15], [196, 262, 15], [190, 205, 15], [120, 260, 45], [95, 305, 62]]],
+  L2: [[[225, 285, 15], [198, 300, 45], [198, 300, 100]]],
+  L3: [[[275, 272, 15], [300, 262, 15], [305, 205, 15], [375, 215, 45], [400, 20, 62]]],
+  L4: [[[275, 285, 15], [298, 290, 45], [298, 190, 100]]],
+  N3: [[[222, 139, 20], [209, 145, 20], [209, 212, 20], [215, 216, 20]]],
+  J1: [[[230, 208, 20], [230, 216, 20]]],
+  D1: [[[200, 236, 20], [193, 200, 25], [190, 190, 25], [110, 61, 55], [95, 61, 80]]],
+  D2: [[[245, 236, 25], [249, 260, 25], [300, 260, 25], [305, 195, 25], [385, 264, 55], [400, 264, 80]]],
+  N5: [[[286, 139, 15], [297, 145, 15], [297, 210, 15], [280, 216, 15]]],
+  I1: [[[252, 236, 30], [247, 212, 45], [247, 212, 200], [202, 65, 214]],
+       [[202, 65, 250], [247, 140, 262], [293, 260, 250]]],
+  S1: [[[252, 258, 12], [196, 260, 10], [190, 165, 10], [60, 90, 25], [12, 65, 40]]],
+  S2: [[[297, 236, 12], [305, 170, 10], [430, 240, 25], [483, 260, 40]]],
+  P1: [[[247, 350, 30], [247, 325, 30], [247, 310, 25]]],
+  P2: [[[240, 300, 15], [245, 294, 15]]],
+  P3: [[[282, 300, 12], [300, 296, 12], [300, 262, 12], [285, 256, 12]]],
+  P4: [[[218, 305, 8], [195, 300, 8], [195, 139, 8], [222, 130, 8]]],
+  P5: [[[282, 310, 8], [301, 305, 8], [301, 130, 8], [288, 120, 8]]],
+};
+const CABLE_C = {N1: "--c-row", M: "--c-col", N2: "--c-led", L: "--c-led", N3: "--c-tft", J1: "--c-tft",
+                 D: "--c-tft", N5: "--c-sound", S: "--c-sound", I1: "--c-lcd", P: "--pwr"};
+const cableC = id => "var(" + (CABLE_C[id] || CABLE_C[id[0]]) + ")";
+const END_NAME = {NUC: "Nucleo", BUS: "BUS 5V", PANEL0: "แผงเรือ P1", PANEL1: "แผงโจมตี P1", PANEL2: "แผงเรือ P2",
+                  PANEL3: "แผงโจมตี P2", TFT1: "TFT P1", TFT2: "TFT P2", CTRL1: "ปุ่ม/buzzer P1",
+                  CTRL2: "ปุ่ม/buzzer P2", "LCD1 > LCD2": "LCD P1 → LCD P2"};
+const endName = e => END_NAME[e] || e;
+const WIRE = {red: ["#d0342c", "แดง"], black: ["#1f2328", "ดำ"], orange: ["#f08a24", "ส้ม"], yellow: ["#e8c31a", "เหลือง"],
+              white: ["#f4f5f6", "ขาว"], grey: ["#9aa3ab", "เทา"], blue: ["#2f6fd6", "น้ำเงิน"], green: ["#2e9d48", "เขียว"],
+              purple: ["#8a4fd0", "ม่วง"], brown: ["#8b5a2b", "น้ำตาล"],
+              ribbon: ["repeating-linear-gradient(90deg, #c8ccd0 0 3px, #8f969d 3px 4px)", "สายแพ"]};
+const WIRE_USE = {red: "+5V", black: "GND", orange: "+3.3V", yellow: "DIN ไฟ LED", white: "COL สวิตช์, SCL",
+                  grey: "ROW สวิตช์", blue: "SPI จอ", green: "CS/DC/RST จอ, SDA", purple: "touch, PWM buzzer",
+                  brown: "ยอมแพ้ / ปิดเสียง", ribbon: "ขีดแดง = เส้นที่ 1"};
+
+function label(s, txt, x, y, anchor, cls, rotate) {
+  const t = el("text", {x, y, "text-anchor": anchor || "middle"}, s);
+  if (cls) t.setAttribute("class", cls);
+  if (rotate) t.setAttribute("transform", "rotate(" + rotate + " " + x + " " + y + ")");
+  t.textContent = txt;
+  return t;
+}
+function drawRoutes(s, project, keep) {
+  for (const id in ROUTES) {
+    for (const line of ROUTES[id]) {
+      const pts = line.filter(keep || (() => true));
+      if (pts.length < 2) continue;
+      el("polyline", {class: "route", "data-id": id, style: "--c:" + cableC(id),
+                      points: pts.map(p => project(p).join(",")).join(" ")}, s);
+    }
+  }
+}
+
+function drawSide() {
+  const s = document.getElementById("side");
+  const X = y => 30 + y, Y = z => 330 - z;
+  const rect = (y0, y1, z0, z1, attrs, parent) =>
+    el("rect", {x: X(y0), y: Y(z1), width: y1 - y0, height: z1 - z0, ...attrs}, parent);
+  rect(0, 190, 0, 92, {class: "shell", rx: 3}, s);
+  rect(190, 305, 0, 282, {class: "shell", rx: 3}, s);
+  rect(305, 495, 0, 92, {class: "shell", rx: 3}, s);
+  el("line", {x1: 12, y1: Y(0), x2: 543, y2: Y(0), stroke: "var(--silk)", "stroke-width": 2}, s);
+  for (const p of PARTS) {
+    const g = el("g", {class: "part", "data-id": p.id, style: "--c:var(" + p.c + ")"}, s);
+    rect(p.y[0], p.y[1], p.z[0], p.z[1], {rx: 2}, g);
+  }
+  const b = el("g", {class: "brd", "data-id": BOARDS.map(b => b.id).join(" ")}, s);
+  rect(196, 300, 3, 30, {rx: 2}, b);
+  for (const h of ["H1", "H2"]) {
+    const a = HOLE_AT[h];
+    el("line", {class: "hole", x1: X(a.face), y1: Y(a.z[0]), x2: X(a.face), y2: Y(a.z[1])}, s);
+    label(s, h, X(a.face + (h === "H1" ? -6 : 6)), Y(44), h === "H1" ? "end" : "start");
+  }
+  drawRoutes(s, p => [X(p[0]), Y(p[2])]);
+  label(s, "แผงเรือ + TFT P1", X(95), Y(100));
+  label(s, "แผงเรือ + TFT P2", X(400), Y(100));
+  label(s, "ปุ่ม · buzzer", X(30), Y(48), "start");
+  label(s, "ปุ่ม · buzzer", X(465), Y(48), "end");
+  label(s, "แผงโจมตี P1", X(208), Y(160), "middle", "", -90);
+  label(s, "แผงโจมตี P2", X(287), Y(160), "middle", "", -90);
+  label(s, "LCD P1", X(222), Y(244), "start");
+  label(s, "LCD P2", X(273), Y(222), "end");
+  label(s, "บอร์ดทั้งหมด", X(248), Y(42));
+  label(s, "ฝาเปิดซ่อม", X(247), Y(288), "middle", "small");
+  label(s, "P1", 14, Y(110)).setAttribute("font-weight", 700);
+  label(s, "P2", 541, Y(110)).setAttribute("font-weight", 700);
+  label(s, "กล่อง P1 · 190", X(95), 350, "middle", "small");
+  label(s, "เสากลาง · 115", X(247), 350, "middle", "small");
+  label(s, "กล่อง P2 · 190", X(400), 350, "middle", "small");
+}
+
+function drawFloor() {
+  const s = document.getElementById("floor");
+  const S = 1.5, X = x => 24 + x * S, Y = y => 40 + (y - 190) * S;
+  el("rect", {class: "shell", x: X(0), y: Y(190), width: 325 * S, height: 115 * S, rx: 3}, s);
+  label(s, "หน้าเสาฝั่ง P1 ↑", X(4), Y(190) - 8, "start", "small");
+  label(s, "หน้าเสาฝั่ง P2 ↓", X(4), Y(305) + 16, "start", "small");
+  for (const h in HOLE_AT) {
+    const a = HOLE_AT[h];
+    if (a.face) {
+      el("line", {class: "hole", x1: X(a.x[0]), y1: Y(a.face), x2: X(a.x[1]), y2: Y(a.face)}, s);
+      label(s, h, X((a.x[0] + a.x[1]) / 2), Y(a.face) + (a.face === 190 ? -8 : 16));
+    } else {
+      el("line", {class: "hole", x1: X(a.wall), y1: Y(a.y[0]), x2: X(a.wall), y2: Y(a.y[1])}, s);
+      label(s, h, X(a.wall) + (a.wall ? 8 : -8), Y((a.y[0] + a.y[1]) / 2) + 4, a.wall ? "start" : "end");
+    }
+  }
+  for (const b of BOARDS) {
+    const g = el("g", {class: "brd", "data-id": b.id}, s);
+    el("rect", {x: X(b.x[0]), y: Y(b.y[0]), width: (b.x[1] - b.x[0]) * S, height: (b.y[1] - b.y[0]) * S, rx: 3}, g);
+    label(g, b.name, X((b.x[0] + b.x[1]) / 2), Y((b.y[0] + b.y[1]) / 2) + 4);
+  }
+  /* only the part of each route that runs on the tower floor */
+  drawRoutes(s, p => [X(p[1]), Y(p[0])], p => p[0] >= 190 && p[0] <= 305 && p[2] <= 60);
+}
+
+let cableOn = null;
+function setCable(id) {
+  cableOn = id;
+  const cab = DATA.harness.find(c => c.id === id);
+  const ends = cab ? (cab.a + " " + cab.b).split(/[ >]+/) : [];
+  document.querySelectorAll("svg.encl").forEach(s => s.classList.toggle("focus", !!id));
+  document.querySelectorAll(".route").forEach(r => r.classList.toggle("on", r.dataset.id === id));
+  document.querySelectorAll(".part, .brd").forEach(g =>
+    g.classList.toggle("on", g.dataset.id.split(" ").some(e => ends.includes(e))));
+}
+
+function drawCables() {
+  const box = document.getElementById("cables");
+  for (const c of DATA.harness) {
+    const d = document.createElement("details");
+    d.className = "cable"; d.dataset.id = c.id;
+    d.style.setProperty("--c", cableC(c.id));
+    const nucleo = c.wires.some(w => w.at);
+    let html = '<summary><span class="cid">' + c.id + "</span><span>" + endName(c.a) + " → " + endName(c.b) +
+      '</span><span class="meta">' + c.len + " cm · " + c.wires.length + " เส้น" +
+      (c.holes.length ? " · " + c.holes.join(" ") : "") + "</span></summary>" +
+      '<div class="cbody"><div class="sub">' + c.name + "<br>" + c.conn_a + " → " + c.conn_b + " · " + c.gauge +
+      (c.same_as ? " · ลำดับเหมือน " + c.same_as : "") + '</div><div class="tablebox"><table><thead><tr><th>#</th><th>สัญญาณ</th>' +
+      (nucleo ? "<th>Nucleo</th>" : "") + "<th>สี</th></tr></thead><tbody>";
+    for (const w of c.wires) {
+      const [bg, th] = WIRE[w.color];
+      html += "<tr><td class=\"mono\">" + w.n + "</td><td class=\"mono\">" + w.sig + "</td>" +
+        (nucleo ? '<td class="where">' + (w.at || "–") + "</td>" : "") +
+        '<td><span class="sw" style="background:' + bg + '"></span>' + th + "</td></tr>";
+    }
+    d.innerHTML = html + "</tbody></table></div></div>";
+    d.addEventListener("toggle", () => {
+      if (d.open) setCable(c.id);
+      else if (cableOn === c.id) setCable(null);
+    });
+    box.appendChild(d);
+  }
+  const tb = document.querySelector("#holes tbody");
+  for (const h in DATA.holes) {
+    const used = DATA.harness.filter(c => c.holes.includes(h)).map(c => c.id).join(", ") || "–";
+    tb.insertAdjacentHTML("beforeend", '<tr><td class="where">' + h + "</td><td>" + DATA.holes[h] + '</td><td class="mono">' + used + "</td></tr>");
+  }
+  const ul = document.getElementById("wirecolors");
+  for (const k in WIRE_USE) {
+    ul.insertAdjacentHTML("beforeend", '<li><span class="sw" style="background:' + WIRE[k][0] + '"></span>' + WIRE[k][1] + " — " + WIRE_USE[k] + "</li>");
+  }
+}
+
 drawBoard(); drawChips(); drawSheet();
+drawSide(); drawFloor(); drawCables();
 try { const k = localStorage.getItem("wiring-active"); if (k) setActive(k); } catch (e) {}
 </script>
