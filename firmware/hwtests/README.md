@@ -9,6 +9,7 @@
 | 1b | `test_ws2812b.c` | ไฟ WS2812B เส้นใดก็ได้ (ไม่ผูกกับเกม) | – (ไฟล์เดียวจบ) |
 | 2 | `test_switch.c` | สวิตช์ matrix 224 ปุ่ม | `1_switch/keypad.c`, `keypad_core.c` (+ไฟ ถ้าเปิด `TEST_SWITCH_WITH_LED`) |
 | 2b | `test_table.c` | ปุ่ม + ไฟ ทีละตาราง 7×8 (กดแล้วไฟช่องนั้นเปลี่ยนสี) | – (ไฟล์เดียวจบ) |
+| 2c | `test_panel_art.c` | ปุ่ม + ไฟ แสดงภาพ Pixel Art 6 ลาย + ทดสอบปุ่ม | – (ไฟล์เดียวจบ) |
 | 3 | `test_buzzer.c` | buzzer ×2 + สวิตช์ปิดเสียง ×2 | `sound/buzzer.c` |
 | 4 | `test_surrender.c` | ปุ่มยอมแพ้ ×2 | – |
 | 5 | `test_lcd.c` | LCD1602 ×2 | `5_lcd/lcd1602.c` |
