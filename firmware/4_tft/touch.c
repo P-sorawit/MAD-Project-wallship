@@ -48,23 +48,38 @@ static bool touching(uint8_t p)
     return HAL_GPIO_ReadPin(irq_port[p], irq_pin[p]) == GPIO_PIN_RESET;
 }
 
+/* Half an XPT2046 clock: the chip allows at most 2.5 MHz, a bare GPIO
+ * toggle at 216 MHz is about twice that. */
+static void half_clock(void)
+{
+    volatile uint32_t n = SystemCoreClock / 4000000U;   /* >= 2 cycles each: >= 0.5 us */
+    while (n-- != 0U) {
+    }
+}
+
 static uint16_t xfer(uint8_t p, uint8_t cmd)
 {
     uint16_t v = 0;
     int i;
     HAL_GPIO_WritePin(cs_port[p], cs_pin[p], GPIO_PIN_RESET);
-    for (i = 7; i >= 0; --i) {
+    for (i = 7; i >= 0; --i) {   /* DIN is sampled on the rising edge */
         HAL_GPIO_WritePin(T_MOSI_GPIO_Port, T_MOSI_Pin,
                           ((cmd >> i) & 1U) ? GPIO_PIN_SET : GPIO_PIN_RESET);
+        half_clock();
         HAL_GPIO_WritePin(T_CLK_GPIO_Port, T_CLK_Pin, GPIO_PIN_SET);
+        half_clock();
         HAL_GPIO_WritePin(T_CLK_GPIO_Port, T_CLK_Pin, GPIO_PIN_RESET);
     }
     HAL_GPIO_WritePin(T_MOSI_GPIO_Port, T_MOSI_Pin, GPIO_PIN_RESET);
-    for (i = 0; i < 16; ++i) {   /* 1 busy bit + 12 data bits + 3 zeros */
+    /* 1 null bit + 12 data bits + 3 zeros. DOUT changes on the falling edge,
+     * so read it while the clock is high (like SPI mode 0). */
+    for (i = 0; i < 16; ++i) {
+        half_clock();
         HAL_GPIO_WritePin(T_CLK_GPIO_Port, T_CLK_Pin, GPIO_PIN_SET);
-        HAL_GPIO_WritePin(T_CLK_GPIO_Port, T_CLK_Pin, GPIO_PIN_RESET);
+        half_clock();
         v = (uint16_t)((v << 1) |
             (HAL_GPIO_ReadPin(T_MISO_GPIO_Port, T_MISO_Pin) == GPIO_PIN_SET ? 1U : 0U));
+        HAL_GPIO_WritePin(T_CLK_GPIO_Port, T_CLK_Pin, GPIO_PIN_RESET);
     }
     HAL_GPIO_WritePin(cs_port[p], cs_pin[p], GPIO_PIN_SET);
     return (uint16_t)((v >> 3) & 0x0FFFU);
@@ -89,6 +104,10 @@ void Touch_Init(void)
         pen_down[p] = false;
     }
     HAL_GPIO_WritePin(T_CLK_GPIO_Port, T_CLK_Pin, GPIO_PIN_RESET);
+    /* The XPT2046 only drives T_IRQ after a command with PD1 PD0 = 00. */
+    for (p = 0; p < 2U; ++p) {
+        (void)xfer(p, 0xD0);
+    }
 }
 
 bool Touch_Poll(uint8_t p, int *x, int *y)
