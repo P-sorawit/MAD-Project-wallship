@@ -155,7 +155,7 @@ USB│ │ NUCLEO-F767ZI            │  │ 28×10k   │              │   �
 | 1 | ยึด Nucleo, BUS · เจาะ H7/H8 · ต่อ P1, P4 (**ยังไม่ต่อ P5**) | มัลติมิเตอร์: BUS 5.0–5.2 V, GND ของ BUS ↔ CN8-11 บี๊บ |
 | 2 | DRV + N2 + P2 + L1 → แผงเรือ P1 | `test_led.c` (`WS2812_ACTIVE_MASK 0x01`) |
 | 3 | L2, L3, L4 | `test_led.c` (`0x0F`) |
-| 4 | ก่อนติดตั้ง: ทดสอบตารางทีละแผงบนโต๊ะ · แล้วต่อ HUB + N1 + M1–M4 | `test_table.c` ทีละตาราง 7×8 → `test_switch.c` ตรวจรวม 224 ปุ่ม |
+| 4 | HUB + N1 + M1–M4 (ทดสอบทีละตารางบนโต๊ะก่อนได้) | `test_table.c` ปุ่ม + ไฟ ทั้ง 4 ตาราง กดครบ 224 ปุ่ม |
 | 5 | AUD + N5 + P3 + S1, S2 | `test_buzzer.c`, `test_surrender.c` |
 | 6 | I1 → LCD P1 → LCD P2 | `test_lcd.c` ต้องเจอ 0x27 และ 0x26 |
 | 7 | DSP + J1 + N3 + D1, D2 | `test_tft.c` แล้ว `test_touch.c` (คาลิเบรต) |
@@ -296,7 +296,7 @@ USB│ │ NUCLEO-F767ZI            │  │ 28×10k   │              │   �
 | 5 | DC | **CN8-4** | green |
 | 6 | RST | **CN8-6** | green |
 | 7 | CS2 | **CN8-8** | green |
-| 8 | DC2 | **CN8-10** | green |
+| 8 | DC2 | **CN7-18** | green |
 | 9 | RST2 | **CN8-12** | green |
 | 10 | T_CLK | **CN9-22** | purple |
 | 11 | T_MOSI | **CN9-18** | purple |

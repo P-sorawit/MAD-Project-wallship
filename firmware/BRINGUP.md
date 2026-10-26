@@ -136,7 +136,7 @@
 |---|---|---|
 | VCC, LED | 3.3V | 3.3V |
 | GND | GND | GND |
-| CS / DC / RESET | PC8 / PC9 / PC10 | PC11 / PC12 / PD2 |
+| CS / DC / RESET | PC8 / PC9 / PC10 | PC11 / **PD15** / PD2 |
 | SDI(MOSI) / SCK / SDO(MISO) | PB5 / PA5 / PA6 | ขนานกับจอ P1 |
 | T_CLK / T_DIN / T_DO | PE3 / PE5 / PE4 | ขนานกับจอ P1 |
 | T_CS / T_IRQ | PE6 / PE2 | PE7 / PE8 |

@@ -106,7 +106,7 @@ PINS = [
     ("PC9",  "DC",     "tft",    "Output", "TFT P1 DC"),
     ("PC10", "RST",    "tft",    "Output, High", "TFT P1 RESET"),
     ("PC11", "CS2",    "tft",    "Output, High", "TFT P2 CS"),
-    ("PC12", "DC2",    "tft",    "Output", "TFT P2 DC"),
+    ("PD15", "DC2",    "tft",    "Output", "TFT P2 DC (moved from PC12: no signal on our board)"),
     ("PD2",  "RST2",   "tft",    "Output, High", "TFT P2 RESET"),
     # 4. touch x2 (bit-bang)
     ("PE3",  "T_CLK",  "touch",  "Output, Very High", "T_CLK of both panels"),

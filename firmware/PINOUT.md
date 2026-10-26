@@ -27,9 +27,9 @@
 
 | Header | อยู่ตรงไหน | ใช้ทำ |
 |---|---|---|
-| **CN8** | ซ้ายบน | จอ TFT CS/DC/RST ทั้งสองจอ (PC8–PC12, PD2), แถวสวิตช์ PG2/PG3 |
+| **CN8** | ซ้ายบน | จอ TFT CS/DC/RST (PC8–PC11, PD2), แถวสวิตช์ PG2/PG3 |
 | **CN9** | ซ้ายล่าง | คอลัมน์สวิตช์ PD3–PD7, PD0/PD1, แถว PF0–PF5/PF7–PF10/PG0/PG1, touch PE2–PE6 |
-| **CN7** | ขวาบน | SPI1 (PA5/PA6/PB5), I2C1 LCD (PB8/PB9), buzzer (PC6/PC7), COL2 (PD14), แถว PF12 |
+| **CN7** | ขวาบน | SPI1 (PA5/PA6/PB5), DC2 จอ P2 (PD15), I2C1 LCD (PB8/PB9), buzzer (PC6/PC7), COL2 (PD14), แถว PF12 |
 | **CN10** | ขวาล่าง | ไฟ WS2812 (PE9/11/13/14), touch PE7/PE8, ยอมแพ้ PE10/PE12, ปิดเสียง PE0/PB1, แถว ที่เหลือ |
 
 ## 1. ไฟ WS2812 — TIM1 + DMA2 (4 ขา)
@@ -71,7 +71,7 @@
 | PC9 | **CN8-4** (D44) | `DC` | Output | TFT P1 DC |
 | PC10 | **CN8-6** (D45) | `RST` | Output, High | TFT P1 RESET |
 | PC11 | **CN8-8** (D46) | `CS2` | Output, High | TFT P2 CS |
-| PC12 | **CN8-10** (D47) | `DC2` | Output | TFT P2 DC |
+| PD15 | **CN7-18** (D9) | `DC2` | Output | TFT P2 DC (ย้ายจาก PC12: บอร์ดเราขานั้นไม่มีสัญญาณ) |
 | PD2 | **CN8-12** (D48) | `RST2` | Output, High | TFT P2 RESET |
 
 SPI1: Transmit Only Master, 8 bit, CPOL Low, CPHA 1 Edge, Prescaler 4 (27 Mbit/s) · DMA2 Stream 5
@@ -154,4 +154,4 @@ PH0 PH1 PC14 PC15 (clock)
 ## 10. ขาว่างบน Zio (สำรอง)
 
 PA0 (CN10-29) · PA3 (CN9-1) · PA4 (CN7-17) · PA15 (CN7-9) · PB4 (CN7-19) · PB12 (CN7-7) · PB15 (CN7-3) ·
-PC0 (CN9-3) · PC2 (CN10-9) · PC3 (CN9-5) · PD15 (CN7-18)
+PC0 (CN9-3) · PC2 (CN10-9) · PC3 (CN9-5) · ~~PC12 (CN8-10)~~ ห้ามใช้: บอร์ดเราขานี้ไม่มีสัญญาณ

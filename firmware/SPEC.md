@@ -133,7 +133,7 @@
 | 8.1 | WS2812 TIM1 CH1–4 + DMA2 | PE9, PE11, PE13, PE14 | ✅ CH1 ทดสอบแล้ว |
 | 8.2 | สวิตช์ คอลัมน์ | PD0, PD1, PD14, PD3–PD7 | ✅ โค้ด / 🔲 ทดสอบ |
 | 8.3 | สวิตช์ แถว | 28 ขาบน CN9/CN10/CN7/CN8 (ดู PINOUT.md v4) | ✅ โค้ด / 🔲 ทดสอบ |
-| 8.4 | TFT SPI1 + CS/DC/RST | PA5, PA6, PB5 · PC8–PC12, PD2 | 🔲 |
+| 8.4 | TFT SPI1 + CS/DC/RST | PA5, PA6, PB5 · PC8–PC11, PD15, PD2 | 🔲 |
 | 8.5 | Touch (bit-bang) | PE3, PE4, PE5 · CS PE6/PE7 · IRQ PE2/PE8 | 🔲 |
 | 8.6 | LCD I2C1 | PB8, PB9 | 🔲 |
 | 8.7 | Buzzer TIM3 CH1–2 | PC6, PC7 | ✅ โค้ด / 🔲 ทดสอบ |

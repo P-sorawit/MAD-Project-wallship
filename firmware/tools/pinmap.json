@@ -518,14 +518,14 @@
    "also": []
   },
   {
-   "pin": "PC12",
+   "pin": "PD15",
    "label": "DC2",
    "group": "tft",
    "mode": "Output",
-   "to": "TFT P2 DC",
-   "conn": "CN8",
-   "num": 10,
-   "zio": "D47",
+   "to": "TFT P2 DC (moved from PC12: no signal on our board)",
+   "conn": "CN7",
+   "num": 18,
+   "zio": "D9",
    "also": []
   },
   {
@@ -2142,7 +2142,7 @@
      "n": 8,
      "sig": "DC2",
      "color": "green",
-     "at": "CN8-10"
+     "at": "CN7-18"
     },
     {
      "n": 9,
