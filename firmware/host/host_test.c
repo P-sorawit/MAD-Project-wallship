@@ -489,13 +489,18 @@ static void test_simultaneous_placement(void)
     Game_OnButton(&g, 0, BTN_CONFIRM);
     assert(g.state == GS_GAME_START);
 
-    /* switch matrix: both players press in the same scan -> two events */
+    /* switch matrix: both players press in the same scan -> two events
+     * (column wire 2 is C on P1's side; on P2's side KEYPAD_FLIP_X may mirror it) */
     Keypad_ResetCore();
     for (i = 0; i < KEYPAD_DEBOUNCE_SCANS; ++i) {
-        Keypad_ProcessColumn(2, (UINT32_C(1) << 0) | (UINT32_C(1) << 15)); /* P1 C1, P2 C2 */
+        Keypad_ProcessColumn(2, (UINT32_C(1) << 0) | (UINT32_C(1) << 15)); /* P1 row 1, P2 row 2 */
     }
-    assert(Keypad_GetEvent(&e) && e.panel == PANEL_P1_FLEET && e.x == 2 && e.y == 0);
-    assert(Keypad_GetEvent(&e) && e.panel == PANEL_P2_FLEET && e.x == 2 && e.y == 1);
+    {
+        static const uint8_t flip_x[4] = KEYPAD_FLIP_X;
+        const uint8_t p2_x = flip_x[PANEL_P2_FLEET] ? (uint8_t)(BOARD_W - 1U - 2U) : 2U;
+        assert(Keypad_GetEvent(&e) && e.panel == PANEL_P1_FLEET && e.x == 2 && e.y == 0);
+        assert(Keypad_GetEvent(&e) && e.panel == PANEL_P2_FLEET && e.x == p2_x && e.y == 1);
+    }
     assert(!Keypad_GetEvent(&e));
     puts("simultaneous placement (interleaved presses, independent CANCEL): OK");
 }

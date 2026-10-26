@@ -22,7 +22,7 @@
 #define KEYPAD_GROUP_TO_PANEL  { 0U, 1U, 2U, 3U }
 /* Mirror a panel if its switch columns/rows are wired right-to-left or
  * bottom-to-top (e.g. the attack panels on the divider). TODO: check. */
-#define KEYPAD_FLIP_X          { 0U, 0U, 0U, 0U }
+#define KEYPAD_FLIP_X          { 0U, 0U, 1U, 1U }   /* P2 panels: column wires A..H mirrored */
 #define KEYPAD_FLIP_Y          { 0U, 0U, 0U, 0U }
 
 /* ---------- Module 2: WS2812B (TIM1 CH1-CH4 + DMA2) ---------- */
